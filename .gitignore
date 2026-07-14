@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment Variables
+.env
+
+# Streamlit Secrets
+.streamlit/secrets.toml
+
+# Logs
+logs/*.log
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# ML Models
+*.pkl
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Temporary Files
+temp/
+*.tmp
+
+# Exported Reports
+exports/pdf/*
+exports/excel/*
+exports/word/*
+exports/csv/*
+exports/json/*
+
+# Screenshots (optional)
+screenshots/*.png
+screenshots/*.jpg

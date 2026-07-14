@@ -1,0 +1,11 @@
+Type,Value
+Website,https://www.google.com
+Website,https://github.com
+Website,https://www.microsoft.com
+UPI,upi://pay?pa=test@upi&pn=Demo
+WiFi,WIFI:T:WPA;S:HomeWiFi;P:password123;;
+Email,mailto:test@example.com
+Phone,tel:+919999999999
+SMS,SMSTO:+919999999999:Hello
+Location,geo:23.0225,72.5714
+Contact,MECARD:N:Daksh Vasani;TEL:+919999999999;EMAIL:test@example.com;;

@@ -1,0 +1,10 @@
+Method,Description
+GET,Retrieve Resource
+POST,Create Resource
+PUT,Update Resource
+DELETE,Delete Resource
+PATCH,Partial Update
+HEAD,Headers Only
+OPTIONS,Supported Methods
+TRACE,Diagnostic
+CONNECT,Tunnel Connection

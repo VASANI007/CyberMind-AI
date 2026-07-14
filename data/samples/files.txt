@@ -1,0 +1,10 @@
+document.pdf
+report.docx
+presentation.pptx
+data.csv
+image.png
+archive.zip
+setup.exe
+installer.msi
+script.js
+application.apk

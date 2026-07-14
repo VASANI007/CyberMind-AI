@@ -1,0 +1,36 @@
+{
+    "Strict-Transport-Security": {
+        "description": "Forces browsers to use HTTPS.",
+        "risk_if_missing": "High"
+    },
+
+    "Content-Security-Policy": {
+        "description": "Prevents XSS attacks.",
+        "risk_if_missing": "High"
+    },
+
+    "X-Frame-Options": {
+        "description": "Protects against clickjacking.",
+        "risk_if_missing": "Medium"
+    },
+
+    "X-Content-Type-Options": {
+        "description": "Prevents MIME sniffing.",
+        "risk_if_missing": "Medium"
+    },
+
+    "Referrer-Policy": {
+        "description": "Controls referrer information.",
+        "risk_if_missing": "Low"
+    },
+
+    "Permissions-Policy": {
+        "description": "Restricts browser features.",
+        "risk_if_missing": "Low"
+    },
+
+    "X-XSS-Protection": {
+        "description": "Legacy XSS protection.",
+        "risk_if_missing": "Low"
+    }
+}

@@ -1,0 +1,16 @@
+Extension,MIME
+html,text/html
+css,text/css
+js,application/javascript
+json,application/json
+xml,application/xml
+pdf,application/pdf
+png,image/png
+jpg,image/jpeg
+jpeg,image/jpeg
+gif,image/gif
+zip,application/zip
+exe,application/octet-stream
+apk,application/vnd.android.package-archive
+csv,text/csv
+txt,text/plain

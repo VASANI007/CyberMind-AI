@@ -1,0 +1,8 @@
+https://google.com
+https://github.com
+https://openai.com
+https://amazon.com
+https://microsoft.com
+https://apple.com
+https://python.org
+https://kaggle.com

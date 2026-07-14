@@ -1,0 +1,15 @@
+Port,Protocol,Service,Risk
+20,TCP,FTP Data,Medium
+21,TCP,FTP,Critical
+22,TCP,SSH,Low
+23,TCP,Telnet,Critical
+25,TCP,SMTP,Medium
+53,UDP,DNS,Low
+80,TCP,HTTP,Medium
+110,TCP,POP3,Medium
+143,TCP,IMAP,Low
+443,TCP,HTTPS,Safe
+3306,TCP,MySQL,Medium
+3389,TCP,RDP,Critical
+5432,TCP,PostgreSQL,Medium
+8080,TCP,HTTP Alternate,Medium

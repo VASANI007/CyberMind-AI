@@ -1,0 +1,8 @@
+Type,Value,Risk
+Website,http://paypal-login.xyz,High
+Website,http://google-security.xyz,High
+Website,http://bank-verification.xyz,Critical
+Website,http://bit.ly/fake123,Medium
+Website,http://tinyurl.com/login123,Medium
+SMS,SMSTO:+919999999999:Click this link,Critical
+Email,mailto:attacker@example.com?subject=Urgent&body=Click,Critical

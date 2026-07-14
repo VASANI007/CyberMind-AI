@@ -1,0 +1,11 @@
+Type,Description
+A,IPv4 Address
+AAAA,IPv6 Address
+CNAME,Canonical Name
+MX,Mail Exchange
+NS,Name Server
+TXT,Text Record
+SOA,Start Of Authority
+PTR,Pointer Record
+SRV,Service Locator
+CAA,Certificate Authority Authorization
