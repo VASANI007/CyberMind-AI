@@ -1,0 +1,14 @@
+google.com
+github.com
+openai.com
+amazon.com
+microsoft.com
+apple.com
+wikipedia.org
+python.org
+example.com
+kaggle.com
+stackoverflow.com
+mit.edu
+harvard.edu
+nasa.gov

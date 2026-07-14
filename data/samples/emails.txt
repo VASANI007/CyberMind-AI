@@ -1,0 +1,10 @@
+user@gmail.com
+admin@gmail.com
+support@microsoft.com
+security@google.com
+info@openai.com
+contact@amazon.com
+test@yahoo.com
+hello@proton.me
+admin@github.com
+career@apple.com

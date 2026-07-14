@@ -1,0 +1,42 @@
+# Tasks
+
+- [x] Align `test_utils.py` (Completed by user)
+- [x] Fix database initialization issue:
+    - [x] Add `initialize_database()` function to `database/db.py` that dynamically imports and runs `database.migrate.migrate`
+- [x] Fix service exports (instantiate services at the end of files):
+    - [x] `services/url_service.py`
+    - [x] `services/website_service.py`
+    - [x] `services/domain_service.py`
+    - [x] `services/email_service.py`
+    - [x] `services/file_service.py`
+    - [x] Implement `services/ip_service.py`
+    - [x] Implement `services/qr_service.py`
+- [x] Create missing wrappers in `modules`:
+    - [x] `modules/url_module.py`
+    - [x] `modules/website_module.py`
+    - [x] `modules/domain_module.py`
+    - [x] `modules/email_module.py`
+    - [x] `modules/ip_module.py`
+    - [x] `modules/file_module.py`
+    - [x] `modules/qr_module.py`
+- [x] Create missing package `apis` for testing:
+    - [x] `apis/__init__.py`
+    - [x] `apis/url_api.py`
+    - [x] `apis/website_api.py`
+    - [x] `apis/domain_api.py`
+    - [x] `apis/email_api.py`
+    - [x] `apis/ip_api.py`
+    - [x] `apis/file_api.py`
+    - [x] `apis/qr_api.py`
+- [x] Create SQLAlchemy database helpers for `tests/test_database.py`:
+    - [x] `database/connection.py`
+    - [x] `database/models.py`
+- [x] Fix startup mismatch in `core/startup.py`:
+    - [x] Change ML model loader import path
+    - [x] Update `services(self)` to return the list of services
+    - [x] Update `modules(self)` to return the list of modules
+- [x] Create `root.py` master diagnostics script and run it:
+    - [x] Initialize database and datasets first
+    - [x] Run folder test suites sequentially (database, config, utils, ml, services, modules, apis, startup)
+    - [x] Fix missing method/attribute mismatches across services (normalize, validate, analyze, lookup, timezone-aware datetime calculations)
+    - [x] Run live diagnostic scan demo on URL, IP, and Email inputs successfully
