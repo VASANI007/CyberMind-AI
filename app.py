@@ -1066,7 +1066,8 @@ def generate_mock_analysis(value: str, score: int, level: str, scanner_key: str)
     
     import math
     entropy = sum(-val * math.log2(val) for val in [val_str.count(c)/url_len for c in set(val_str)]) if url_len > 0 else 0.0
-    ip_based = "Yes" if any(char.isdigit() for char in val_str.split("/")[2]) else "No" if len(val_str.split("/")) > 2 else "No"
+    _parts = val_str.split("/")
+    ip_based = "Yes" if len(_parts) > 2 and any(char.isdigit() for char in _parts[2]) else "No"
     shortened = "Yes" if any(domain in val_str for domain in ["bit.ly", "tinyurl.com", "t.co", "rebrand.ly"]) else "No"
     
     is_safe = score < 30
