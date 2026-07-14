@@ -45,7 +45,7 @@ DEFAULTS = {
     "settings_language": "English",
     "settings_auto_save": True,
     "settings_dark_mode": True,
-    "settings_animations": False,
+    "settings_animations": True,
     "settings_sound_alerts": False,
     "settings_auto_updates": True,
     "settings_export_format": "PDF",
