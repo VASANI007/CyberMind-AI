@@ -1,0 +1,68 @@
+{
+  "accuracy": 0.7476,
+  "precision": 0.7555,
+  "recall": 0.7476,
+  "f1_score": 0.7475,
+  "roc_auc": 0.9083,
+  "model_type": "RandomForestClassifier",
+  "evaluation": "5-fold Stratified Cross-Validation",
+  "dataset": "Multi-Dataset (4 CSV sources)",
+  "per_dataset": [
+    {
+      "dataset": "PhiUSIIL Phishing URL",
+      "model_file": "phishing_url_model.pkl",
+      "model_type": "RandomForestClassifier",
+      "task": "Binary Classification",
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "samples": 235795,
+      "feature_count": 50,
+      "class_count": 2
+    },
+    {
+      "dataset": "Online-Valid Phishing URLs",
+      "model_file": "online_valid_model.pkl",
+      "model_type": "RandomForestClassifier",
+      "task": "Multi-Class Classification",
+      "accuracy": 0.6567,
+      "precision": 0.688,
+      "recall": 0.6567,
+      "f1_score": 0.6653,
+      "roc_auc": 0.9147,
+      "samples": 7411,
+      "feature_count": 18,
+      "class_count": 9
+    },
+    {
+      "dataset": "World's Biggest Data Breaches",
+      "model_file": "breaches_model.pkl",
+      "model_type": "RandomForestClassifier",
+      "task": "Multi-Class Classification",
+      "accuracy": 0.3592,
+      "precision": 0.357,
+      "recall": 0.3592,
+      "f1_score": 0.35,
+      "roc_auc": 0.7206,
+      "samples": 515,
+      "feature_count": 6,
+      "class_count": 11
+    },
+    {
+      "dataset": "File Signatures Risk",
+      "model_file": "file_signatures_model.pkl",
+      "model_type": "RandomForestClassifier",
+      "task": "Multi-Class Classification",
+      "accuracy": 0.9746,
+      "precision": 0.9769,
+      "recall": 0.9746,
+      "f1_score": 0.9748,
+      "roc_auc": 0.9977,
+      "samples": 1024,
+      "feature_count": 9,
+      "class_count": 3
+    }
+  ]
+}
