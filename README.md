@@ -180,6 +180,46 @@ Generate reports in:
 * python-docx
 
 ---
+## .env
+```
+# CyberMind AI Environment Variables
+APP_NAME=CyberMind AI
+APP_VERSION=1.0.0
+DEBUG=True
+
+# Google Safe Browsing
+GOOGLE_SAFE_BROWSING_API_KEY= 
+
+# VirusTotal
+VIRUSTOTAL_API_KEY= 
+
+# URLScan.io
+URLSCAN_API_KEY=
+
+# AbuseIPDB
+ABUSEIPDB_API_KEY=
+
+# IPinfo
+IPINFO_API_KEY= 
+
+# Groq
+GROQ_API_KEY= 
+
+# Database
+DATABASE_NAME=cybermind.db
+
+# Paths
+DATA_DIR=data
+DATASET_DIR=data/datasets
+MODEL_DIR=ml/models
+REPORT_DIR=reports
+CACHE_DIR=data/cache
+
+# Reports
+REPORT_AUTHOR=Daksh Vasani
+REPORT_COMPANY=CyberMind AI
+```
+---
 
 # 📂 Project Structure
 
