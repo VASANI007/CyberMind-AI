@@ -2003,24 +2003,7 @@ def seed_database_if_empty():
                         """,
                         (key, val, db_level, float(sc))
                     )
-            # Add baseline counts for realistic scale
-            import random
-            types = list(SCANNERS.keys())
-            for _ in range(1000):
-                db.execute(
-                    "INSERT INTO scan_history (scan_type, target, risk_level, risk_score) VALUES (?, ?, ?, ?)",
-                    (random.choice(types), "internal-traffic.net", "Safe", float(random.randint(0, 12)))
-                )
-            for _ in range(200):
-                db.execute(
-                    "INSERT INTO scan_history (scan_type, target, risk_level, risk_score) VALUES (?, ?, ?, ?)",
-                    (random.choice(types), "uncommon-domain.org", random.choice(["Low", "Medium"]), float(random.randint(22, 58)))
-                )
-            for _ in range(100):
-                db.execute(
-                    "INSERT INTO scan_history (scan_type, target, risk_level, risk_score) VALUES (?, ?, ?, ?)",
-                    (random.choice(types), "phishing-link.net", random.choice(["High", "Critical"]), float(random.randint(68, 97)))
-                )
+
     except Exception:
         pass
 
@@ -5675,14 +5658,26 @@ def render_analytics_page():
 
     # ── 2. METRICS & COUNTS (Row 1) ───────────────────────────────────────────
     sc1, sc2, sc3, sc4 = st.columns(4, gap="medium")
+       # Read real accuracy from the trained ML metrics file instead of hardcoding it
+    import json as _json_acc
+    _real_accuracy = None
+    try:
+        _metrics_file = BASE_DIR / "ml" / "models" / "cybermind_metrics.json"
+        if _metrics_file.exists():
+            with open(_metrics_file, encoding="utf-8") as _mf:
+                _real_accuracy = float(_json_acc.load(_mf).get("accuracy", 0)) * 100
+    except Exception:
+        pass
+    _acc_display = f"{_real_accuracy:.1f}%" if _real_accuracy is not None else "N/A"
+
     with sc1:
         st.markdown(
             f"""
             <div class="stat-card">
                 <div>
                     <div class="stat-label">System Accuracy</div>
-                    <div class="stat-value">96.8%</div>
-                    <div class="stat-delta" style="color:var(--success)">▲ 1.4% vs baseline</div>
+                    <div class="stat-value">{_acc_display}</div>
+                    <div class="stat-delta" style="color:var(--success)">From trained ML models</div>
                 </div>
                 <div class="stat-icon" style="background:var(--success-bg);color:var(--success)">🎯</div>
             </div>
@@ -6492,7 +6487,7 @@ if st.session_state.active_page != "AI Security Assistant":
             position: relative !important;
         }
 
-        /* 🚨 असली 👁️ इमोजी के टेक्स्ट को पूरी तरह गायब करने के लिए */
+ 
         .st-key-floating_ai_assistant button p {
             position: absolute !important;
             inset: 0 !important;
@@ -6530,13 +6525,12 @@ if st.session_state.active_page != "AI Security Assistant":
             z-index: 3 !important;
         }
 
-        /* ── परफेक्ट छोटी आँखें (Left & Right Eye) ── */
         .st-key-floating_ai_assistant button p::before,
         .st-key-floating_ai_assistant button p::after {
             content: "" !important;
             position: absolute !important;
-            top: 18px !important;           /* बटन में वर्टिकल सेंटर अलाइनमेंट */
-            width: 6.5px !important;         /* छोटा और सटीक साइज (Kimi Style) */
+            top: 18px !important;         
+            width: 6.5px !important;         
             height: 9.5px !important;
             background: white !important;
             border-radius: 50% !important;
@@ -6642,7 +6636,6 @@ if st.session_state.active_page != "AI Security Assistant":
             100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; }
         }
 
-        /* बिना जगह से हिले-डुले पलक झपकाने का एनीमेशन */
         @keyframes eye-blink-left {
             0%, 45%, 53%, 100% { transform: scaleY(1); }
             49% { transform: scaleY(0.08); }
