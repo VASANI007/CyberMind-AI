@@ -1,5 +1,8 @@
 # 🛡️ CyberMind AI
+---
+🔗 **Live Project Link:** [Click Here to View App](https://cybermind-ai.streamlit.app/)
 
+---
 > **AI-Powered Cyber Risk Assessment & Threat Intelligence Platform Using Machine Learning**
 
 CyberMind AI is a research-oriented cybersecurity platform developed as part of an **M.Sc. Data Science** project. The application combines Artificial Intelligence, Machine Learning, and Cyber Threat Intelligence to analyze cyber risks from multiple sources within a single, user-friendly dashboard.
