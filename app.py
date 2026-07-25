@@ -4073,10 +4073,10 @@ def render_website_breach_intelligence(domain_or_url: str):
             </tr>
             """
 
-        st.markdown(
-            f"""
-            <div class="chart-card" style="padding:0; overflow-x:auto;">
-                <table class="scan-table" style="width:100%;">
+        table_html = clean_html(f"""
+        <div class="chart-card" style="padding:0; overflow-x:auto;">
+            <table class="scan-table" style="width:100%;">
+                <thead>
                     <tr>
                         <th>Year</th>
                         <th>Date</th>
@@ -4085,12 +4085,14 @@ def render_website_breach_intelligence(domain_or_url: str):
                         <th>Data Sensitivity</th>
                         <th>Source Reference</th>
                     </tr>
+                </thead>
+                <tbody>
                     {rows_html}
-                </table>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+                </tbody>
+            </table>
+        </div>
+        """)
+        st.markdown(table_html, unsafe_allow_html=True)
 
     st.markdown('<div class="section-title">Breach Analytics & Trends</div>', unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3, gap="large")
