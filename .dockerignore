@@ -1,0 +1,16 @@
+.git
+.gitignore
+.gitattributes
+.devcontainer
+.pytest_cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+env/
+logs/*.log
+temp/*
+scratch/*

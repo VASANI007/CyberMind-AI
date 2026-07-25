@@ -1,7 +1,7 @@
 streamlit
 pandas
 numpy
-scikit-learn==1.8.0
+scikit-learn
 plotly
 requests
 beautifulsoup4
@@ -16,7 +16,7 @@ openpyxl
 pillow
 opencv-python
 pyzbar
-joblib==1.5.3
+joblib
 loguru
 python-dotenv
 streamlit-option-menu
