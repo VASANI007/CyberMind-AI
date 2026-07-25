@@ -55,4 +55,4 @@ exports/json/*
 
 # Screenshots (optional)
 screenshots/*.png
-screenshots/*.jpg
+screenshots/*.jpg"*.pkl" 
