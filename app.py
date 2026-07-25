@@ -5284,13 +5284,36 @@ def render_ai_assistant_page():
 def render_universal_scan_page():
     from modules.universal_scan_module import universal_scan_module
     import html
-    
+
+    # Auto-clean when navigating INTO Universal Scan from a different page
+    if st.session_state.get("_last_active_scanner_page") != "Universal Scan":
+        if not st.session_state.pop("_restore_pending_Universal Scan", False):
+            st.session_state.universal_scan_result = None
+        st.session_state["_last_active_scanner_page"] = "Universal Scan"
+
     render_page_poster("Universal Scan", "Automatically identify and run the correct scanner modules for your input (Domain, Email, or URL) in real-time.")
     
     # Session state for universal scan results
     if "universal_scan_result" not in st.session_state:
         st.session_state.universal_scan_result = None
-        
+
+    # Example Pill Buttons
+    st.markdown('<div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:6px;">💡 Examples:</div>', unsafe_allow_html=True)
+    ex_cols = st.columns(4)
+    examples = [
+        ("Google URL", "https://google.com"),
+        ("Phishing Email", "phishing@malicious.com"),
+        ("Malware Site", "https://malware-site.net"),
+        ("Suspicious Domain", "malicious-domain.com")
+    ]
+    example_triggered = False
+    selected_example = ""
+    for idx, (lbl, val) in enumerate(examples):
+        with ex_cols[idx]:
+            if st.button(lbl, key=f"ex_univ_{idx}", use_container_width=True):
+                example_triggered = True
+                selected_example = val
+
     c1, c2 = st.columns([4, 1.3], vertical_alignment="center")
     with c1:
         user_input = st.text_input(
@@ -5303,14 +5326,23 @@ def render_universal_scan_page():
         st.markdown('<div class="cta-scan">', unsafe_allow_html=True)
         scan_clicked = st.button("🔍 Universal Scan", key="run_universal_scan_btn", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
-        
-    if scan_clicked:
-        if not user_input.strip():
+
+    target_to_scan = selected_example if example_triggered else user_input.strip()
+    if scan_clicked or example_triggered:
+        if not target_to_scan:
             st.warning("Please enter a valid input (Domain, Email, or URL) first.")
         else:
             with st.spinner("Analyzing input type and launching modules..."):
-                res = universal_scan_module.analyze(user_input)
+                res = universal_scan_module.analyze(target_to_scan)
                 st.session_state.universal_scan_result = res
+                st.session_state.last_scan_context = {
+                    "scanner_key": "Universal Scan",
+                    "target": target_to_scan,
+                    "scanner": f"Universal Scan ({res['input_type'].upper()})",
+                    "risk_score": res["risk_score"],
+                    "risk_level": res["risk_level"],
+                    "findings": res["details"]
+                }
                 st.rerun()
                 
     res = st.session_state.universal_scan_result
@@ -8964,7 +8996,10 @@ if hasattr(st, "dialog"):
 
 last_ctx = st.session_state.get("last_scan_context", {})
 active_p = st.session_state.get("active_page")
-has_active_scan_res = st.session_state.get(f"scan_result_{active_p}") is not None
+has_active_scan_res = (
+    st.session_state.get(f"scan_result_{active_p}") is not None
+    or (active_p == "Universal Scan" and st.session_state.get("universal_scan_result") is not None)
+)
 if last_ctx and active_p == last_ctx.get("scanner_key") and has_active_scan_res:
     st.markdown(
         """

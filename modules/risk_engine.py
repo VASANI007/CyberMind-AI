@@ -70,31 +70,35 @@ class RiskEngine:
         ]
         sources_present = 0
 
-        reputation = report.get("reputation", {})
+        def _extract(key):
+            v = report.get(key)
+            if not v and "url_analysis" in report:
+                v = report["url_analysis"].get(key)
+            if not v and "analysis" in report:
+                v = report["analysis"].get(key)
+            if not v and "domain_data" in report:
+                v = report["domain_data"].get(key)
+            if not v and "url_data" in report:
+                v = report["url_data"].get(key)
+            return v or {}
+
+        reputation = _extract("reputation")
         if reputation:
             sources_present += 1
 
-        blacklist = report.get("blacklist", {})
-        if not blacklist and "url_analysis" in report:
-            blacklist = report["url_analysis"].get("blacklist", {})
+        blacklist = _extract("blacklist")
         if blacklist:
             sources_present += 1
 
-        ssl = report.get("ssl", {})
-        if not ssl and "url_analysis" in report:
-            ssl = report["url_analysis"].get("ssl", {})
+        ssl = _extract("ssl")
         if ssl:
             sources_present += 1
 
-        google = report.get("google_safe_browsing", {})
-        if not google and "url_analysis" in report:
-            google = report["url_analysis"].get("google_safe_browsing", {})
+        google = _extract("google_safe_browsing")
         if google:
             sources_present += 1
 
-        virustotal = report.get("virustotal", {})
-        if not virustotal and "url_analysis" in report:
-            virustotal = report["url_analysis"].get("virustotal", {})
+        virustotal = _extract("virustotal")
         if virustotal:
             sources_present += 1
 
@@ -115,17 +119,17 @@ class RiskEngine:
         reputation_score = reputation.get("score", 100)
 
         if reputation_score < 80:
-            score += 10
+            score += 15
             reasons.append("Low reputation score")
         if reputation_score < 60:
-            score += 20
+            score += 25
         if reputation_score < 40:
-            score += 20
+            score += 25
 
         # Blacklist
         if blacklist.get("detected", False) or blacklist.get("blacklisted", False):
-            score += 40
-            reasons.append("Blacklisted")
+            score += 60
+            reasons.append("Blacklisted across threat databases")
 
         # SSL
         if not ssl.get("valid", True):
@@ -136,61 +140,68 @@ class RiskEngine:
         if google.get("malicious", False) or (
             "safe" in google and not google.get("safe", True)
         ):
-            score += 50
-            reasons.append("Google Safe Browsing")
+            score += 75
+            reasons.append("Google Safe Browsing Flagged Malicious")
 
         # VirusTotal
         malicious = virustotal.get("malicious", 0)
         if malicious > 0:
-            score += malicious * 5
-            reasons.append("VirusTotal detection")
+            score += min(malicious * 10, 75)
+            reasons.append(f"VirusTotal detected {malicious} engine flags")
 
         # Homograph / Typosquat / Brand Impersonation
-        if report.get("homograph", {}).get("is_homograph"):
-            score += 25
+        homograph_data = _extract("homograph")
+        if homograph_data.get("is_homograph"):
+            score += 45
             reasons.append("Homograph Unicode attack")
-        if report.get("typosquat", {}).get("is_typosquat"):
-            score += 20
+
+        typosquat_data = _extract("typosquat")
+        if typosquat_data.get("is_typosquat"):
+            score += 35
             reasons.append("Typosquatting domain")
-        if report.get("brand_impersonation", {}).get("is_impersonation"):
-            score += 30
+
+        brand_data = _extract("brand_impersonation")
+        if brand_data.get("is_impersonation"):
+            score += 50
             reasons.append("Brand impersonation detected")
 
         # TOR / VPN
-        if report.get("tor", {}).get("is_tor"):
-            score += 35
+        tor_data = _extract("tor")
+        if tor_data.get("is_tor"):
+            score += 55
             reasons.append("TOR Exit Node IP")
-        if report.get("vpn_proxy", {}).get("is_vpn"):
-            score += 15
+
+        vpn_data = _extract("vpn_proxy")
+        if vpn_data.get("is_vpn"):
+            score += 20
             reasons.append("VPN / Proxy IP")
 
         # Disposable email
-        if report.get("disposable", {}).get("is_disposable"):
-            score += 25
+        disposable_data = _extract("disposable")
+        if disposable_data.get("is_disposable"):
+            score += 45
             reasons.append("Disposable / temporary email domain")
 
         # File entropy & Macros
-        # File entropy & Macros
-        if report.get("entropy_analysis", {}).get("is_suspicious"):
-            score += report.get("entropy_analysis", {}).get("risk_contribution", 15)
+        entropy_data = _extract("entropy_analysis")
+        if entropy_data.get("is_suspicious"):
+            score += entropy_data.get("risk_contribution", 25)
             reasons.append("Suspicious file entropy")
-        if report.get("macro_detection", {}).get("suspicious"):
-            score += report.get("macro_detection", {}).get("risk_contribution", 25)
+
+        macro_data = _extract("macro_detection")
+        if macro_data.get("suspicious"):
+            score += macro_data.get("risk_contribution", 35)
             reasons.append("Suspicious Office VBA macro")
 
         # Lexical suspicious keywords check
-        keyword_check = report.get("lexical_keywords", {})
-        if not keyword_check and "url_analysis" in report:
-            keyword_check = report["url_analysis"].get("lexical_keywords", {})
-        if not keyword_check and "analysis" in report:
-            keyword_check = report["analysis"].get("lexical_keywords", {})
+        keyword_check = _extract("lexical_keywords")
 
         if keyword_check.get("severity") == "high":
-            score += 35
+            score += 65
             matched_kws = keyword_check.get("matched_keywords", [])
             reasons.append(f"Alarming keyword(s) found in target: {', '.join(matched_kws)}")
         elif keyword_check.get("severity") == "medium":
-            score += 15
+            score += 25
             matched_kws = keyword_check.get("matched_keywords", [])
             reasons.append(f"Suspicious keyword(s) found in target: {', '.join(matched_kws)}")
 
