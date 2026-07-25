@@ -26,3 +26,8 @@ streamlit-card
 streamlit-shadcn-ui
 altair
 psutil
+shap
+lime
+pefile
+oletools
+networkx

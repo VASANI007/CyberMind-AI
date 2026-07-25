@@ -23,12 +23,12 @@ class GoogleSafeBrowsingService:
 
     def available(self) -> bool:
         """
-        Check API key.
+        Check API key and offline mode.
         """
-
-        return bool(
-            GOOGLE_SAFE_BROWSING_API_KEY
-        )
+        from core.offline_mode import offline_mode
+        if offline_mode.is_enabled:
+            return False
+        return bool(GOOGLE_SAFE_BROWSING_API_KEY)
 
     def scan(
         self,
@@ -130,18 +130,15 @@ class GoogleSafeBrowsingService:
 
             )
 
+            threat_types = list({m.get("threatType", "") for m in matches if m.get("threatType")})
+
             return {
-
                 "success": True,
-
                 "safe": len(matches) == 0,
-
                 "malicious": len(matches) > 0,
-
                 "matches": matches,
-
-                "threat_count": len(matches)
-
+                "threat_count": len(matches),
+                "threat_types": threat_types
             }
 
         except requests.RequestException as error:

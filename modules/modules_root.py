@@ -95,6 +95,12 @@ class ModulesRoot:
 
         self.initialize_scanners()
 
+        try:
+            from core.plugin_manager import plugin_manager
+            plugin_manager.discover_plugins(os.path.dirname(__file__), "modules")
+        except Exception as exc:
+            logger.warning("Plugin discovery in modules_root skipped: %s", exc)
+
         logger.info(
             "Modules Ready."
         )

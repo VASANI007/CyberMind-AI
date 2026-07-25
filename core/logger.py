@@ -19,6 +19,20 @@ LOG_PATH.mkdir(
 LOG_FILE = LOG_PATH / "cybermind.log"
 
 
+class SafeStreamHandler(logging.StreamHandler):
+    def emit(self, record):
+        try:
+            super().emit(record)
+        except (ValueError, OSError):
+            pass
+
+    def flush(self):
+        try:
+            super().flush()
+        except (ValueError, OSError):
+            pass
+
+
 def get_logger(name: str) -> logging.Logger:
     """
     Return logger instance.
@@ -43,7 +57,7 @@ def get_logger(name: str) -> logging.Logger:
 
     file_handler.setFormatter(formatter)
 
-    console_handler = logging.StreamHandler()
+    console_handler = SafeStreamHandler()
 
     console_handler.setFormatter(formatter)
 

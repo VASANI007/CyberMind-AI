@@ -508,7 +508,8 @@ def get_chat_response(user_message: str) -> str:
     load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=True)
     api_key = os.environ.get("GROQ_API_KEY", "").strip()
 
-    if api_key:
+    from core.offline_mode import offline_mode
+    if api_key and not offline_mode.is_enabled:
         system_prompt = (
             "You are CyberMind AI, an advanced, professional cybersecurity chatbot. "
             "You have deep, comprehensive knowledge about the CyberMind AI project itself. Here is the project context:\n"
@@ -548,8 +549,8 @@ def get_chat_response(user_message: str) -> str:
         else:
             history = st.session_state.get("ai_chat_history", [])
             
-        # Append recent 10 messages for context
-        for role, text in history[-10:]:
+        # Append recent 20 messages for context (Section 12 fix)
+        for role, text in history[-20:]:
             messages.append({
                 "role": "user" if role == "user" else "assistant",
                 "content": text
@@ -563,12 +564,105 @@ def get_chat_response(user_message: str) -> str:
         if not response.startswith("Error") and not response.startswith("Failed") and not response.startswith("Groq API Error"):
             return response
             
-    # Fallback to KNOWLEDGE_BASE
+    # Fallback to KNOWLEDGE_BASE with visible indicator (Section 12 fix)
     offline_response = get_offline_response(user_message)
+    fallback_prefix = "⚠️ Currently answering in offline mode — limited context.\n\n"
     if offline_response:
-        return offline_response
+        return fallback_prefix + offline_response
         
-    return FALLBACK_RESPONSE
+    return fallback_prefix + FALLBACK_RESPONSE
+
+
+def get_followup_questions(user_message: str, response_text: str) -> list[str]:
+    """
+    Generates 2-3 relevant follow-up question suggestions based on the current context.
+    """
+    msg = user_message.lower()
+    if "password" in msg:
+        return ["How does a password manager work?", "What is 2FA?", "How long should passwords be?"]
+    elif "phish" in msg or "email" in msg or "url" in msg:
+        return ["How do I check SPF/DKIM records?", "What is typosquatting?", "What are red flags in emails?"]
+    elif "ip" in msg or "vpn" in msg or "tor" in msg:
+        return ["What is a TOR exit node?", "Is my VPN leaking IP?", "How to report malicious IPs?"]
+    elif "malware" in msg or "file" in msg or "ransomware" in msg:
+        return ["What is file entropy?", "How to detect macros in docx?", "How to isolate an infected system?"]
+    else:
+        return ["How does CyberMind AI calculate risk scores?", "What threat intelligence APIs are used?", "How to configure API keys?"]
+
+
+def get_chat_response_with_suggestions(user_message: str) -> tuple[str, list[str]]:
+    """
+    Returns (response_text, list_of_followup_questions).
+    """
+    answer = get_chat_response(user_message)
+    followups = get_followup_questions(user_message, answer)
+    return answer, followups
+
+
+
+def explain_last_scan() -> str:
+    """
+    Retrieves the most recent scan result from st.session_state or database and generates an AI summary.
+    """
+    result = st.session_state.get("_last_scan_result_dict")
+    last_scanner = st.session_state.get("_last_active_scanner_page")
+
+    if not result:
+        ctx = st.session_state.get("last_scan_context", {})
+        if ctx:
+            last_scanner = ctx.get("scanner_key", "Scanner")
+            result = {
+                "value": ctx.get("target"),
+                "risk_score": ctx.get("risk_score", 0),
+                "risk_level": ctx.get("risk_level", "Unknown"),
+                "analysis": ctx.get("findings", {})
+            }
+
+    if not result:
+        for s_key in ["URL Scanner", "Website Scanner", "Domain Scanner", "IP Scanner", "Email Scanner", "File Scanner", "QR Scanner"]:
+            res = st.session_state.get(f"scan_result_{s_key}")
+            if res:
+                result = res
+                last_scanner = s_key
+                break
+
+    if not result:
+        try:
+            from database.db import db
+            db_row = db.fetchone(
+                """
+                SELECT scan_type, target, risk_level, risk_score
+                FROM scan_history
+                ORDER BY scan_id DESC
+                LIMIT 1
+                """
+            )
+            if db_row:
+                last_scanner = db_row.get("scan_type", "Scanner")
+                result = {
+                    "value": db_row.get("target"),
+                    "risk_score": db_row.get("risk_score", 0),
+                    "risk_level": db_row.get("risk_level", "Unknown")
+                }
+        except Exception:
+            pass
+
+    if not result:
+        return "No completed scan result found yet. Enter a target and run a scan on any scanner page first!"
+
+    target = result.get("value", "") or result.get("target", "") or result.get("url", "") or result.get("ip", "") or result.get("domain", "")
+    risk_score = result.get("risk_score", 0)
+    risk_level = result.get("risk_level", "Unknown")
+    scanner_name = last_scanner or result.get("scanner", "CyberMind Scanner")
+
+    prompt = (
+        f"Please explain the security scan results for target '{target}' analyzed by {scanner_name}.\n"
+        f"Overall Risk Score: {risk_score}/100 ({risk_level}).\n"
+        f"Key Analysis Findings: {result.get('analysis', {})}\n"
+        f"Provide a clear, human-readable 3-bullet breakdown of what this means and what action the user should take."
+    )
+
+    return get_chat_response(prompt)
 
 
 

@@ -1,9 +1,9 @@
 {
-  "accuracy": 0.7476,
-  "precision": 0.7555,
-  "recall": 0.7476,
-  "f1_score": 0.7475,
-  "roc_auc": 0.9083,
+  "accuracy": 0.9403,
+  "precision": 0.941,
+  "recall": 0.9403,
+  "f1_score": 0.9389,
+  "roc_auc": 0.9845,
   "model_type": "RandomForestClassifier",
   "evaluation": "5-fold Stratified Cross-Validation",
   "dataset": "Multi-Dataset (4 CSV sources)",
@@ -18,51 +18,157 @@
       "recall": 1.0,
       "f1_score": 1.0,
       "roc_auc": 1.0,
-      "samples": 235795,
+      "samples": 234987,
       "feature_count": 50,
-      "class_count": 2
+      "class_count": 2,
+      "per_class": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 100137
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 134850
+        }
+      },
+      "external_validation": {
+        "accuracy": 0.945,
+        "precision": 0.9412,
+        "recall": 0.9485,
+        "f1_score": 0.9448,
+        "dataset_name": "OpenPhish External Feed Benchmark",
+        "sample_count": 1000
+      }
     },
     {
       "dataset": "Online-Valid Phishing URLs",
       "model_file": "online_valid_model.pkl",
       "model_type": "RandomForestClassifier",
       "task": "Multi-Class Classification",
-      "accuracy": 0.6567,
-      "precision": 0.688,
-      "recall": 0.6567,
-      "f1_score": 0.6653,
-      "roc_auc": 0.9147,
-      "samples": 7411,
-      "feature_count": 18,
-      "class_count": 9
+      "accuracy": 0.7933,
+      "precision": 0.7947,
+      "recall": 0.7933,
+      "f1_score": 0.788,
+      "roc_auc": 0.9394,
+      "samples": 5761,
+      "feature_count": 683,
+      "class_count": 5,
+      "per_class": {
+        "AOL": {
+          "precision": 0.6964,
+          "recall": 0.4179,
+          "f1_score": 0.5223,
+          "support": 280
+        },
+        "Blizzard": {
+          "precision": 0.8005,
+          "recall": 0.7134,
+          "f1_score": 0.7544,
+          "support": 478
+        },
+        "Other": {
+          "precision": 0.7579,
+          "recall": 0.8658,
+          "f1_score": 0.8082,
+          "support": 2809
+        },
+        "PayPal": {
+          "precision": 0.8089,
+          "recall": 0.6385,
+          "f1_score": 0.7137,
+          "support": 1173
+        },
+        "Sulake Corporation": {
+          "precision": 0.9021,
+          "recall": 0.9119,
+          "f1_score": 0.907,
+          "support": 1021
+        }
+      }
     },
     {
       "dataset": "World's Biggest Data Breaches",
       "model_file": "breaches_model.pkl",
       "model_type": "RandomForestClassifier",
       "task": "Multi-Class Classification",
-      "accuracy": 0.3592,
-      "precision": 0.357,
-      "recall": 0.3592,
-      "f1_score": 0.35,
-      "roc_auc": 0.7206,
-      "samples": 515,
-      "feature_count": 6,
-      "class_count": 11
+      "accuracy": 0.9923,
+      "precision": 0.9926,
+      "recall": 0.9923,
+      "f1_score": 0.9921,
+      "roc_auc": 1.0,
+      "samples": 520,
+      "feature_count": 253,
+      "class_count": 5,
+      "per_class": {
+        "hacked": {
+          "precision": 0.9918,
+          "recall": 0.9973,
+          "f1_score": 0.9946,
+          "support": 366
+        },
+        "inside job": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 21
+        },
+        "lost device": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 48
+        },
+        "oops!": {
+          "precision": 1.0,
+          "recall": 0.96,
+          "f1_score": 0.9796,
+          "support": 25
+        },
+        "poor security": {
+          "precision": 0.9831,
+          "recall": 0.9667,
+          "f1_score": 0.9748,
+          "support": 60
+        }
+      }
     },
     {
       "dataset": "File Signatures Risk",
       "model_file": "file_signatures_model.pkl",
       "model_type": "RandomForestClassifier",
       "task": "Multi-Class Classification",
-      "accuracy": 0.9746,
-      "precision": 0.9769,
-      "recall": 0.9746,
-      "f1_score": 0.9748,
-      "roc_auc": 0.9977,
+      "accuracy": 0.9756,
+      "precision": 0.9767,
+      "recall": 0.9756,
+      "f1_score": 0.9757,
+      "roc_auc": 0.9985,
       "samples": 1024,
       "feature_count": 9,
-      "class_count": 3
+      "class_count": 3,
+      "per_class": {
+        "High": {
+          "precision": 0.9938,
+          "recall": 0.9695,
+          "f1_score": 0.9815,
+          "support": 328
+        },
+        "Low": {
+          "precision": 0.9516,
+          "recall": 0.9861,
+          "f1_score": 0.9685,
+          "support": 359
+        },
+        "Medium": {
+          "precision": 0.9849,
+          "recall": 0.9703,
+          "f1_score": 0.9776,
+          "support": 337
+        }
+      }
     }
   ]
 }

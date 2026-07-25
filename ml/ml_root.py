@@ -352,6 +352,14 @@ class MLRoot:
         """
         return len(self.discover_models())
 
+    def train_models(self) -> dict[str, Any]:
+        """
+        Train all CyberMind AI ML models via train_cybermind.
+        """
+        logger.info("Executing CyberMind ML Model Training...")
+        from ml.train_cybermind import main as train_cybermind_main
+        return train_cybermind_main()
+
     def __repr__(self) -> str:
         """
         String representation.
@@ -369,3 +377,11 @@ class MLRoot:
 
 
 ml_root = MLRoot()
+
+if __name__ == "__main__":
+    ml_root.initialize()
+    print("=" * 70)
+    print("  CyberMind AI - ML Root & Model Retraining Execution")
+    print("=" * 70)
+    metrics_result = ml_root.train_models()
+    print("\n[OK] ML Root execution and model training completed successfully.")

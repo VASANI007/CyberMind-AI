@@ -8,10 +8,46 @@ from __future__ import annotations
 
 import socket
 import ssl
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+def verify_https(hostname: str, timeout: float = 4.0) -> dict:
+    """Performs a REAL TLS handshake and certificate check — not a string match."""
+    try:
+        if not hostname:
+            return {"valid": False, "reason": "Empty hostname provided."}
+        if "://" in hostname:
+            hostname = hostname.split("://")[1].split("/")[0]
+        elif "/" in hostname:
+            hostname = hostname.split("/")[0]
+        if ":" in hostname:
+            hostname = hostname.split(":")[0]
+
+        ctx = ssl.create_default_context()
+        with socket.create_connection((hostname, 443), timeout=timeout) as sock:
+            with ctx.wrap_socket(sock, server_hostname=hostname) as ssock:
+                cert = ssock.getpeercert()
+                not_after = datetime.strptime(cert["notAfter"], "%b %d %H:%M:%S %Y %Z").replace(tzinfo=timezone.utc)
+                days_left = (not_after - datetime.now(timezone.utc)).days
+                return {
+                    "valid": True,
+                    "issuer": dict(x[0] for x in cert.get("issuer", [])),
+                    "expires": not_after.isoformat(),
+                    "days_until_expiry": days_left,
+                    "expiring_soon": days_left < 14,
+                }
+    except (socket.timeout, socket.gaierror, ConnectionRefusedError):
+        return {"valid": False, "reason": "Could not connect on port 443 — site may not support HTTPS or is unreachable."}
+    except ssl.SSLCertVerificationError as e:
+        return {"valid": False, "reason": f"Certificate verification failed: {e}"}
+    except Exception as e:
+        return {"valid": False, "reason": f"Unexpected error: {e}"}
 
 
 class SSLService:
+    def verify_https(self, hostname: str, timeout: float = 4.0) -> dict:
+        return verify_https(hostname, timeout=timeout)
+
 
     def get_certificate(
         self,

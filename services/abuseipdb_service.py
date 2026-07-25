@@ -19,9 +19,11 @@ class AbuseIPDBService:
 
     def available(self) -> bool:
         """
-        Check API key.
+        Check API key and offline mode.
         """
-
+        from core.offline_mode import offline_mode
+        if offline_mode.is_enabled:
+            return False
         return bool(ABUSEIPDB_API_KEY)
 
     def lookup(self, ip: str) -> dict:

@@ -109,56 +109,60 @@ class IPScanner:
         )
 
         analysis = ip_service.analyze(
-
             ip
-
         )
 
+        try:
+            from services.tor_exit_node_service import tor_exit_node_service
+            analysis["tor"] = tor_exit_node_service.is_tor_exit(ip)
+        except Exception as exc:
+            logger.warning("TOR check failed: %s", exc)
+
+        try:
+            from services.vpn_proxy_service import vpn_proxy_service
+            analysis["vpn_proxy"] = vpn_proxy_service.check(ip)
+        except Exception as exc:
+            logger.warning("VPN/Proxy check failed: %s", exc)
+
+        try:
+            from services.lexical_keyword_service import lexical_keyword_service
+            analysis["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(ip)
+        except Exception as e:
+            logger.warning("Lexical keyword check failed: %s", e)
+
         risk = risk_engine.calculate(
-
             analysis
-
         )
 
         analysis["risk"] = risk
 
         recommendation = (
-
             recommendation_engine.generate(
-
                 analysis
-
             )
-
         )
 
         explanation = (
-
             explain_ai.explain(
-
                 analysis
-
             )
-
         )
 
         result = {
-
             "success": True,
-
             "scanner": "ip",
-
             "ip": ip,
-
             "analysis": analysis,
-
             "risk": risk,
-
             "recommendation": recommendation,
-
             "explain_ai": explanation
-
         }
+
+        try:
+            from modules.mitre_mapper import mitre_mapper
+            result["mitre_attack"] = mitre_mapper.map_findings(result)
+        except Exception as exc:
+            logger.warning("MITRE mapping failed for IP scanner: %s", exc)
 
         analytics_engine.add(
 

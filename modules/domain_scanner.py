@@ -129,56 +129,54 @@ class DomainScanner:
         )
 
         analysis = domain_service.analyze(
-
             domain
-
         )
 
+        try:
+            from services.subdomain_discovery_service import subdomain_discovery_service
+            analysis["subdomain_discovery"] = subdomain_discovery_service.discover(domain)
+        except Exception as exc:
+            logger.warning("Subdomain discovery failed for domain scanner: %s", exc)
+
+        try:
+            from services.lexical_keyword_service import lexical_keyword_service
+            analysis["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(domain)
+        except Exception as e:
+            logger.warning("Lexical keyword check failed: %s", e)
+
         risk = risk_engine.calculate(
-
             analysis
-
         )
 
         analysis["risk"] = risk
 
         recommendation = (
-
             recommendation_engine.generate(
-
                 analysis
-
             )
-
         )
 
         explanation = (
-
             explain_ai.explain(
-
                 analysis
-
             )
-
         )
 
         result = {
-
             "success": True,
-
             "scanner": "domain",
-
             "domain": domain,
-
             "analysis": analysis,
-
             "risk": risk,
-
             "recommendation": recommendation,
-
             "explain_ai": explanation
-
         }
+
+        try:
+            from modules.mitre_mapper import mitre_mapper
+            result["mitre_attack"] = mitre_mapper.map_findings(result)
+        except Exception as exc:
+            logger.warning("MITRE mapping failed for domain scanner: %s", exc)
 
         analytics_engine.add(
 

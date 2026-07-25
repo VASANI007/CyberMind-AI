@@ -51,17 +51,34 @@ class DeviceSecurityService:
     def __init__(self) -> None:
         logger.info("Device Security Service initialized.")
 
-    def run_all_checks(self, email: str | None = None, url: str | None = None, qr_image_path: str | None = None, file_path: str | None = None) -> dict[str, Any]:
+    def run_all_checks(self, email: str | None = None, url: str | None = None, qr_image_path: str | None = None, file_path: str | None = None, auto_check_updates: bool = True) -> dict[str, Any]:
         """
         Runs all local device security checks and returns compiled report.
         """
         logger.info("Starting complete Device Security Scan...")
         start_time = time.time()
 
+        try:
+            import streamlit as st
+            if not st.session_state.get("settings_auto_updates", True):
+                auto_check_updates = False
+        except Exception:
+            pass
+
         os_info = self.get_os_info()
         firewall = self.get_firewall_status()
         antivirus = self.get_antivirus_status()
-        updates = self.get_windows_updates()
+        if auto_check_updates:
+            updates = self.get_windows_updates()
+        else:
+            updates = {
+                "pending_count": None,
+                "status": "🔄 Check on Demand",
+                "risk": "Unknown",
+                "details": "Auto-updates check disabled in settings. Click 'Check for Updates' to run Windows Update audit manually.",
+                "recommendation": "",
+                "manual_mode": True
+            }
         cpu = self.get_cpu_usage()
         ram = self.get_ram_usage()
         disk = self.get_disk_health()
@@ -131,7 +148,7 @@ class DeviceSecurityService:
     # 2. Firewall Status
     def get_firewall_status(self) -> dict[str, Any]:
         if platform.system() != "Windows":
-            return {"enabled": True, "status": "Enabled 🟢", "details": "Non-Windows OS: Firewall assumed active or managed externally.", "risk": "Safe"}
+            return {"enabled": None, "status": "❔ Not Verified", "details": "Firewall status can only be checked on the machine actually running this scan — see the downloadable local scanner for a genuine per-visitor check.", "risk": "Unknown", "checked": False}
 
         try:
             # Query netsh for firewall state
@@ -162,7 +179,8 @@ class DeviceSecurityService:
                     "details": "One or more Windows Firewall profiles (Domain, Private, Public) are disabled.",
                     "risk": "High",
                     "explanation": "The firewall protects your computer from unauthorized network access and prevents malicious software from communicating over the network.",
-                    "recommendation": "Enable Windows Firewall for all profiles immediately."
+                    "recommendation": "Enable Windows Firewall for all profiles immediately.",
+                    "checked": True
                 }
             else:
                 return {
@@ -171,17 +189,17 @@ class DeviceSecurityService:
                     "details": "All Windows Firewall profiles are enabled and active.",
                     "risk": "Safe",
                     "explanation": "",
-                    "recommendation": ""
+                    "recommendation": "",
+                    "checked": True
                 }
         except Exception as e:
             logger.warning(f"Failed to check firewall status: {e}")
             return {
-                "enabled": True,
-                "status": "Enabled 🟢 (Assumed)",
-                "details": "Could not verify via Netsh. Assuming Enabled.",
-                "risk": "Safe",
-                "explanation": "",
-                "recommendation": ""
+                "enabled": None,
+                "status": "❔ Could Not Verify",
+                "details": f"Netsh/PowerShell check failed: {e}",
+                "risk": "Unknown",
+                "checked": False
             }
 
     # 3. Antivirus Information

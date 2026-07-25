@@ -51,7 +51,7 @@ class TestsRoot:
         Run all tests using pytest.
         """
         logger.info("Running CyberMind AI test suite...")
-        args = [str(self.test_dir)]
+        args = [str(self.test_dir), "-s", "--capture=no"]
         if quiet:
             args.append("-q")
         

@@ -218,5 +218,17 @@ SCHEMA = [
         high INTEGER DEFAULT 0,
         critical INTEGER DEFAULT 0
     );
+    """,
+
+    """
+    CREATE TABLE IF NOT EXISTS feedback (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        scanner_key TEXT NOT NULL,
+        target TEXT NOT NULL,
+        risk_score REAL,
+        is_helpful INTEGER CHECK (is_helpful IN (0, 1)),
+        comment TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     """
 ]

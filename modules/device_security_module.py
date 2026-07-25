@@ -39,7 +39,7 @@ class DeviceSecurityModule:
         
         # 1. Firewall check
         fw_status = scan_data["firewall"]
-        if not fw_status.get("enabled", True):
+        if fw_status.get("enabled") is False:
             security_score -= 14
             problems.append("Windows Firewall is Disabled")
             recs.append("Enable Windows Firewall immediately to protect your system from unauthorized network requests.")

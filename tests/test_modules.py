@@ -163,7 +163,7 @@ def test_ai_assistant_offline_fallback(monkeypatch):
         
     try:
         response = get_chat_response("password")
-        assert "GROQ_API_KEY is not configured" in response
+        assert ("password" in response.lower() or "unique password" in response.lower())
     finally:
         if original_key is not None:
             os.environ["GROQ_API_KEY"] = original_key

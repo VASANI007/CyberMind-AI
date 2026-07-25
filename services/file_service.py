@@ -465,42 +465,53 @@ class FileService:
 
         )
 
-        report["hashes"] = self.hashes(
+        report["hashes"] = self.hashes(file_path)
 
-            file_path
+        # ── Extended File Analysis Services ─────────────────────────────
+        try:
+            file_size = Path(file_path).stat().st_size
+            with open(file_path, "rb") as f:
+                head_bytes = f.read(64)
+                full_bytes = f.read() if file_size < 10 * 1024 * 1024 else head_bytes
+            
+            from services.hex_signature_service import hex_signature_service
+            report["hex_signature"] = hex_signature_service.identify(head_bytes)
 
-        )
+            from services.file_entropy_service import file_entropy_service
+            report["entropy_analysis"] = file_entropy_service.calculate(head_bytes + full_bytes)
+        except Exception as exc:
+            logger.warning("Hex/Entropy analysis failed: %s", exc)
+
+        try:
+            from services.pe_metadata_service import pe_metadata_service
+            report["pe_metadata"] = pe_metadata_service.extract(file_path)
+        except Exception as exc:
+            logger.warning("PE metadata extraction failed: %s", exc)
+
+        try:
+            from services.macro_detection_service import macro_detection_service
+            report["macro_detection"] = macro_detection_service.detect(file_path)
+        except Exception as exc:
+            logger.warning("Macro detection failed: %s", exc)
 
         report["entropy"] = self.entropy(
-
             file_path
-
         )
 
         report["virustotal"] = (
-
             self.virustotal(
-
                 file_path
-
             )
-
         )
 
         report["reputation"] = (
-
             self.reputation(
-
                 report
-
             )
-
         )
 
         logger.info(
-
             "File analysis completed."
-
         )
 
         return report

@@ -23,9 +23,11 @@ class VirusTotalService:
 
     def available(self) -> bool:
         """
-        Check API key.
+        Check API key and offline mode.
         """
-
+        from core.offline_mode import offline_mode
+        if offline_mode.is_enabled:
+            return False
         return bool(VIRUSTOTAL_API_KEY)
 
     def scan_url(
@@ -51,6 +53,14 @@ class VirusTotalService:
             if report_res.get("success"):
                 attributes = report_res.get("data", {}).get("data", {}).get("attributes", {})
                 stats = attributes.get("last_analysis_stats", {})
+                raw_results = attributes.get("last_analysis_results", {})
+                engine_list = []
+                for engine_name, res_dict in list(raw_results.items())[:50]:
+                    engine_list.append({
+                        "engine": engine_name,
+                        "category": res_dict.get("category", "undetected"),
+                        "result": res_dict.get("result", "") or "clean"
+                    })
                 if stats:
                     return {
                         "success": True,
@@ -58,7 +68,8 @@ class VirusTotalService:
                         "suspicious": stats.get("suspicious", 0),
                         "harmless": stats.get("harmless", 0),
                         "undetected": stats.get("undetected", 0),
-                        "total": sum(stats.values())
+                        "total": sum(stats.values()),
+                        "engine_results": engine_list
                     }
 
             # Submit URL for scanning

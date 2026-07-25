@@ -362,28 +362,219 @@ M.Sc. Data Science
 
 CyberMind AI is designed exclusively for educational, research, and cybersecurity awareness purposes.
 
-The application analyzes only publicly available information and open-source intelligence. It does not collect, access, or expose private user information, perform unauthorized activities, or provide hacking capabilities.
+The application analyzes only publicly available information and open-source intelligence. It does not collect, access, or expose private user information, perform unautho# 🚀 Future Enhancements: Ultimate Future Roadmap (30 Advanced Features)
+
+We have designed CyberMind AI as a next-generation, enterprise-grade, AI-powered cybersecurity platform. The system is built on modular, scalable, and future-ready principles, allowing new modules and plugins to be added without core refactoring.
+
+> [!TIP]
+> ### ⭐ Top 5 — For Live Presentation / Viva
+> 1. **Dynamic Sandbox Analysis**: Running suspicious links and files in an isolated environment to monitor run-time behaviors.
+> 2. **Dark Web Monitoring**: Scanning breached credential databases and underground forums to detect leaked user information.
+> 3. **AI-Based Malware Family Classification**: Going beyond binary classification to categorize threats into specific malware families.
+> 4. **Behavioral Anomaly Detection**: Utilizing machine learning to flag outliers in network activity and system logs.
+> 5. **Real-Time SOC Dashboard**: Building a security operations center visualization with live alert notifications.
+>
+> _Note: The full 30-feature developmental roadmap containing all tracks and design principles is detailed below._
 
 ---
 
-# 👨‍💻 Developer
+## 🚀 30 Advanced Features
 
-**Daksh Vasani**
+### 1. AI Threat Intelligence Engine
+- AI Threat Correlation Engine
+- Multi-Source Threat Intelligence Fusion
+- AI Threat Prediction
+- AI Confidence Score
+- Explainable AI (SHAP/LIME)
+- *Tools:* Scikit-learn, SHAP, LIME
 
-M.Sc. Data Science Student
+### 2. Smart URL & Website Security
+- Dynamic URL Behavior Analysis
+- Redirect Chain Analysis
+- JavaScript Behavior Detection
+- Drive-by Download Detection
+- Homograph Domain Detection
+- Typosquatting Detection
+- Website Technology Fingerprinting
+- *Tools:* URLScan.io, Wappalyzer, WHOIS, DNS
+
+### 3. Advanced Threat Detection
+- Phishing Detection
+- Malware Reputation
+- Ransomware Indicators
+- Spyware Indicators
+- Trojan Indicators
+- Rootkit Indicators
+- Worm Indicators
+- Zero-Day Risk Prediction
+
+### 4. Intelligent File Analysis
+- Hex Signature Analysis
+- Magic Byte Verification
+- File Entropy Analysis
+- Hash Reputation (MD5/SHA1/SHA256)
+- Executable Metadata Analysis
+- Macro Detection
+- Suspicious File Scoring
+- *Tools:* pefile, python-magic, YARA
+
+### 5. IP & Network Intelligence
+- GeoIP Analytics
+- ASN Intelligence
+- ISP Intelligence
+- VPN/Proxy Detection
+- TOR Exit Node Detection
+- Blacklist Reputation
+- Network Risk Score
+- *Tools:* GeoLite2, AbuseIPDB, IPinfo
+
+### 6. Email Intelligence
+- Email Breach Detection
+- SPF Validation
+- DKIM Validation
+- DMARC Validation
+- Disposable Email Detection
+- Domain Reputation
+- Email Risk Score
+
+### 7. QR Security
+- QR URL Detection
+- Hidden Redirect Detection
+- Fake Payment QR Detection
+- QR Reputation
+- QR Risk Score
+
+### 8. Device Security
+- Firewall Status
+- Antivirus Status
+- Open Ports
+- Running Services
+- Installed Security Updates
+- Device Risk Score
+
+### 9. AI Security Assistant
+- Explain Results
+- Threat Education
+- Security Recommendations
+- Incident Guidance
+- Interactive Chat
+- *Tools:* Groq API (Free Tier)
+
+### 10. Security Analytics
+- Threat Heat Map
+- Attack Timeline
+- Risk Trends
+- Country-wise Threats
+- Threat Distribution
+- Security Score Dashboard
+
+### 11. Enterprise Reporting
+- PDF Report
+- Excel Report
+- JSON Export
+- Executive Summary
+- Technical Report
+- Compliance Report
+
+### 12. OSINT Intelligence
+- WHOIS
+- DNS Records
+- Certificate Transparency Logs
+- Subdomain Discovery
+- Organization Intelligence
+
+### 13. AI Anomaly Detection
+- Unusual URL Detection
+- Suspicious Domain Behaviour
+- Outlier Detection
+- Unknown Threat Detection
+- *Tools:* Isolation Forest, One-Class SVM
+
+### 14. Threat Knowledge Graph
+- Relationship Graph for URLs, Domains, IPs, Emails and Files
+- *Tools:* NetworkX, Plotly
+
+### 15. MITRE ATT&CK Mapping
+- Map detected threats to MITRE ATT&CK techniques
+
+### 16. IOC Extraction
+- MD5
+- SHA1
+- SHA256
+- URLs
+- Domains
+- Emails
+- IP Addresses
+
+### 17. AI Risk Decision Engine
+- Unified Cyber Risk Score using URL Risk, Domain Risk, IP Risk, Threat Intelligence, and ML Prediction
+
+### 18. Global Threat Dashboard
+- World Threat Map
+- Threat Categories
+- Top Malicious Countries
+- Attack Statistics
+
+### 19. Cyber Threat Knowledge Base
+- Phishing, Malware, Ransomware, SQL Injection, XSS, DDoS, CVEs, and MITRE ATT&CK concepts
+
+### 20. Offline AI Mode
+- Offline ML Models
+- Cached WHOIS
+- GeoLite2 Database
+- Local Rules
+- Offline Risk Scoring
+
+### 21. AI Attack Path Prediction
+- Predict possible attacker movement from initial compromise to final impact
+
+### 22. Dark Web Intelligence
+- Public Credential Leak Detection
+- Email Exposure Monitoring
+- Domain Exposure Monitoring
+
+### 23. Brand Impersonation Detection
+- Detect fake brands using typosquatting and homograph analysis
+
+### 24. Software Supply Chain Risk Analysis
+- Dependency Risk
+- Package Reputation
+- Vulnerable Libraries
+
+### 25. CVE Intelligence Engine
+- Latest CVEs, CVSS Scores, Severity, and Security Recommendations
+
+### 26. Attack Surface Discovery
+- Public Domains, Subdomains, SSL Certificates, and Exposed Technologies
+
+### 27. Security Compliance Analyzer
+- Assessment against NIST CSF, CIS Controls, ISO 27001, and OWASP Top 10
+
+### 28. AI Threat Explainability Dashboard
+- Visualize feature importance and AI decision explanations using SHAP/LIME
+
+### 29. Continuous Threat Learning
+- Support user feedback and scheduled model retraining to improve accuracy
+
+### 30. Plugin-Based Security Architecture
+- Design a modular plugin framework so new scanners, APIs, AI models, and integrations can be added without changing the core application
 
 ---
 
-# ⭐ Future Enhancements
+## 🎨 Design Principles
 
-* Explainable AI Dashboard
-* Advanced Threat Intelligence
-* Browser Extension
-* Mobile Application
-* AI Security Assistant
-* Real-Time Threat Monitoring
-* Multi-Language Support
-* Offline AI Detection
+- **Modular Architecture**: Independent modules for scan operations, database connection, risk assessment, and reporting.
+- **Offline + Online Support**: Hybrid operational modes using local cached databases when offline and external APIs when online.
+- **Free/Open-Source First**: Prioritizing open intelligence sources, free API tiers, and open-source python packages.
+- **AI + ML + Rule-Based Hybrid Detection**: Layered security scoring combining rules, signatures, heuristics, and trained scikit-learn models.
+- **Explainable AI**: Translating complex model features into actionable threat insights and explainable risk scores.
+- **Scalable Plugin System**: Abstract scanner interface enabling frictionless integration of new cybersecurity telemetry tools.
+- **Enterprise-Grade Reporting**: Automated multi-format export files for executive and engineering consumers.
+- **Professional Dashboard**: Clean, responsive layout with visual status indicators and unified risk telemetry.
+- **Security by Design**: Secure handling of scans and credentials with strictly scoped local database schemas.
+- **Future-Ready Architecture**: Decoupled design patterns optimized for continuous integration and scaling.ty & Threat Sharing
+* Crowdsourced Threat Intelligence Sharing (community-reported malicious links)
+* Blockchain-Based Threat Intelligence Verification (tamper-proof threat logs)
 
 ---
 

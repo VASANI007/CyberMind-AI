@@ -5,13 +5,43 @@ Port,Protocol,Service,Risk
 23,TCP,Telnet,High
 25,TCP,SMTP,Low
 53,UDP,DNS,Low
+67,UDP,DHCP Server,Low
+68,UDP,DHCP Client,Low
+69,UDP,TFTP,High
 80,TCP,HTTP,Medium
+88,TCP,Kerberos,Low
 110,TCP,POP3,Medium
+111,TCP,RPCBIND,High
+123,UDP,NTP,Low
+135,TCP,RPC / MSRPC,High
+137,UDP,NetBIOS Name Service,High
+138,UDP,NetBIOS Datagram,High
+139,TCP,NetBIOS Session,High
 143,TCP,IMAP,Low
+161,UDP,SNMP,High
+162,UDP,SNMP Trap,High
+389,TCP,LDAP,Medium
 443,TCP,HTTPS,Low
 445,TCP,SMB,High
+465,TCP,SMTPS,Low
+500,UDP,IKE IPsec,Low
+514,UDP,Syslog,Medium
+636,TCP,LDAPS,Low
+853,TCP,DNS over TLS,Low
+873,TCP,Rsync,High
+993,TCP,IMAPS,Low
+995,TCP,POP3S,Low
+1433,TCP,MSSQL,High
+1521,TCP,Oracle DB,High
+1812,UDP,RADIUS,Medium
+2049,TCP,NFS,High
 3306,TCP,MySQL,Medium
 3389,TCP,RDP,High
 5432,TCP,PostgreSQL,Medium
 5900,TCP,VNC,High
+6379,TCP,Redis,High
 8080,TCP,HTTP Alternate,Medium
+8443,TCP,HTTPS Alternate,Low
+9200,TCP,Elasticsearch,High
+11211,TCP,Memcached,High
+27017,TCP,MongoDB,High

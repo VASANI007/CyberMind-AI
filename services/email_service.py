@@ -797,20 +797,27 @@ class EmailService:
         )
 
         report["dmarc"] = {
-
             "found":
-
                 bool(
-
                     dmarc_record
-
                 ),
-
             "record":
-
                 dmarc_record
-
         }
+
+        # ── Extended Phase 1E Email Services ─────────────────────────────
+        domain_str = self._domain(email)
+        try:
+            from services.spf_dkim_dmarc_service import spf_dkim_dmarc_service
+            report["email_auth"] = spf_dkim_dmarc_service.check(domain_str)
+        except Exception as exc:
+            logger.warning("SPF/DKIM/DMARC service failed: %s", exc)
+
+        try:
+            from services.disposable_email_service import disposable_email_service
+            report["disposable"] = disposable_email_service.is_disposable(email)
+        except Exception as exc:
+            logger.warning("Disposable email check failed: %s", exc)
 
         report["blacklist"] = (
 

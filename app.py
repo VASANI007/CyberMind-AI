@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 import re
-
+import math
 import plotly.graph_objects as go
 import streamlit as st
 import streamlit.components.v1 as components
@@ -48,9 +48,13 @@ DEFAULTS = {
     "settings_animations": True,
     "settings_sound_alerts": False,
     "settings_auto_updates": True,
+    "settings_offline_mode": False,
     "settings_export_format": "PDF",
     "sidebar_visible": True,
     "toggle_counter": 0,
+    # Section 10: Sidebar collapse state (False = expanded, True = icon-only rail)
+    "sidebar_collapsed": False,
+    "last_scan_context": {},
 }
 for k, v in DEFAULTS.items():
     if k not in st.session_state:
@@ -100,7 +104,7 @@ TRANSLATIONS = {
         "Activate API Keys": "Activate API Keys",
         "Database": "Database",
         "Datasets": "Datasets",
-        "API Connections": "API Connections"
+        "API Connections": "API Connections",
     },
     "Hindi": {
         "Dashboard": "डैशबोर्ड",
@@ -138,7 +142,7 @@ TRANSLATIONS = {
         "Activate API Keys": "एपीआई कुंजी सक्रिय करें",
         "Database": "डेटाबेस",
         "Datasets": "डेटासेट",
-        "API Connections": "एपीआई कनेक्शन"
+        "API Connections": "एपीआई कनेक्शन",
     },
     "Spanish": {
         "Dashboard": "Tablero",
@@ -176,7 +180,7 @@ TRANSLATIONS = {
         "Activate API Keys": "Activar Claves API",
         "Database": "Base de Datos",
         "Datasets": "Conjuntos de Datos",
-        "API Connections": "Conexiones API"
+        "API Connections": "Conexiones API",
     },
     "German": {
         "Dashboard": "Dashboard",
@@ -214,7 +218,7 @@ TRANSLATIONS = {
         "Activate API Keys": "API-Schlüssel aktivieren",
         "Database": "Datenbank",
         "Datasets": "Datensätze",
-        "API Connections": "API-Verbindungen"
+        "API Connections": "API-Verbindungen",
     }
 }
 
@@ -410,6 +414,21 @@ if dark_mode:
         --info-bg:rgba(59,130,246,0.12);
         --hover-bg:rgba(255,255,255,0.045);
         --hero-bg:radial-gradient(circle at 82% 40%, rgba(34,184,240,0.16), transparent 60%), linear-gradient(135deg, #0A0F1D 0%, #0C1424 100%);
+        --sidebar-bg:rgba(11, 17, 30, 0.95);
+        --sidebar-border:rgba(255, 255, 255, 0.08);
+        --sidebar-shadow:0 8px 32px rgba(0, 0, 0, 0.45);
+        --sb-btn-bg:rgba(18, 28, 45, 0.75);
+        --sb-btn-border:rgba(255, 255, 255, 0.08);
+        --sb-btn-text:#E2E8F0;
+        --logo-text:#FFFFFF;
+        --tooltip-bg:#111C2C;
+        --tooltip-border:#1D2838;
+        --tooltip-text:#EAF0F7;
+        --dialog-bg:#0B111E;
+        --dialog-border:rgba(255, 255, 255, 0.12);
+        --dialog-text:#EAF0F7;
+        --dialog-muted:#8B98AC;
+        --dialog-shadow:0 20px 50px rgba(0, 0, 0, 0.65);
     """
 else:
     theme_vars = """
@@ -433,6 +452,21 @@ else:
         --info-bg:rgba(59,130,246,0.12);
         --hover-bg:rgba(0,0,0,0.045);
         --hero-bg:radial-gradient(circle at 82% 40%, rgba(34,184,240,0.12), transparent 60%), linear-gradient(135deg, #E2E8F0 0%, #F1F5F9 100%);
+        --sidebar-bg:#FFFFFF;
+        --sidebar-border:#D1D9E6;
+        --sidebar-shadow:0 8px 32px rgba(0, 0, 0, 0.08);
+        --sb-btn-bg:#F8FAFC;
+        --sb-btn-border:#E2E8F0;
+        --sb-btn-text:#1E293B;
+        --logo-text:#1E293B;
+        --tooltip-bg:#FFFFFF;
+        --tooltip-border:#D1D9E6;
+        --tooltip-text:#1E293B;
+        --dialog-bg:#FFFFFF;
+        --dialog-border:#D1D9E6;
+        --dialog-text:#1E293B;
+        --dialog-muted:#64748B;
+        --dialog-shadow:0 20px 50px rgba(0, 0, 0, 0.15);
     """
 
 animations_enabled = st.session_state.get("settings_animations", True)
@@ -448,7 +482,7 @@ else:
 style_template = """
     <style>
 
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap');
 
     :root{
         __THEME_VARS__
@@ -462,7 +496,16 @@ style_template = """
     footer {visibility:hidden;}
     [data-testid="stToolbar"]{display:none;}
     [data-testid="stDecoration"]{display:none;}
-    header[data-testid="stHeader"]{background:transparent;}
+    header[data-testid="stHeader"]{
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    [data-testid="stMain"] {
+        padding-top: 0 !important;
+    }
     section[data-testid="stSidebar"] {
         display: none !important;
     }
@@ -470,121 +513,246 @@ style_template = """
         display: none !important;
     }
 
-    /* ===== LAYOUT: INDEPENDENT PANEL SCROLLING =====
-       Sidebar: position:fixed  → stays in place, scrolls internally when hovered
-       Main content: normal page scroll → only right panel moves
-    ================================================== */
-
     .stApp {
         background: radial-gradient(circle at 80% 0%, rgba(108,92,231,0.08), transparent 45%), var(--bg);
     }
 
-    /* Push all content right to make room for the fixed sidebar (18.5rem wide + 0.8rem left offset + 0.8rem gap) */
-    div.block-container {
-        padding-top: 0.8rem;
-        padding-bottom: 2.5rem;
-        padding-left: 20.8rem !important;
-        padding-right: 1.2rem;
-        max-width: 100%;
-        box-sizing: border-box;
+    /* Global Image Sizing Safety Rule */
+    .chart-card img, .stApp img[src*="18310827"], .stApp img[src*="flaticon"], .stApp img[src*="cdn-icons"] {
+        max-width: 24px !important;
+        max-height: 24px !important;
+        object-fit: contain !important;
+        vertical-align: middle !important;
     }
 
-    /* Collapse the Streamlit nav_col to zero — sidebar renders as fixed overlay */
-    [data-testid="column"]:has(.st-key-navcol),
-    [data-testid="stColumn"]:has(.st-key-navcol) {
-        flex: 0 0 0 !important;
-        max-width: 0 !important;
-        min-width: 0 !important;
-        overflow: hidden !important;
-        padding: 0 !important;
+    /* 1. Custom Fixed Sidebar Outer Element Wrapper Node Zero-Out */
+    div.stElementContainer:has(> .st-key-navcol),
+    [data-testid="stElementContainer"]:has(> .st-key-navcol) {
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
         margin: 0 !important;
-        gap: 0 !important;
+        padding: 0 !important;
     }
 
-    /* Ensure main content column fills the full remaining width */
-    [data-testid="column"]:not(:has(.st-key-navcol)),
-    [data-testid="stColumn"]:not(:has(.st-key-navcol)) {
-        min-width: 0 !important;
-        flex: 1 1 auto !important;
+    /* 2. Main Page Content Block Layout Offsets */
+    html body div.block-container,
+    div.block-container,
+    [data-testid="stMainBlockContainer"],
+    .stMainBlockContainer {
+        padding-top: 1rem !important;
+        padding-bottom: 2.5rem !important;
+        padding-left: 17.5rem !important;
+        padding-right: 1.5rem !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
-    [data-testid="stVerticalBlock"] {
-        min-width: 0 !important;
-        width: 100% !important;
-    }
-
-    /* -------- FIXED SIDEBAR: scrolls independently -------- */
+    /* -------- SLEEK COMPACT EXPANDED SIDEBAR -------- */
     .st-key-navcol {
         position: fixed !important;
         top: 0.8rem !important;
         left: 0.8rem !important;
-        width: 18.5rem !important;
+        width: 15rem !important;
         height: calc(100vh - 1.6rem) !important;
-        background: var(--card-bg) !important;
-        border: 1px solid var(--border) !important;
-        border-radius: 16px !important;
-        padding: 14px 12px 16px 12px !important;
+        background: var(--sidebar-bg) !important;
+        border: 1px solid var(--sidebar-border) !important;
+        border-radius: 14px !important;
+        padding: 12px 8px 14px 8px !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         z-index: 1000 !important;
         box-sizing: border-box !important;
-        /* Thin scrollbar for sidebar */
+        box-shadow: var(--sidebar-shadow) !important;
+        backdrop-filter: blur(12px) !important;
+        pointer-events: auto !important;
         scrollbar-width: thin !important;
-        scrollbar-color: var(--border) transparent !important;
+        scrollbar-color: rgba(255, 255, 255, 0.15) transparent !important;
     }
-    .st-key-navcol::-webkit-scrollbar { width: 4px; }
-    .st-key-navcol::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .st-key-navcol button,
+    .st-key-navcol .stButton > button {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+    }
+    .st-key-navcol::-webkit-scrollbar { width: 3px; }
+    .st-key-navcol::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
     .st-key-navcol::-webkit-scrollbar-track { background: transparent; }
 
+    .st-key-navcol .stButton > button {
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        padding: 6px 10px !important;
+        min-height: 36px !important;
+        height: 36px !important;
+        border-radius: 8px !important;
+        margin-bottom: 3px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
 
-
-    .sb-logo{
-        display:flex;align-items:center;gap:12px;
-        padding:6px 6px 16px 6px;
-        margin-bottom:8px;
-        border-bottom:1px solid var(--border);
+    /* -------- Logo Button (Clickable Sidebar Toggle - Pure Transparent Header ONLY) -------- */
+    .st-key-sb_logo_btn {
+        margin-bottom: 12px !important;
+        border-bottom: 1px solid var(--border) !important;
+        padding-bottom: 10px !important;
     }
-    .sb-logo .icon{
-        width:40px;height:40px;border-radius:10px;
-        background:rgba(34, 184, 240, 0.08);
-        border:1px solid rgba(34, 184, 240, 0.25);
-        display:flex;align-items:center;justify-content:center;
-        box-shadow:0 0 16px rgba(34,184,240,0.2);
-        padding:5px;
-        box-sizing:border-box;
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn *,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn button,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn .stButton > button,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn [data-testid*="baseButton"],
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn [data-testid*="stBaseButton"],
+    div.st-key-sb_logo_btn,
+    div.st-key-sb_logo_btn *,
+    div.st-key-sb_logo_btn button,
+    div.st-key-sb_logo_btn .stButton > button {
+        background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        border: none !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
     }
-    .sb-logo .icon img{
-        width:100%;height:100%;object-fit:contain;
+    .st-key-sb_logo_btn .stButton > button {
+        height: auto !important;
+        min-height: 52px !important;
+        max-height: none !important;
+        padding: 4px 0 !important;
+        border-radius: 12px !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
     }
-    .sb-logo .title{ font-size:21px;font-weight:900;letter-spacing:-0.2px;color:var(--text); }
-    .sb-logo .title span{
-        background:linear-gradient(90deg, var(--grad-a), var(--grad-b));
-        -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    .st-key-sb_logo_btn button:hover,
+    .st-key-sb_logo_btn .stButton > button:hover {
+        background: rgba(34, 211, 238, 0.08) !important;
+        border: 1px solid rgba(34, 211, 238, 0.25) !important;
+    }
+    .st-key-sb_logo_btn button::before,
+    .st-key-sb_logo_btn .stButton > button::before {
+        content: "" !important;
+        display: inline-block !important;
+        width: 44px !important;
+        height: 44px !important;
+        background-image: url("https://cdn-icons-png.flaticon.com/512/6071/6071531.png") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+    }
+    /* High Specificity Logo Header Text Overrides */
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn button p,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn button span,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn [data-testid="stMarkdownContainer"] p,
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn [data-testid="stMarkdownContainer"] span,
+    .st-key-sb_logo_btn button p,
+    .st-key-sb_logo_btn button span {
+        font-family: 'Outfit', 'Inter', sans-serif !important;
+        font-size: 24px !important;
+        font-weight: 900 !important;
+        color: var(--logo-text) !important;
+        margin: 0 !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.4px !important;
+        display: inline-block !important;
+    }
+    /* Single AI Pseudo-element on Paragraph Node Only (Fixes Double AI Bug) */
+    html body .stApp .st-key-navcol .st-key-sb_logo_btn button p::after,
+    .st-key-sb_logo_btn button p::after {
+        content: " AI" !important;
+        color: #22D3EE !important;
+        font-family: 'Outfit', 'Inter', sans-serif !important;
+        font-size: 24px !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.4px !important;
+        display: inline-block !important;
     }
     .sb-section{
-        font-size:12.5px;font-weight:700;letter-spacing:1.2px;
+        font-size:11.5px;font-weight:800;letter-spacing:1.2px;
         color:var(--text-faint);
-        margin:18px 6px 8px 6px;
+        margin:12px 6px 6px 6px;
+    }
+    .sb-divider {
+        height: 1px !important;
+        background: var(--border) !important;
+        opacity: 0.6 !important;
+        margin: 12px 4px 6px 4px !important;
+        border: none !important;
     }
 
-    .st-key-navcol .stButton{ margin-bottom:2px; }
-    .st-key-navcol .stButton > button{
-        width:100%; text-align:left; justify-content:flex-start;
-        background:transparent; border:1px solid transparent;
-        color:var(--text-muted); font-size:15px; font-weight:500;
-        padding:0.55rem 0.7rem; border-radius:8px;
-        transition:all 0.12s ease;
+    .st-key-navcol .stButton{ margin-bottom:3px; }
+    
+    /* Unselected Sidebar Buttons */
+    .st-key-navcol .stButton > button,
+    .st-key-navcol .stButton > button[kind="secondary"],
+    .st-key-navcol .stButton > button[data-testid*="secondary"],
+    .st-key-navcol .stButton > button[data-testid*="Secondary"],
+    .st-key-navcol button[data-testid*="secondary"] {
+        width: 100% !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        background: var(--sb-btn-bg) !important;
+        background-color: var(--sb-btn-bg) !important;
+        border: 1px solid var(--sb-btn-border) !important;
+        color: var(--sb-btn-text) !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        padding: 7px 12px !important;
+        border-radius: 9px !important;
+        transition: all 0.15s ease !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
     }
-    .st-key-navcol .stButton > button:hover{
-        background:var(--hover-bg); color:var(--text); border-color:var(--border);
+    .st-key-navcol .stButton > button p,
+    .st-key-navcol .stButton > button span {
+        color: var(--sb-btn-text) !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
     }
-    .st-key-navcol .stButton > button p{ font-size:15px; font-weight:500; text-align:left; }
-    .st-key-navcol .stButton > button[kind="primary"]{
-        background:linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important;
-        color:#fff !important; border:none !important;
-        box-shadow:0 4px 14px rgba(34,184,240,0.25);
+
+    /* Hover State: Glowing Cyan Glassmorphism Frame on Hover */
+    .st-key-navcol .stButton > button:hover,
+    .st-key-navcol .stButton > button[kind="secondary"]:hover,
+    .st-key-navcol .stButton > button[data-testid*="secondary"]:hover,
+    .st-key-navcol button[data-testid*="secondary"]:hover {
+        background: rgba(34, 211, 238, 0.12) !important;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(34, 211, 238, 0.35) !important;
+        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2) !important;
     }
-    .st-key-navcol .stButton > button[kind="primary"] p{ color:#fff !important; font-weight:600 !important; }
+    .st-key-navcol .stButton > button:hover p,
+    .st-key-navcol .stButton > button:hover span {
+        color: #FFFFFF !important;
+    }
+
+    /* Selected Active Button: Vibrant Gradient Background Intact */
+    .st-key-navcol .stButton > button[kind="primary"],
+    .st-key-navcol .stButton > button[data-testid*="primary"],
+    .st-key-navcol .stButton > button[data-testid*="Primary"],
+    .st-key-navcol button[data-testid*="primary"],
+    .st-key-navcol button[data-testid*="Primary"],
+    .st-key-navcol button[kind="primary"] {
+        background: linear-gradient(135deg, var(--grad-a), var(--grad-b)) !important;
+        background-color: transparent !important;
+        color: #ffffff !important;
+        border: none !important;
+        box-shadow: 0 4px 16px rgba(34,184,240,0.35) !important;
+    }
+    .st-key-navcol .stButton > button[kind="primary"] p,
+    .st-key-navcol .stButton > button[data-testid*="primary"] p,
+    .st-key-navcol .stButton > button[data-testid*="Primary"] p,
+    .st-key-navcol .stButton > button[kind="primary"] span,
+    .st-key-navcol .stButton > button[data-testid*="primary"] span,
+    .st-key-navcol .stButton > button[data-testid*="Primary"] span {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
 
     .sb-sub .stButton > button{ padding-left:1.7rem !important; font-size:14.2px; }
 
@@ -716,6 +884,7 @@ style_template = """
     .badge-safe{ background:var(--success-bg);color:var(--success); }
     .badge-malicious{ background:var(--danger-bg);color:var(--danger); }
     .badge-suspicious{ background:var(--warning-bg);color:var(--warning); }
+    .badge-unverified{ background:rgba(245, 158, 11, 0.15);color:#F59E0B; }
 
     /* ---------- Charts / scanner-page cards ---------- */
     .chart-card{ background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:16px; box-sizing:border-box; overflow:hidden; min-width:0; }
@@ -773,7 +942,15 @@ style_template = """
     .list-row{ display:flex;align-items:center;justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:12.6px; }
     .list-row:last-child{ border-bottom:none; }
     .list-name{ color:var(--text-muted); }
-    .list-val{ color:var(--text); font-weight:700; }
+    .st-key-toggle_countries_wrap {
+        display: flex !important;
+        justify-content: flex-end !important;
+        width: 100% !important;
+    }
+    .st-key-toggle_countries_wrap button {
+        margin-left: auto !important;
+        float: right !important;
+    }
 
     .cta-primary button{
         background:linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important; color:#fff !important;
@@ -842,30 +1019,264 @@ style_template = """
         box-shadow: 0 0 10px rgba(108, 92, 231, 0.25) !important;
     }
 
-    /* Download button styling */
-    .stDownloadButton > button {
-        background: linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important;
-        color: #ffffff !important;
+    /* Form Submit Buttons (Ask Assistant, Clear Chat History, etc.) */
+    [data-testid="stFormSubmitButton"] > button,
+    .stForm [data-testid="stFormSubmitButton"] > button,
+    div.stButton > button[data-testid*="FormSubmit"],
+    button[kind="header"] {
+        background: linear-gradient(135deg, var(--grad-a), var(--grad-b)) !important;
+        background-color: transparent !important;
+        color: #FFFFFF !important;
         border: none !important;
-        font-weight: 600 !important;
         border-radius: 9px !important;
-        box-shadow: 0 6px 18px rgba(34,184,240,0.25) !important;
-        height: 2.9rem !important;
-        transition: all 0.15s ease-in-out !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        box-shadow: 0 4px 16px rgba(34, 184, 240, 0.25) !important;
+        transition: all 0.2s ease !important;
     }
-    .stDownloadButton > button p, .stDownloadButton > button span {
-        color: #ffffff !important;
+    [data-testid="stFormSubmitButton"] > button p,
+    [data-testid="stFormSubmitButton"] > button span,
+    .stForm [data-testid="stFormSubmitButton"] > button p,
+    .stForm [data-testid="stFormSubmitButton"] > button span {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
     }
-    .stDownloadButton > button:hover {
-        opacity: 0.9 !important;
-        color: #ffffff !important;
+    [data-testid="stFormSubmitButton"] > button:hover,
+    .stForm [data-testid="stFormSubmitButton"] > button:hover {
+        opacity: 0.92 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 20px rgba(34, 184, 240, 0.4) !important;
     }
-    .stTextInput{ margin-bottom:0 !important; }
-    .stTextInput input{ height:2.9rem !important; }
 
-    .stTextInput input, .stTextArea textarea{
-        background:var(--bg-soft) !important; border:1px solid var(--border) !important; color:var(--text) !important;
-        border-radius:9px !important;
+    /* Streamlit Tooltip Popups ONLY (Prevents card stacking & cut-off) */
+    [data-testid="stTooltipContent"] {
+        background: var(--tooltip-bg) !important;
+        background-color: var(--tooltip-bg) !important;
+        color: var(--tooltip-text) !important;
+        border: 1px solid var(--tooltip-border) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        padding: 6px 12px !important;
+        white-space: nowrap !important;
+        width: max-content !important;
+        max-width: 320px !important;
+        z-index: 9999999 !important;
+    }
+    [data-testid="stTooltipContent"] * {
+        color: var(--tooltip-text) !important;
+        background: transparent !important;
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        white-space: nowrap !important;
+    }
+
+    /* Streamlit Dialog / Modal Popup Outer Backdrop Overlay (Translucent Glass Mask) */
+    html body div[data-baseweb="backdrop"],
+    html body div[data-baseweb="modal"],
+    html body [data-testid="stDialog"],
+    html body [data-testid="stDialogService"],
+    html body [data-testid="stModal"],
+    html body div[role="dialog"][aria-modal="true"],
+    div[data-baseweb="backdrop"],
+    div[data-baseweb="modal"],
+    [data-testid="stDialog"],
+    [data-testid="stDialogService"],
+    [data-testid="stModal"],
+    div[role="dialog"][aria-modal="true"] {
+        background: rgba(0, 0, 0, 0.4) !important;
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        backdrop-filter: blur(6px) !important;
+        -webkit-backdrop-filter: blur(6px) !important;
+    }
+    /* Force intermediate container divs to be 100% transparent */
+    div[data-baseweb="modal"] > div,
+    div[data-baseweb="modal"] > div > div,
+    [data-testid="stDialog"] > div,
+    [data-testid="stModal"] > div {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+    /* Target ONLY the inner floating modal card box */
+    div[data-baseweb="modal"] [role="dialog"],
+    [data-testid="stDialog"] [role="dialog"],
+    [data-testid="stDialog"] [data-testid="stDialogContent"] {
+        background: var(--dialog-bg) !important;
+        background-color: var(--dialog-bg) !important;
+        color: var(--dialog-text) !important;
+        border: 1px solid var(--dialog-border) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5) !important;
+    }
+    [data-testid="stDialog"] > div *,
+    div[role="dialog"] > div *,
+    [data-testid="stModal"] > div *,
+    div[data-baseweb="modal"] * {
+        color: var(--dialog-text) !important;
+    }
+    [data-testid="stDialog"] p,
+    div[role="dialog"] p,
+    [data-testid="stDialog"] li,
+    div[role="dialog"] li,
+    [data-testid="stDialog"] span,
+    div[role="dialog"] span {
+        color: var(--dialog-text) !important;
+    }
+    [data-testid="stDialog"] h1,
+    [data-testid="stDialog"] h2,
+    [data-testid="stDialog"] h3,
+    [data-testid="stDialog"] h4,
+    [data-testid="stDialog"] h5,
+    [data-testid="stDialog"] h6,
+    div[role="dialog"] h1,
+    div[role="dialog"] h2,
+    div[role="dialog"] h3,
+    div[role="dialog"] h4,
+    div[role="dialog"] h5,
+    div[role="dialog"] h6 {
+        color: var(--dialog-text) !important;
+    }
+    [data-testid="stDialog"] code,
+    div[role="dialog"] code {
+        background: var(--card-bg-soft) !important;
+        color: #22D3EE !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        padding: 2px 6px !important;
+    }
+    [data-testid="stDialog"] button[aria-label="Close"],
+    div[role="dialog"] button[aria-label="Close"],
+    [data-testid="stDialog"] [data-testid="stBaseButton-header"],
+    div[role="dialog"] button {
+        color: var(--dialog-text) !important;
+    }
+
+    /* Expander & JSON Payload Container (Light/Dark Dynamic) */
+    [data-testid="stExpander"],
+    div[data-testid="stExpander"] {
+        background: var(--card-bg) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+    }
+    [data-testid="stExpander"] summary,
+    div[data-testid="stExpander"] summary {
+        background: var(--card-bg-soft) !important;
+        color: var(--text) !important;
+        border-radius: 10px !important;
+    }
+    [data-testid="stExpander"] summary *,
+    div[data-testid="stExpander"] summary * {
+        color: var(--text) !important;
+    }
+    [data-testid="stJson"],
+    [data-testid="stJsonBlock"],
+    div.stJson,
+    pre,
+    code,
+    .react-json-view {
+        background: var(--card-bg-soft) !important;
+        background-color: var(--card-bg-soft) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+    }
+
+    /* Download Button (Export Report) - Vibrant Gradient in All Modes */
+    .stDownloadButton > button,
+    div.stDownloadButton button,
+    [data-testid="stDownloadButton"] > button,
+    div[class*="stDownloadButton"] button {
+        background: linear-gradient(135deg, var(--grad-a), var(--grad-b)) !important;
+        background-color: transparent !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 9px !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
+        box-shadow: 0 4px 16px rgba(34, 184, 240, 0.25) !important;
+        transition: all 0.2s ease !important;
+        height: 2.9rem !important;
+    }
+    .stDownloadButton > button p,
+    .stDownloadButton > button span,
+    div.stDownloadButton button p,
+    div.stDownloadButton button span,
+    [data-testid="stDownloadButton"] > button p,
+    [data-testid="stDownloadButton"] > button span {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
+    .stDownloadButton > button:hover,
+    div.stDownloadButton button:hover,
+    [data-testid="stDownloadButton"] > button:hover {
+        opacity: 0.92 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 20px rgba(34, 184, 240, 0.4) !important;
+    }
+
+    /* File Uploader Dropzone & "Browse files" Button (Vibrant Gradient in All Modes) */
+    [data-testid="stFileUploaderDropzone"] {
+        background: var(--bg-soft) !important;
+        border: 1px dashed var(--border) !important;
+        border-radius: 12px !important;
+    }
+    [data-testid="stFileUploaderDropzone"] button,
+    [data-testid="stFileUploaderDropzone"] [data-testid*="baseButton"],
+    [data-testid="stFileUploaderDropzone"] [data-testid*="stBaseButton"],
+    div[data-testid="stFileUploaderDropzone"] button,
+    section[data-testid="stFileUploaderDropzone"] button {
+        background: linear-gradient(135deg, var(--grad-a), var(--grad-b)) !important;
+        background-color: transparent !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: 13.5px !important;
+        padding: 6px 16px !important;
+        box-shadow: 0 4px 14px rgba(34, 184, 240, 0.25) !important;
+        transition: all 0.2s ease !important;
+    }
+    [data-testid="stFileUploaderDropzone"] button p,
+    [data-testid="stFileUploaderDropzone"] button span,
+    [data-testid="stFileUploaderDropzone"] [data-testid*="baseButton"] p,
+    [data-testid="stFileUploaderDropzone"] [data-testid*="baseButton"] span,
+    div[data-testid="stFileUploaderDropzone"] button p,
+    div[data-testid="stFileUploaderDropzone"] button span,
+    section[data-testid="stFileUploaderDropzone"] button p,
+    section[data-testid="stFileUploaderDropzone"] button span {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stFileUploaderDropzone"] button:hover,
+    div[data-testid="stFileUploaderDropzone"] button:hover,
+    section[data-testid="stFileUploaderDropzone"] button:hover {
+        opacity: 0.92 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 18px rgba(34, 184, 240, 0.4) !important;
+    }
+    /* Inputs & Textareas (Text & Placeholder Visibility in All Modes) */
+    .stTextInput input,
+    .stTextArea textarea,
+    [data-testid="stTextInput"] input,
+    [data-testid="stTextArea"] textarea {
+        background: var(--card-bg-soft) !important;
+        background-color: var(--card-bg-soft) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 9px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+    }
+    .stTextInput input::placeholder,
+    .stTextArea textarea::placeholder,
+    [data-testid="stTextInput"] input::placeholder,
+    [data-testid="stTextArea"] textarea::placeholder,
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--text-muted) !important;
+        opacity: 0.85 !important;
+        font-weight: 400 !important;
     }
     [data-testid="stFileUploaderDropzone"]{
         background:var(--bg-soft) !important; border:1px dashed var(--border) !important; border-radius:12px !important;
@@ -895,19 +1306,45 @@ style_template = """
         color: var(--text) !important;
     }
 
-    /* Global styling for all primary buttons */
-    .stButton > button[kind="primary"] {
+    /* Override: Force logo button AI text span to stay vibrant cyan/blue */
+    .st-key-sb_logo_btn button span,
+    .st-key-sb_logo_btn button p span,
+    .st-key-sb_logo_btn button div span,
+    .st-key-sb_logo_btn button [data-testid="stMarkdownContainer"] span,
+    div[class*="st-key-sb_logo_btn"] span {
+        color: #22D3EE !important;
+        font-weight: 900 !important;
+    }
+
+    /* Global styling for all primary buttons — forces theme blue gradient, NO RED! */
+    .stButton > button[kind="primary"],
+    .stButton > button[data-testid*="primary"],
+    .stButton > button[data-testid*="Primary"],
+    button[kind="primary"],
+    button[data-testid*="primary"],
+    button[data-testid*="Primary"] {
         background: linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important;
+        background-color: transparent !important;
         color: #FFFFFF !important;
         border: none !important;
-        box-shadow: 0 4px 14px rgba(34,184,240,0.25) !important;
+        box-shadow: 0 4px 14px rgba(34,184,240,0.3) !important;
     }
-    .stButton > button[kind="primary"] p, .stButton > button[kind="primary"] span {
+    .stButton > button[kind="primary"] p,
+    .stButton > button[data-testid*="primary"] p,
+    .stButton > button[data-testid*="Primary"] p,
+    .stButton > button[kind="primary"] span,
+    .stButton > button[data-testid*="primary"] span,
+    .stButton > button[data-testid*="Primary"] span {
         color: #FFFFFF !important;
+        font-weight: 600 !important;
     }
-    .stButton > button[kind="primary"]:hover {
-        opacity: 0.9 !important;
+    .stButton > button[kind="primary"]:hover,
+    .stButton > button[data-testid*="primary"]:hover,
+    .stButton > button[data-testid*="Primary"]:hover {
+        background: linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important;
+        opacity: 0.92 !important;
         color: #FFFFFF !important;
+        box-shadow: 0 6px 18px rgba(34,184,240,0.4) !important;
     }
 
     /* Global styling for all secondary (default) buttons */
@@ -955,6 +1392,25 @@ style_template = """
     }
 
     /* ---- Hamburger toggle button ---- */
+    .st-key-sidebar_toggle button,
+    .st-key-sidebar_toggle .stButton > button,
+    .st-key-sidebar_toggle [data-testid*="baseButton"] {
+        border: 1px solid transparent !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        color: var(--text) !important;
+        transition: all 0.18s ease !important;
+        cursor: pointer !important;
+        box-shadow: none !important;
+        min-width: 42px !important;
+    }
+    .st-key-sidebar_toggle button:hover,
+    .st-key-sidebar_toggle .stButton > button:hover {
+        background: rgba(34, 211, 238, 0.12) !important;
+        border-color: rgba(34, 211, 238, 0.35) !important;
+        color: #fff !important;
+        box-shadow: 0 4px 16px rgba(34,211,238,0.3) !important;
+    }
     .st-key-sidebar_toggle {
         margin-bottom: 12px !important;
     }
@@ -987,6 +1443,102 @@ style_template = """
 """
 style_content = style_template.replace("__THEME_VARS__", theme_vars).replace("__ANIMATION_CSS__", animation_css)
 st.markdown(style_content, unsafe_allow_html=True)
+
+# ── Dynamic Sidebar Collapse CSS ──
+if st.session_state.get("sidebar_collapsed", False):
+    st.markdown(
+        """
+        <style>
+        .st-key-navcol {
+            position: fixed !important;
+            top: 0.8rem !important;
+            left: 0.8rem !important;
+            width: 4.2rem !important;
+            height: calc(100vh - 1.6rem) !important;
+            padding: 10px 5px !important;
+        }
+        html body div.block-container,
+        div.block-container,
+        [data-testid="stMainBlockContainer"],
+        .stMainBlockContainer {
+            padding-left: 6.2rem !important;
+        }
+        .st-key-navcol .st-key-sb_logo_btn {
+            border-bottom: 1px solid var(--border) !important;
+            padding-bottom: 10px !important;
+            margin-bottom: 12px !important;
+            width: 100% !important;
+        }
+        html body .stApp .st-key-navcol .st-key-sb_logo_btn button,
+        html body .stApp .st-key-navcol .st-key-sb_logo_btn .stButton > button,
+        html body .stApp .st-key-navcol .st-key-sb_logo_btn [data-testid*="baseButton"],
+        .st-key-navcol .st-key-sb_logo_btn button {
+            width: 100% !important;
+            height: 42px !important;
+            min-height: 42px !important;
+            max-height: 42px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 9px !important;
+            background: rgba(18, 28, 45, 0.75) !important;
+            background-color: rgba(18, 28, 45, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+        }
+        html body .stApp .st-key-navcol .st-key-sb_logo_btn button:hover,
+        .st-key-navcol .st-key-sb_logo_btn button:hover {
+            background: rgba(34, 211, 238, 0.12) !important;
+            border-color: rgba(34, 211, 238, 0.35) !important;
+            box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2) !important;
+        }
+        .st-key-navcol .st-key-sb_logo_btn button::before {
+            content: "" !important;
+            display: block !important;
+            width: 26px !important;
+            height: 26px !important;
+            background-image: url("https://cdn-icons-png.flaticon.com/512/6071/6071531.png") !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            margin: 0 auto !important;
+            flex-shrink: 0 !important;
+            float: none !important;
+        }
+        .st-key-navcol .st-key-sb_logo_btn button [data-testid="stMarkdownContainer"],
+        .st-key-navcol .st-key-sb_logo_btn button div,
+        .st-key-navcol .st-key-sb_logo_btn button p,
+        .st-key-navcol .st-key-sb_logo_btn button span {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .st-key-navcol .stButton {
+            margin-bottom: 4px !important;
+        }
+        .st-key-navcol .stButton > button {
+            justify-content: center !important;
+            text-align: center !important;
+            padding: 0.6rem 0 !important;
+            min-width: 0 !important;
+            width: 100% !important;
+        }
+        .st-key-navcol .stButton > button p,
+        .st-key-navcol .stButton > button span {
+            text-align: center !important;
+            font-size: 18px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 # ── GLOBAL AUDIO SYNTHESIS HELPER ──
 st.markdown(
@@ -1073,7 +1625,9 @@ def generate_mock_analysis(value: str, score: int, level: str, scanner_key: str)
     is_safe = score < 30
     
     return {
-        "success": True,
+        "success": False,
+        "simulated": True,
+        "is_mock": True,
         "url": value,
         "risk": {
             "score": score,
@@ -1082,37 +1636,36 @@ def generate_mock_analysis(value: str, score: int, level: str, scanner_key: str)
             "risk_level": level
         },
         "ml_prediction": {
-            "prediction": "Legitimate" if is_safe else "Malicious",
-            "probability": round(100.0 - score if is_safe else float(score), 1)
+            "prediction": "Unverified" if is_safe else "Suspicious",
+            "probability": round(float(score), 1)
         },
         "explain_ai": {
-            "summary": "This resource is safe" if is_safe else "High threat vectors identified",
+            "summary": "Live scan analysis unavailable — placeholder state rendered",
             "details": [
-                f"Domain age is {15 if is_safe else 1} years old",
-                "SSL certificate is valid and secure" if is_safe else "Invalid or expired SSL configuration",
-                "No suspicious keywords detected" if is_safe else "Detected suspicious pattern",
-                "Clean reputation across databases" if is_safe else "Blacklist listings found"
+                "Domain WHOIS lookup was not completed",
+                "SSL certificate handshake was not completed",
+                "Reputation services did not return live status",
+                "Results are placeholder values for preview"
             ]
         },
         "recommendation": {
-            "count": 3,
+            "count": 2,
             "recommendations": [
-                "This URL is safe to visit." if is_safe else "DO NOT enter credentials on this site.",
-                "No security concerns found." if is_safe else "Avoid interacting with this resource.",
-                "You can bookmark this site." if is_safe else "Verify source authority."
+                "Retry the scan when live network services are reachable.",
+                "Verify host connectivity manually."
             ]
         },
         "analysis": {
             "ssl": {
-                "valid": is_safe,
-                "expiration_date": "Dec 15, 2026" if is_safe else "Expired"
+                "valid": False,
+                "expiration_date": "Not Available"
             },
             "whois": {
-                "domain_age_days": 5475 if is_safe else 365,
-                "expiration_date": "Dec 15, 2026" if is_safe else "Expired"
+                "domain_age_days": None,
+                "expiration_date": "Not Available"
             },
             "dns": {
-                "a_records": ["93.184.216.34"]
+                "a_records": []
             },
             "lexical": {
                 "length": url_len,
@@ -1131,14 +1684,14 @@ def generate_mock_analysis(value: str, score: int, level: str, scanner_key: str)
             "virustotal": {
                 "stats": {
                     "malicious": 0 if is_safe else int(score // 10),
-                    "harmless": 96 if is_safe else int(100 - score)
+                    "harmless": 0
                 }
             }
         }
     }
 
 
-def compute_scan_display(result):
+def compute_scan_display(result, scanner_key=None):
     """
     Single source of truth for every value shown on a scanner result page.
     Used by render_scanner_page() to draw the screen AND by export_report()
@@ -1151,12 +1704,40 @@ def compute_scan_display(result):
     raw_payload = result.get("raw") or {}
     analysis_data = raw_payload.get("analysis") or {}
 
-    ml_prediction_data = raw_payload.get("ml_prediction") or {}
-    ml_available = ml_prediction_data.get("ml_available", False)
-    ml_pred = ml_prediction_data.get("prediction") or (
-        "Legitimate" if score < 30 else "Suspicious" if score < 70 else "Malicious"
+    active_scanner_key = (
+        scanner_key
+        or result.get("scanner_key")
+        or result.get("scanner")
+        or (st.session_state.get("last_scan_context") or {}).get("scanner_key", "")
     )
-    prob_val = ml_prediction_data.get("probability") or (100.0 - score if score < 50 else float(score))
+
+    ml_prediction_data = raw_payload.get("ml_prediction") or {}
+    has_real_ml = bool(
+        ml_prediction_data.get("probability") is not None
+        and ml_prediction_data.get("ml_available", True)
+    )
+    if level == "Unverified":
+        default_pred = "Unverified"
+    elif level == "Safe":
+        default_pred = "Legitimate"
+    elif level == "Low":
+        default_pred = "Low Risk"
+    elif level in ("Medium", "Suspicious"):
+        default_pred = "Suspicious"
+    else:
+        default_pred = "Malicious"
+
+    ml_pred = ml_prediction_data.get("prediction") or default_pred
+    if has_real_ml:
+        prob_val = float(ml_prediction_data["probability"])
+        ml_subtitle = f"Confidence: {prob_val:.1f}%"
+        ml_card_title = "AI Prediction"
+    else:
+        prob_val = float(score)
+        ml_subtitle = "Risk-Derived Estimate"
+        ml_card_title = "Threat Assessment"
+
+    ml_available = ml_prediction_data.get("ml_available", False)
     ml_confidence = ml_prediction_data.get("confidence", None)
     ml_model_name = ml_prediction_data.get("model", "Heuristic")
     # Brand impersonation signal from online_valid_model
@@ -1167,7 +1748,22 @@ def compute_scan_display(result):
     # File risk prediction from file_signatures_model (stored in analysis_data)
     file_ml_prediction = analysis_data.get("ml_prediction") or {}
 
-    is_https = "Yes" if "https" in str(result["value"]).lower() else "No"
+    target_val = result["value"]
+    hostname_val = target_val
+    if "://" in target_val:
+        hostname_val = target_val.split("://")[1].split("/")[0]
+    elif "/" in target_val:
+        hostname_val = target_val.split("/")[0]
+    if ":" in hostname_val:
+        hostname_val = hostname_val.split(":")[0]
+
+    from services.ssl_service import verify_https
+    if str(target_val).lower().startswith("http://"):
+        is_https = "No"
+        https_check = {"valid": False, "reason": "Target uses plain unencrypted HTTP scheme"}
+    else:
+        https_check = verify_https(hostname_val)
+        is_https = "Yes" if https_check.get("valid", False) else "No"
 
     domain_age = "Not Available"
     domain_age_note = "No live WHOIS data"
@@ -1179,19 +1775,19 @@ def compute_scan_display(result):
             reg_date = whois_data.get("creation_date") or whois_data.get("registered_on")
             domain_age_note = f"Since {reg_date}" if reg_date else "Based on WHOIS lookup"
 
-    target_val = result["value"]
-    hostname_val = target_val
-    if "://" in target_val:
-        hostname_val = target_val.split("://")[1].split("/")[0]
-    elif "/" in target_val:
-        hostname_val = target_val.split("/")[0]
-
-    ip_val = "93.184.216.34"
+    ip_val = "Not Available"
     dns_data = analysis_data.get("dns") or raw_payload.get("dns") or {}
     if dns_data:
         a_recs = dns_data.get("a_records") or dns_data.get("ips")
-        if a_recs and isinstance(a_recs, list):
+        if a_recs and isinstance(a_recs, list) and len(a_recs) > 0:
             ip_val = a_recs[0]
+    if ip_val == "Not Available" and hostname_val:
+        try:
+            resolved = socket.gethostbyname(hostname_val)
+            if resolved:
+                ip_val = resolved
+        except Exception:
+            pass
 
     google_data = analysis_data.get("google_safe_browsing") or raw_payload.get("google_safe_browsing") or {}
     google_safe = google_data.get("safe") if google_data.get("safe") is not None else True
@@ -1224,9 +1820,16 @@ def compute_scan_display(result):
     shortened = "Yes" if lexical_data.get("shortened", False) else "No"
 
     ssl_data = analysis_data.get("ssl") or raw_payload.get("ssl") or {}
-    ssl_valid = ssl_data.get("valid") if ssl_data.get("valid") is not None else True
+    if "valid" in ssl_data and ssl_data["valid"] is not None:
+        ssl_valid = ssl_data["valid"]
+    else:
+        ssl_valid = https_check.get("valid", False)
     ssl_status = "Valid" if ssl_valid else "Invalid"
-    expiry_val = ssl_data.get("expiration_date") or whois_data.get("expiration_date") or "Dec 15, 2026"
+    if https_check.get("valid") and https_check.get("expires"):
+        days = https_check.get("days_until_expiry")
+        expiry_val = f"{https_check['expires'][:10]} ({days}d remaining)"
+    else:
+        expiry_val = ssl_data.get("expiration_date") or whois_data.get("expiration_date") or https_check.get("reason", "N/A")
 
     explain_data = raw_payload.get("explain_ai") or {}
     points = explain_data.get("details") or [
@@ -1245,12 +1848,50 @@ def compute_scan_display(result):
         "Continue to monitor for any changes."
     ]
 
-    risk_label = "Low Risk" if score < 30 else "Medium Risk" if score < 70 else "High Risk"
-    threat_desc = "No immediate threat" if score < 30 else "Suspicious host" if score < 70 else "Threat flagged"
+    SUBJECT_NOUN = {
+        "File Scanner": "file",
+        "Email Scanner": "sender",
+        "IP Scanner": "host",
+        "Domain Scanner": "domain",
+        "Website Scanner": "site",
+        "URL Scanner": "link",
+        "QR Code Scanner": "QR content",
+        "Universal Scan": "target",
+    }
+    noun = SUBJECT_NOUN.get(active_scanner_key, "target")
+    if level == "Unverified":
+        risk_label = "Unverified State"
+        threat_desc = f"Unverified {noun}"
+    else:
+        risk_label = "Low Risk" if score < 30 else "Medium Risk" if score < 70 else "High Risk"
+        threat_desc = "No immediate threat" if score < 30 else f"Suspicious {noun}" if score < 70 else "Threat flagged"
+
+    from services.lexical_keyword_service import lexical_keyword_service
+    kw_res = lexical_keyword_service.check_suspicious_keywords(str(target_val))
+    kw_matches = kw_res.get("matched_keywords", [])
+    suspicious_words = ", ".join(kw_matches) if kw_matches else "None"
+
+    simulated_flag = bool(
+        result.get("simulated")
+        or result.get("is_simulated")
+        or result.get("is_mock")
+        or raw_payload.get("simulated")
+        or raw_payload.get("is_simulated")
+        or raw_payload.get("is_mock")
+        or raw_payload.get("mock")
+    )
+    scan_err = (
+        result.get("scan_error")
+        or raw_payload.get("scan_error")
+        or result.get("note")
+        or raw_payload.get("note")
+        or ""
+    )
 
     return {
         "score": score, "level": level, "duration": duration,
         "ml_pred": ml_pred, "prob_val": prob_val,
+        "has_real_ml": has_real_ml, "ml_subtitle": ml_subtitle, "ml_card_title": ml_card_title,
         "ml_available": ml_available, "ml_confidence": ml_confidence,
         "ml_model_name": ml_model_name,
         "brand_impersonation": brand_impersonation,
@@ -1263,10 +1904,14 @@ def compute_scan_display(result):
         "blacklist_status": blacklist_status, "reputation_val": reputation_val,
         "url_len": url_len, "digits": digits, "hyphens": hyphens, "dots": dots,
         "specials": specials, "subdomains": subdomains, "entropy_val": entropy_val,
-        "ip_based": ip_based, "shortened": shortened,
+        "ip_based": ip_based, "shortened": shortened, "suspicious_words": suspicious_words,
         "ssl_status": ssl_status, "ssl_valid": ssl_valid, "expiry_val": expiry_val,
         "points": points, "recs": recs,
         "risk_label": risk_label, "threat_desc": threat_desc,
+        "simulated": simulated_flag,
+        "is_mock": simulated_flag,
+        "scan_error": scan_err,
+        "scanner_key": active_scanner_key,
     }
 
 
@@ -1281,22 +1926,56 @@ def export_report(result, fmt):
     # grouped into the same sections the user sees: Summary, Detailed Analysis,
     # Threat Intelligence, URL/File Features, Security Checks, AI Explanation,
     # Recommendations. This guarantees "what's on screen is what's in the report".
-    d = compute_scan_display(result)
+    d = compute_scan_display(result, scanner_key=result.get("scanner_key") or result.get("scanner"))
     target_val = d["target_val"]
 
-    sections: list[tuple[str, list[tuple[str, str]]]] = [
-        ("Summary", [
-            ("Target", target_val),
-            ("Risk Score", f"{d['score']} / 100"),
-            ("Risk Level", d["risk_label"]),
-            ("Threat Level", str(d["level"]).upper()),
-            ("AI Prediction", d["ml_pred"]),
-            ("Probability", f"{d['prob_val']:.1f}%"),
-            ("Scan Time", d["duration"]),
+    exec_summary = ""
+    try:
+        from modules.ai_summary_module import ai_summary_module
+        exec_summary = ai_summary_module.generate_summary(result)
+    except Exception:
+        pass
+
+    summary_items = [
+        ("Target", target_val),
+        ("Risk Score", f"{d['score']} / 100"),
+        ("Risk Level", d["risk_label"]),
+        ("Threat Level", str(d["level"]).upper()),
+        (d.get("ml_card_title", "AI Prediction"), d["ml_pred"]),
+        ("Estimate / Confidence", d.get("ml_subtitle", f"{d['prob_val']:.1f}%")),
+        ("Scan Time", d["duration"]),
+    ]
+    s_key = d.get("scanner_key", "")
+    if s_key in ("Domain Scanner", "Website Scanner", "URL Scanner", "Universal Scan", ""):
+        summary_items.extend([
             ("HTTPS", "Valid" if d["is_https"] == "Yes" else "Invalid"),
             ("Domain Age", d["domain_age"]),
             ("Domain Age Source", d["domain_age_note"]),
-        ]),
+        ])
+    elif s_key == "File Scanner":
+        summary_items.extend([
+            ("File Entropy", f"{d['entropy_val']:.2f}" if isinstance(d['entropy_val'], (int, float)) else str(d['entropy_val'])),
+            ("File Format", str(target_val).split(".")[-1].upper() if "." in str(target_val) else "BINARY"),
+        ])
+    elif s_key == "IP Scanner":
+        summary_items.extend([
+            ("IP Reputation", d["reputation_val"]),
+            ("Blacklist Check", d["blacklist_status"]),
+        ])
+    elif s_key == "Email Scanner":
+        summary_items.extend([
+            ("Sender Domain Reputation", d["reputation_val"]),
+            ("Blacklist Check", d["blacklist_status"]),
+        ])
+
+    sections: list[tuple[str, list[tuple[str, str]]]] = [
+        ("Summary", summary_items),
+    ]
+
+    if exec_summary:
+        sections.append(("AI Executive Summary", [("Executive Summary", exec_summary)]))
+
+    sections.extend([
         ("Detailed Analysis", [
             ("URL", target_val),
             ("Domain", d["hostname_val"]),
@@ -1330,7 +2009,7 @@ def export_report(result, fmt):
             ("Entropy", f"{d['entropy_val']:.2f} (Low)"),
             ("IP Based URL", d["ip_based"]),
             ("Shortened URL", d["shortened"]),
-            ("Suspicious Words", "None"),
+            ("Suspicious Words", d["suspicious_words"]),
         ]),
         ("Security Checks", [
             ("HTTPS", "Valid" if d["is_https"] == "Yes" else "Invalid"),
@@ -1344,7 +2023,7 @@ def export_report(result, fmt):
         ]),
         ("AI Explanation", [(f"Point {i+1}", p) for i, p in enumerate(d["points"])]),
         ("Recommendations", [(f"Recommendation {i+1}", r) for i, r in enumerate(d["recs"])]),
-    ]
+    ])
 
     if fmt == "JSON":
         report_data = {
@@ -1409,6 +2088,10 @@ def export_report(result, fmt):
             'ValueStyle', parent=styles['Normal'], fontSize=9.5,
             textColor=colors.HexColor('#0F1826')
         )
+        callout_style = ParagraphStyle(
+            'CalloutStyle', parent=styles['Normal'], fontSize=9.5,
+            textColor=colors.HexColor('#0F172A'), leading=14
+        )
 
         story.append(Paragraph("CyberMind AI - Threat Intelligence Report", title_style))
         story.append(Paragraph(f"Target: {html.escape(str(target_val))}", subtitle_style))
@@ -1416,6 +2099,19 @@ def export_report(result, fmt):
 
         for section_name, rows in sections:
             story.append(Paragraph(section_name, header_style))
+            if section_name == "AI Executive Summary":
+                sum_text = rows[0][1] if rows else ""
+                callout_data = [[Paragraph(f"<b>Executive Summary:</b><br/>{html.escape(sum_text)}", callout_style)]]
+                callout_table = Table(callout_data, colWidths=[490])
+                callout_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#ECFEFF')),
+                    ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#22D3EE')),
+                    ('PADDING', (0, 0), (-1, -1), 10),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ]))
+                story.append(callout_table)
+                continue
+
             table_data = [["Parameter", "Value"]]
             for k, v in rows:
                 val_str = str(v)
@@ -1433,8 +2129,6 @@ def export_report(result, fmt):
                 ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
                 ('TOPPADDING', (0, 0), (-1, 0), 8),
                 ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#D1D9E6')),
-                # PDF is a static/printable document: always light background + dark
-                # text so it stays readable no matter what the app's dark-mode is.
                 ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#FFFFFF')),
                 ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.HexColor('#FFFFFF'), colors.HexColor('#F4F6F9')]),
             ]))
@@ -1456,6 +2150,7 @@ def run_scan(scanner_key: str, mod_path: str, attr: str, value: str):
     fn = _module(mod_path, attr)
     risk_score, risk_level, note = None, None, ""
     raw_result = None
+    is_simulated = False
     if fn is not None:
         try:
             raw_result = fn.analyze(value)
@@ -1464,16 +2159,23 @@ def run_scan(scanner_key: str, mod_path: str, attr: str, value: str):
                 risk_score = risk.get("risk_score") if risk.get("risk_score") is not None else risk.get("score")
                 risk_level = risk.get("risk_level") if risk.get("risk_level") is not None else risk.get("level")
             else:
-                note = (raw_result or {}).get("message", "")
+                note = (raw_result or {}).get("message") or (raw_result or {}).get("error") or "Analysis returned unverified state"
         except Exception as exc:
+            from core.logger import logger
+            logger.error("Scan module %s failed for %s: %s", mod_path, value, exc)
             note = str(exc)
 
     if risk_score is None or risk_level is None:
         sim = simulated_result(value)
         risk_score, risk_level = sim["risk_score"], sim["risk_level"]
+        is_simulated = True
 
     if not raw_result or not raw_result.get("success"):
         raw_result = generate_mock_analysis(value, risk_score, risk_level, scanner_key)
+        raw_result["simulated"] = True
+        raw_result["is_mock"] = True
+        raw_result["scan_error"] = note or "Live scan analysis unavailable or encountered error."
+        is_simulated = True
 
     # Save to SQLite Database for dynamic statistics
     try:
@@ -1545,15 +2247,31 @@ def run_scan(scanner_key: str, mod_path: str, attr: str, value: str):
 
     duration = time.time() - start_t
 
-    return {
+    res = {
         "value": value,
         "risk_score": risk_score,
         "risk_level": risk_level,
         "time": datetime.now().strftime("%H:%M:%S"),
         "note": note,
         "duration": f"{duration:.2f} sec",
-        "raw": raw_result
+        "raw": raw_result,
+        "simulated": is_simulated,
+        "is_mock": is_simulated,
+        "scan_error": note or (raw_result.get("scan_error") if isinstance(raw_result, dict) else "")
     }
+    st.session_state["_last_active_scanner_page"] = scanner_key
+    st.session_state["_last_scan_result_dict"] = res
+    st.session_state[f"fb_given_{scanner_key}"] = False
+    st.session_state["last_scan_context"] = {
+        "scanner": scanner_key,
+        "scanner_key": scanner_key,
+        "target": value,
+        "risk_score": risk_score,
+        "risk_level": risk_level,
+        "findings": raw_result
+    }
+    return res
+
 
 
 LEVEL_BADGE = {
@@ -1564,6 +2282,7 @@ LEVEL_BADGE = {
     "High": "badge-malicious",
     "Critical": "badge-malicious",
     "Malicious": "badge-malicious",
+    "Unverified": "badge-unverified",
 }
 
 SCANNERS = {
@@ -1700,57 +2419,219 @@ SYSTEM_MENU = [
 
 
 
+def toggle_sidebar_collapse():
+    st.session_state.sidebar_collapsed = not st.session_state.get("sidebar_collapsed", False)
+
+
 def render_sidebar():
+    collapsed = st.session_state.get("sidebar_collapsed", False)
     with st.container(key="navcol"):
-        st.markdown(
-            """
-            <div class="sb-logo">
-                <div class="icon"><img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" alt="Logo"></div>
-                <div class="title">CyberMind <span>AI</span></div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        # Clickable logo button toggles collapse / expand
+        st.button(
+            "CyberMind" if not collapsed else "",
+            key="sb_logo_btn",
+            on_click=toggle_sidebar_collapse,
+            use_container_width=True,
         )
 
-        st.markdown(f'<div class="sb-section">{t("MAIN")}</div>', unsafe_allow_html=True)
+        # MAIN section
+        if not collapsed:
+            st.markdown(f'<div class="sb-section">{t("MAIN")}</div>', unsafe_allow_html=True)
         for label, icon in MAIN_MENU:
             active = st.session_state.active_page == label
+            btn_label = icon if collapsed else f"{icon}  {t(label)}"
             st.button(
-                f"{icon}  {t(label)}",
+                btn_label,
                 key=f"nav_main_{label}", use_container_width=True,
                 type="primary" if active else "secondary",
+                help=t(label) if collapsed else None,
                 on_click=go_to, args=(label,),
             )
 
-        st.markdown(f'<div class="sb-section">{t("ANALYSIS")}</div>', unsafe_allow_html=True)
+        # Section Divider between MAIN and ANALYSIS
+        st.markdown('<div class="sb-divider"></div>', unsafe_allow_html=True)
+
+        # ANALYSIS section
+        if not collapsed:
+            st.markdown(f'<div class="sb-section">{t("ANALYSIS")}</div>', unsafe_allow_html=True)
         for target_page, (icon, disp_label) in SCANNERS_DISPLAY.items():
             active = st.session_state.active_page == target_page
+            btn_label = icon if collapsed else f"{icon}  {t(disp_label)}"
             st.button(
-                f"{icon}  {t(disp_label)}",
+                btn_label,
                 key=f"nav_analysis_{target_page}", use_container_width=True,
                 type="primary" if active else "secondary",
+                help=t(disp_label) if collapsed else None,
                 on_click=go_to, args=(target_page,),
             )
 
+        # Section Divider between ANALYSIS and SYSTEM
+        st.markdown('<div class="sb-divider"></div>', unsafe_allow_html=True)
 
-        st.markdown(f'<div class="sb-section">{t("SYSTEM")}</div>', unsafe_allow_html=True)
+        # SYSTEM section
+        if not collapsed:
+            st.markdown(f'<div class="sb-section">{t("SYSTEM")}</div>', unsafe_allow_html=True)
         for label, icon in SYSTEM_MENU:
             active = st.session_state.active_page == label
+            btn_label = icon if collapsed else f"{icon}  {t(label)}"
             st.button(
-                f"{icon}  {t(label)}",
+                btn_label,
                 key=f"nav_system_{label}", use_container_width=True,
                 type="primary" if active else "secondary",
+                help=t(label) if collapsed else None,
                 on_click=go_to, args=(label,),
             )
 
-        st.markdown('<div class="sb-version">v2.0.0 Enterprise</div>', unsafe_allow_html=True)
+        if not collapsed:
+            st.markdown('<div class="sb-version">v1.0.0 Enterprise</div>', unsafe_allow_html=True)
+            # Inject interactive Drag-to-Resize handle for sidebar invisibly
+            components.html(
+                """
+                <script>
+                (function() {
+                    function initResizableSidebar() {
+                        try {
+                            var doc = window.parent.document;
+                            var win = window.parent;
+                            var sidebar = doc.querySelector('.st-key-navcol');
+                            if (!sidebar) return;
+                            
+                            // Guard: Check if sidebar is collapsed (width < 120px)
+                            var isCollapsed = sidebar.getBoundingClientRect().width < 120;
+                            if (isCollapsed) return;
+                            
+                            function updateLayoutWidth(w) {
+                                sidebar.style.setProperty('width', w + 'px', 'important');
+                                sidebar.style.setProperty('max-width', w + 'px', 'important');
+                                sidebar.style.setProperty('min-width', w + 'px', 'important');
+                                
+                                var pOffset = (w + 24) + 'px';
+                                var mainContainers = doc.querySelectorAll('html body div.block-container, div.block-container, [data-testid="stMainBlockContainer"], .stMainBlockContainer');
+                                mainContainers.forEach(function(el) {
+                                    el.style.setProperty('padding-left', pOffset, 'important');
+                                });
+                                
+                                try { win.dispatchEvent(new Event('resize')); } catch(e){}
+                            }
+                            
+                            var handle = sidebar.querySelector('#sb-drag-handle');
+                            if (!handle) {
+                                handle = doc.createElement('div');
+                                handle.id = 'sb-drag-handle';
+                                handle.style.cssText = 'position:absolute; top:0; right:-4px; width:8px; height:100%; cursor:col-resize; z-index:999999; border-right:2px solid transparent; transition:border-color 0.2s, box-shadow 0.2s;';
+                                sidebar.appendChild(handle);
+                                
+                                var isDragging = false;
+                                var startX = 0;
+                                var startWidth = 0;
+                                
+                                handle.addEventListener('mouseenter', function() {
+                                    handle.style.borderRight = '2px solid #22D3EE';
+                                    handle.style.boxShadow = '0 0 10px rgba(34, 211, 238, 0.8)';
+                                });
+                                handle.addEventListener('mouseleave', function() {
+                                    if (!isDragging) {
+                                        handle.style.borderRight = '2px solid transparent';
+                                        handle.style.boxShadow = 'none';
+                                    }
+                                });
+                                
+                                handle.onmousedown = function(e) {
+                                    isDragging = true;
+                                    startX = e.clientX;
+                                    startWidth = sidebar.getBoundingClientRect().width;
+                                    doc.body.style.userSelect = 'none';
+                                    doc.body.style.cursor = 'col-resize';
+                                    handle.style.borderRight = '2px solid #22D3EE';
+                                };
+                                
+                                doc.addEventListener('mousemove', function(e) {
+                                    if (!isDragging) return;
+                                    var deltaX = e.clientX - startX;
+                                    var newWidth = Math.max(160, Math.min(420, startWidth + deltaX));
+                                    
+                                    updateLayoutWidth(newWidth);
+                                    try { localStorage.setItem('custom_sb_width', newWidth); } catch(err){}
+                                });
+                                
+                                doc.addEventListener('mouseup', function() {
+                                    if (isDragging) {
+                                        isDragging = false;
+                                        doc.body.style.userSelect = '';
+                                        doc.body.style.cursor = '';
+                                        handle.style.borderRight = '2px solid transparent';
+                                        handle.style.boxShadow = 'none';
+                                    }
+                                });
+                            }
+                            
+                            try {
+                                var savedWidth = localStorage.getItem('custom_sb_width');
+                                if (savedWidth) {
+                                    var w = parseInt(savedWidth);
+                                    if (w >= 160 && w <= 420) {
+                                        updateLayoutWidth(w);
+                                    }
+                                }
+                            } catch(e){}
+                        } catch(e) {}
+                    }
+                    
+                    if (window.parent.document.readyState === 'complete') {
+                        initResizableSidebar();
+                    } else {
+                        window.parent.addEventListener('DOMContentLoaded', initResizableSidebar);
+                    }
+                    setTimeout(initResizableSidebar, 150);
+                    setTimeout(initResizableSidebar, 600);
+                })();
+                </script>
+                """,
+                height=0,
+                width=0
+            )
+        else:
+            # Inject Collapsed Mode Layout Reset (Strips leftover expanded inline padding)
+            components.html(
+                """
+                <script>
+                (function() {
+                    function resetCollapsedLayout() {
+                        try {
+                            var doc = window.parent.document;
+                            var win = window.parent;
+                            var mainContainers = doc.querySelectorAll('html body div.block-container, div.block-container, [data-testid="stMainBlockContainer"], .stMainBlockContainer');
+                            mainContainers.forEach(function(el) {
+                                el.style.removeProperty('padding-left');
+                                el.style.setProperty('padding-left', '5.8rem', 'important');
+                            });
+                            var sidebar = doc.querySelector('.st-key-navcol');
+                            if (sidebar) {
+                                sidebar.style.removeProperty('width');
+                                sidebar.style.removeProperty('max-width');
+                                sidebar.style.removeProperty('min-width');
+                                sidebar.style.setProperty('width', '4.2rem', 'important');
+                            }
+                            try { win.dispatchEvent(new Event('resize')); } catch(e){}
+                        } catch(e) {}
+                    }
+                    if (window.parent.document.readyState === 'complete') {
+                        resetCollapsedLayout();
+                    } else {
+                        window.parent.addEventListener('DOMContentLoaded', resetCollapsedLayout);
+                    }
+                    setTimeout(resetCollapsedLayout, 100);
+                    setTimeout(resetCollapsedLayout, 350);
+                })();
+                </script>
+                """,
+                height=0,
+                width=0
+            )
 
 
-# Layout shell: custom columns
-
-nav_col, main_col = st.columns([1.2, 4.8], gap="medium")
-with nav_col:
-    render_sidebar()
+# Layout shell: CSS-positioned sidebar (no st.columns)
+render_sidebar()
 
 
 
@@ -1768,7 +2649,7 @@ def render_page_poster(title: str, subtitle: str):
         poster_base64 = ""
 
     if poster_base64:
-        bg_style = f'background-image: linear-gradient(270deg, var(--card-bg) 0%, var(--card-bg) 45%, transparent 100%), url("data:image/png;base64,{poster_base64}");'
+        bg_style = f'background-image: linear-gradient(90deg, rgba(15,24,38,0) 0%, rgba(15,24,38,0.3) 40%, var(--card-bg) 75%, var(--card-bg) 100%), url("data:image/png;base64,{poster_base64}");'
     else:
         bg_style = 'background: var(--card-bg);'
 
@@ -1777,10 +2658,9 @@ def render_page_poster(title: str, subtitle: str):
         <style>
         @media (max-width: 768px) {{
             .responsive-poster {{
-                background-image: linear-gradient(360deg, var(--card-bg) 0%, var(--card-bg) 100%) !important;
+                background-image: linear-gradient(180deg, rgba(15,24,38,0.8) 0%, var(--card-bg) 100%) !important;
                 height: auto !important;
-                min-height: 120px !important;
-                position: relative !important;
+                min-height: 140px !important;
                 padding: 20px !important;
             }}
             .responsive-poster-text {{
@@ -1797,18 +2677,19 @@ def render_page_poster(title: str, subtitle: str):
         </style>
         <div class="responsive-poster" style='
             {bg_style}
-            background-size: cover;
-            background-position: left center;
+            background-size: 100% 100%;
+            background-position: center center;
             background-repeat: no-repeat;
+            background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 18px;
             margin-bottom: 24px;
-            max-width: 1189px;
+            width: 100%;
             height: 186px;
             position: relative;
             box-sizing: border-box;
             overflow: hidden;
-            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
         '>
             <div class="responsive-poster-text" style='
                 position: absolute;
@@ -1842,36 +2723,44 @@ def render_page_poster(title: str, subtitle: str):
 
 
 def donut_chart(labels, values, colors, center_label):
+    dark = st.session_state.get("settings_dark_mode", True)
+    text_color = "#EAF0F7" if dark else "#1E293B"
+    muted_color = "#8B98AC" if dark else "#64748B"
+    border_color = "#0F1826" if dark else "#FFFFFF"
     total = sum(values)
     fig = go.Figure(data=[go.Pie(
         labels=labels, values=values, hole=0.68,
-        marker=dict(colors=colors, line=dict(color="#0F1826", width=2)),
+        marker=dict(colors=colors, line=dict(color=border_color, width=2)),
         textinfo="none", sort=False,
     )])
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         showlegend=False, height=190, margin=dict(l=0, r=0, t=10, b=0),
         annotations=[dict(
-            text=f"<b>{total:,}</b><br><span style='font-size:10px;color:#8B98AC'>{center_label}</span>",
-            x=0.5, y=0.5, font=dict(size=18, color="#EAF0F7"), showarrow=False
+            text=f"<b>{total:,}</b><br><span style='font-size:10px;color:{muted_color}'>{center_label}</span>",
+            x=0.5, y=0.5, font=dict(size=18, color=text_color), showarrow=False
         )],
     )
     return fig
 
 
 def circular_gauge(score, level):
+    dark = st.session_state.get("settings_dark_mode", True)
+    text_color = "#EAF0F7" if dark else "#1E293B"
+    tick_color = "#8B98AC" if dark else "#64748B"
+    border_color = "#1D2838" if dark else "#D1D9E6"
     color = "#22C55E" if score < 30 else "#F5A623" if score < 70 else "#F2545B"
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = score,
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        title = {'text': f"RISK: {level.upper()}", 'font': {'size': 16, 'color': "#EAF0F7"}},
+        domain = {'x': [0, 1], 'y': [0.08, 0.92]},
+        title = {'text': f"RISK: {level.upper()}", 'font': {'size': 14, 'color': text_color}},
         gauge = {
-            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "#8B98AC"},
+            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': tick_color},
             'bar': {'color': color},
             'bgcolor': "rgba(0,0,0,0)",
             'borderwidth': 2,
-            'bordercolor': "#1D2838",
+            'bordercolor': border_color,
             'steps': [
                 {'range': [0, 30], 'color': 'rgba(34,197,94,0.08)'},
                 {'range': [30, 70], 'color': 'rgba(245,166,35,0.08)'},
@@ -1882,9 +2771,9 @@ def circular_gauge(score, level):
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font={'color': "#EAF0F7", 'family': "Inter"},
-        height=220,
-        margin=dict(l=20, r=20, t=30, b=20)
+        font={'color': text_color, 'family': "Inter"},
+        height=230,
+        margin=dict(l=25, r=25, t=45, b=15)
     )
     return fig
 
@@ -1907,7 +2796,7 @@ def render_home():
             """,
             unsafe_allow_html=True
         )
-        b1, b2, b3 = st.columns([1, 1, 2])
+        b1, b2, _ = st.columns([1.25, 1.25, 1.5], gap="small")
         with b1:
             st.markdown('<div class="cta-primary">', unsafe_allow_html=True)
             st.button("🛡️ Run New Scan", key="run_scan_btn", on_click=go_to, args=("URL Scanner",))
@@ -2078,17 +2967,23 @@ def render_system_status():
 
     # 3. API Connection check
     from config.api_config import GOOGLE_SAFE_BROWSING_API_KEY, VIRUSTOTAL_API_KEY, ABUSEIPDB_API_KEY
+    from core.offline_mode import offline_mode
     apis = []
-    if GOOGLE_SAFE_BROWSING_API_KEY:
-        apis.append("Safe Browsing")
-    if VIRUSTOTAL_API_KEY:
-        apis.append("VirusTotal")
-    if ABUSEIPDB_API_KEY:
-        apis.append("AbuseIPDB")
+    if not offline_mode.is_enabled:
+        if GOOGLE_SAFE_BROWSING_API_KEY:
+            apis.append("Safe Browsing")
+        if VIRUSTOTAL_API_KEY:
+            apis.append("VirusTotal")
+        if ABUSEIPDB_API_KEY:
+            apis.append("AbuseIPDB")
     
     api_connected = len(apis) > 0
-    api_status = f"Active ({', '.join(apis)})" if api_connected else "Inactive"
-    api_color = "var(--success)" if api_connected else "var(--danger)"
+    if offline_mode.is_enabled:
+        api_status = "Disabled (Offline Mode Active)"
+        api_color = "var(--warning)"
+    else:
+        api_status = f"Active ({', '.join(apis)})" if api_connected else "Inactive"
+        api_color = "var(--success)" if api_connected else "var(--danger)"
 
     st.markdown(
         f"""
@@ -2102,6 +2997,125 @@ def render_system_status():
         """,
         unsafe_allow_html=True
     )
+
+
+def render_offline_toast():
+    if not st.session_state.get("show_offline_toast"):
+        return
+    
+    toast_time = st.session_state.get("offline_toast_time", 0)
+    elapsed = time.time() - toast_time
+    if elapsed > 10.5:
+        st.session_state["show_offline_toast"] = False
+        return
+
+    is_offline = st.session_state.get("offline_toast_state", False)
+    if is_offline:
+        icon = "<img src='https://cdn-icons-png.flaticon.com/512/3926/3926678.png' style='width:24px;height:24px;'>"
+        title = "Offline Mode Enabled"
+        msg = "All external API calls are disabled. Running on local ML models & offline databases."
+        border_color = "rgba(255, 170, 0, 0.5)"
+        left_accent = "#ffaa00"
+        shadow_color = "rgba(255, 170, 0, 0.25)"
+        grad_bar = "linear-gradient(90deg, #ffaa00, #ff5500)"
+    else:
+        icon = "<img src='https://cdn-icons-png.flaticon.com/512/6532/6532060.png' style='width:24px;height:24px;'>"
+        title = "Online Mode Enabled"
+        msg = "External threat-intelligence API connections restored."
+        border_color = "rgba(0, 210, 255, 0.5)"
+        left_accent = "#00d2ff"
+        shadow_color = "rgba(0, 210, 255, 0.25)"
+        grad_bar = "linear-gradient(90deg, #00d2ff, #0055ff)"
+
+    remaining_sec = max(0.1, 10.0 - elapsed)
+    toast_id = int(toast_time * 1000)
+
+    toast_html = f"""
+    <div id="offline-toast-{toast_id}" class="st-offline-toast-box-{toast_id}">
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding-right: 12px;">
+            <span style="font-size: 20px; line-height: 1; margin-top: 2px;">{icon}</span>
+            <div>
+                <div style="font-weight: 700; font-size: 14px; color: #ffffff; margin-bottom: 2px;">{title}</div>
+                <div style="font-weight: 400; font-size: 12.5px; color: rgba(255, 255, 255, 0.85);">{msg}</div>
+            </div>
+        </div>
+        <div class="st-offline-toast-progress-{toast_id}"></div>
+    </div>
+
+    <style>
+    .st-offline-toast-box-{toast_id} {{
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 9999999;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 320px;
+        max-width: 440px;
+        padding: 14px 18px;
+        background: rgba(18, 24, 38, 0.96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid {border_color};
+        border-left: 4px solid {left_accent};
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px {shadow_color};
+        border-radius: 12px;
+        color: #ffffff;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        line-height: 1.4;
+        overflow: hidden;
+        animation: 
+            slideInToast_{toast_id} 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+            slideOutToast_{toast_id} 0.4s cubic-bezier(0.16, 1, 0.3, 1) {remaining_sec:.2f}s forwards;
+    }}
+
+    .st-offline-toast-close-{toast_id} {{
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        line-height: 1;
+        align-self: flex-start;
+    }}
+
+    .st-offline-toast-close-{toast_id}:hover {{
+        color: #fff;
+        background: rgba(255, 255, 255, 0.15);
+    }}
+
+    .st-offline-toast-progress-{toast_id} {{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        background: {grad_bar};
+        animation: toastProgressAnimation_{toast_id} {remaining_sec:.2f}s linear forwards;
+    }}
+
+    @keyframes slideInToast_{toast_id} {{
+        from {{ transform: translateX(120%); opacity: 0; }}
+        to {{ transform: translateX(0); opacity: 1; }}
+    }}
+
+    @keyframes slideOutToast_{toast_id} {{
+        from {{ transform: translateX(0); opacity: 1; }}
+        to {{ transform: translateX(120%); opacity: 0; }}
+    }}
+
+    @keyframes toastProgressAnimation_{toast_id} {{
+        from {{ width: 100%; }}
+        to {{ width: 0%; }}
+    }}
+    </style>
+    """
+    st.markdown(toast_html, unsafe_allow_html=True)
 
 
 # Mapping scanner categories to circular icons
@@ -2425,6 +3439,21 @@ def render_dashboard():
 
         unsafe_allow_html=True
     )
+
+    # ── Section 5 Dashboard Score Breakdown ──────────────────────────────────
+    with st.expander("📊 Unified Risk Score Calculation Breakdown", expanded=False):
+        st.markdown(
+            """
+            CyberMind AI calculates a **Unified Risk Score (0 - 100)** using a multi-telemetry weighted model:
+            - **Blacklist Detection Weight:** Up to +40 points (Google Safe Browsing, VirusTotal, AbuseIPDB)
+            - **Brand Impersonation / Homograph Weight:** Up to +30 points (Unicode confusables & typosquatting edit distance)
+            - **File Signature / Entropy / Macro Weight:** Up to +35 points (Shannon entropy >7.0, suspicious VBA macros)
+            - **Network & IP Reputation Weight:** Up to +35 points (TOR Exit Nodes, unverified VPN proxies, low ASN score)
+            - **Domain & Email Auth Weight:** Up to +25 points (SPF/DKIM/DMARC missing, disposable email domains)
+            
+            *Risk Levels:* **Safe** (0-19) | **Low** (20-39) | **Medium** (40-59) | **High** (60-79) | **Critical** (80-100)
+            """
+        )
 
     # 2. Row 2: 8 Analysis module cards for direct navigation
     st.markdown('<br><div class="section-title">Analysis Modules</div>', unsafe_allow_html=True)
@@ -2822,14 +3851,25 @@ def render_website_breach_intelligence(domain_or_url: str):
         return
 
     risk_color = "var(--success)" if report["risk_level"] == "Low" else "var(--warning)" if report["risk_level"] == "Medium" else "var(--danger)"
+
+    # Build multi-org label
+    matched_orgs = report.get("matched_orgs", [report["company_name"]])
+    match_note = report.get("match_note", "")
+    if len(matched_orgs) > 1:
+        company_display = " + ".join(matched_orgs)
+        org_subtitle = f"<div style='font-size:10px; color:var(--warning); margin-top:3px; font-weight:600;'>⚠️ {len(matched_orgs)} entities matched</div>"
+    else:
+        company_display = report["company_name"]
+        org_subtitle = ""
     
     st.markdown(
         f"""
         <div class="metric-grid" style="margin-bottom:20px;">
             <div class="chart-card" style="padding:16px 14px; text-align:center;">
                 <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">Company Name</div>
-                <div class="metric-value" style="font-size:20px; font-weight:800; color:var(--text);">{report['company_name']}</div>
+                <div class="metric-value" style="font-size:18px; font-weight:800; color:var(--text);">{company_display}</div>
                 <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">Sector: {report['sector']}</div>
+                {org_subtitle}
             </div>
             <div class="chart-card" style="padding:16px 14px; text-align:center;">
                 <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:4px;">Total Breaches</div>
@@ -2850,6 +3890,20 @@ def render_website_breach_intelligence(domain_or_url: str):
         """,
         unsafe_allow_html=True
     )
+
+    # Match transparency note
+    if match_note:
+        st.markdown(
+            f"""
+            <div style="background:rgba(245,166,35,0.06); border:1px solid rgba(245,166,35,0.2);
+                        border-radius:8px; padding:8px 14px; margin-bottom:16px; font-size:11.5px;
+                        color:var(--text-muted); display:flex; align-items:center; gap:8px;">
+                <span style="color:var(--warning);">ℹ️</span>
+                <span>{match_note}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     # ── ML Sector Prediction Card (breaches_model) ────────────────────────
     ml_sector = report.get("ml_sector_prediction", {})
@@ -3279,49 +4333,36 @@ def render_device_security_page():
         st.markdown(
             """
             <style>
-            .st-key-ready_to_audit_container {
-                background: rgba(13, 16, 29, 0.6) !important;
-                border: 1px solid rgba(99, 102, 241, 0.22) !important;
-                border-radius: 20px !important;
-                padding: 40px 35px 35px 35px !important;
-                box-shadow: 
-                    0 15px 35px rgba(0, 0, 0, 0.4), 
-                    0 0 30px rgba(99, 102, 241, 0.05) !important;
-                backdrop-filter: blur(16px) !important;
+            .ready-audit-hero-card {
+                background: var(--card-bg) !important;
+                background-color: var(--card-bg) !important;
+                border: 1px solid var(--border) !important;
+                border-radius: 16px !important;
+                padding: 32px 24px !important;
                 position: relative !important;
                 overflow: hidden !important;
-                margin-top: 15px !important;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
                 margin-bottom: 20px !important;
             }
-            .st-key-ready_to_audit_container::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0; left: 0; right: 0; bottom: 0 !important;
-                background: linear-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px), 
-                            linear-gradient(90deg, rgba(99, 102, 241, 0.02) 1px, transparent 1px) !important;
-                background-size: 24px 24px !important;
-                z-index: 0 !important;
-                opacity: 0.6 !important;
-                pointer-events: none !important;
+            .st-key-ready_to_audit_container {
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
             }
             .spec-badge {
-                background: rgba(255, 255, 255, 0.02) !important;
-                border: 1px solid rgba(255, 255, 255, 0.05) !important;
-                border-radius: 30px !important;
-                padding: 6px 16px !important;
-                display: flex !important;
+                background: var(--card-bg-soft) !important;
+                background-color: var(--card-bg-soft) !important;
+                border: 1px solid var(--border) !important;
+                border-radius: 20px !important;
+                padding: 6px 14px !important;
+                display: inline-flex !important;
                 align-items: center !important;
-                gap: 8px !important;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
-                transition: all 0.2s ease !important;
-            }
-            .spec-badge:hover {
-                background: rgba(255, 255, 255, 0.04) !important;
-                border-color: rgba(255, 255, 255, 0.1) !important;
+                gap: 6px !important;
             }
             .audit-card {
-                background: rgba(255, 255, 255, 0.02) !important;
-                border: 1px solid rgba(255, 255, 255, 0.04) !important;
+                background: var(--card-bg-soft) !important;
+                background-color: var(--card-bg-soft) !important;
+                border: 1px solid var(--border) !important;
                 border-radius: 12px !important;
                 padding: 20px 16px !important;
                 text-align: center !important;
@@ -3330,9 +4371,9 @@ def render_device_security_page():
             }
             .audit-card:hover {
                 transform: translateY(-4px) !important;
-                background: rgba(99, 102, 241, 0.04) !important;
-                border-color: rgba(99, 102, 241, 0.2) !important;
-                box-shadow: 0 10px 25px rgba(99, 102, 241, 0.08) !important;
+                background: var(--hover-bg) !important;
+                border-color: var(--grad-a) !important;
+                box-shadow: 0 10px 25px rgba(108, 92, 231, 0.15) !important;
             }
             
             /* Styled neon scan button */
@@ -3364,52 +4405,54 @@ def render_device_security_page():
             st.markdown(
                 clean_html(
                     f"""
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 60%); z-index: 0; pointer-events: none;"></div>
-                    <div style="position: relative; z-index: 1; text-align: center; width: 100%;">
-                        <div style="margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.35));"><img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="90" height="90" style="object-fit: contain;"></div>
-                        <h3 style="margin-bottom: 8px; color: #FFFFFF; font-weight: 800; letter-spacing: 0.5px; font-size: 23px;">Ready to Audit System Security</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 650px; margin: 0 auto 20px auto;">
-                            CyberMind AI will run an in-depth security scan of your device's active defenses, resource loads, active ports, startup configurations, and download folders.
-                        </p>
+                    <div class="ready-audit-hero-card">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 60%); z-index: 0; pointer-events: none;"></div>
+                        <div style="position: relative; z-index: 1; text-align: center; width: 100%;">
+                            <div style="margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.35));"><img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="90" height="90" style="object-fit: contain;"></div>
+                            <h3 style="margin-bottom: 8px; color: var(--text); font-weight: 800; letter-spacing: 0.5px; font-size: 23px;">Ready to Audit System Security</h3>
+                            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 650px; margin: 0 auto 20px auto;">
+                                CyberMind AI will run an in-depth security scan of your device's active defenses, resource loads, active ports, startup configurations, and download folders.
+                            </p>
 
-                        <!-- LIVE INFO BAR -->
-                        <div style="display: flex; justify-content: center; gap: 14px; margin: 24px auto; flex-wrap: wrap; max-width: 700px;">
-                            <div class="spec-badge">
-                                <span style="color:#8C7CF0; font-size: 14px;">💻</span> <span style="color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.5px;">HOST:</span> <b style="color:#FFFFFF; font-size:12.5px;">{sys_hostname}</b>
+                            <!-- LIVE INFO BAR -->
+                            <div style="display: flex; justify-content: center; gap: 14px; margin: 24px auto; flex-wrap: wrap; max-width: 700px;">
+                                <div class="spec-badge">
+                                    <span style="color:#8C7CF0; font-size: 14px;">💻</span> <span style="color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.5px;">HOST:</span> <b style="color:var(--text); font-size:12.5px;">{sys_hostname}</b>
+                                </div>
+                                <div class="spec-badge">
+                                    <span style="color:#22D3EE; font-size: 14px;">⚙️</span> <span style="color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.5px;">OS:</span> <b style="color:var(--text); font-size:12.5px;">{sys_os} {sys_ver} ({sys_arch})</b>
+                                </div>
+                                <div class="spec-badge">
+                                    <span style="color:#F43F5E; font-size: 14px;">🧠</span> <span style="color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.5px;">RAM:</span> <b style="color:var(--text); font-size:12.5px;">{sys_ram_gb} GB</b>
+                                </div>
                             </div>
-                            <div class="spec-badge">
-                                <span style="color:#22D3EE; font-size: 14px;">⚙️</span> <span style="color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.5px;">OS:</span> <b style="color:#FFFFFF; font-size:12.5px;">{sys_os} {sys_ver} ({sys_arch})</b>
-                            </div>
-                            <div class="spec-badge">
-                                <span style="color:#F43F5E; font-size: 14px;">🧠</span> <span style="color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.5px;">RAM:</span> <b style="color:#FFFFFF; font-size:12.5px;">{sys_ram_gb} GB</b>
-                            </div>
-                        </div>
 
-                        <!-- AUDIT CAPABILITIES -->
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 750px; margin: 0 auto 25px auto;">
-                            <!-- Card 1 -->
-                            <div class="audit-card" style="border-top: 3px solid #8C7CF0 !important;">
-                                <div style="width:36px; height:36px; background:rgba(140,124,240,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
-                                    <span style="font-size: 16px;">🛡️</span>
+                            <!-- AUDIT CAPABILITIES -->
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 750px; margin: 0 auto 25px auto;">
+                                <!-- Card 1 -->
+                                <div class="audit-card" style="border-top: 3px solid #8C7CF0 !important;">
+                                    <div style="width:36px; height:36px; background:rgba(140,124,240,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+                                        <span style="font-size: 16px;">🛡️</span>
+                                    </div>
+                                    <div style="font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Defender & OS</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">Firewall status, Antivirus detection, & Windows updates</div>
                                 </div>
-                                <div style="font-size: 12px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px;">Defender & OS</div>
-                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">Firewall status, Antivirus detection, & Windows updates</div>
-                            </div>
-                            <!-- Card 2 -->
-                            <div class="audit-card" style="border-top: 3px solid #3B82F6 !important;">
-                                <div style="width:36px; height:36px; background:rgba(59,130,246,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
-                                    <span style="font-size: 16px;">📊</span>
+                                <!-- Card 2 -->
+                                <div class="audit-card" style="border-top: 3px solid #3B82F6 !important;">
+                                    <div style="width:36px; height:36px; background:rgba(59,130,246,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+                                        <span style="font-size: 16px;">📊</span>
+                                    </div>
+                                    <div style="font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Resources & Disk</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">CPU & RAM usages, Disk health & partitions capacity</div>
                                 </div>
-                                <div style="font-size: 12px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px;">Resources & Disk</div>
-                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">CPU & RAM usages, Disk health & partitions capacity</div>
-                            </div>
-                            <!-- Card 3 -->
-                            <div class="audit-card" style="border-top: 3px solid #22D3EE !important;">
-                                <div style="width:36px; height:36px; background:rgba(34,211,238,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
-                                    <span style="font-size: 16px;">🌐</span>
+                                <!-- Card 3 -->
+                                <div class="audit-card" style="border-top: 3px solid #22D3EE !important;">
+                                    <div style="width:36px; height:36px; background:rgba(34,211,238,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+                                        <span style="font-size: 16px;">🌐</span>
+                                    </div>
+                                    <div style="font-size: 12px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Ports & Tasks</div>
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">Active listening ports, browser audit, & startup apps</div>
                                 </div>
-                                <div style="font-size: 12px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px;">Ports & Tasks</div>
-                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; line-height: 1.4;">Active listening ports, browser audit, & startup apps</div>
                             </div>
                         </div>
                     </div>
@@ -3574,16 +4617,27 @@ def render_device_security_page():
                     unsafe_allow_html=True
                 )
             with c_sec3:
+                up_info = details['updates']
+                pending_txt = "Auto-updates disabled in settings" if up_info.get("pending_count") is None else f"{up_info.get('pending_count', 0)} updates missing"
                 st.markdown(
                     f"""
                     <div class="chart-card" style="padding: 15px; text-align: center;">
                         <div style="font-size: 12px; color: var(--text-muted);">Windows Update Patches</div>
-                        <div style="font-size: 20px; font-weight: 700; margin-top: 8px;">{details['updates']['status']}</div>
-                        <div style="font-size: 11px; color: var(--text-faint); margin-top: 5px;">{details['updates']['pending_count']} updates missing</div>
+                        <div style="font-size: 20px; font-weight: 700; margin-top: 8px;">{up_info['status']}</div>
+                        <div style="font-size: 11px; color: var(--text-faint); margin-top: 5px;">{pending_txt}</div>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
+                if up_info.get("manual_mode") or not st.session_state.get("settings_auto_updates", True):
+                    st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+                    if st.button("🔄 Check for Updates", key="btn_check_win_updates_manual", use_container_width=True):
+                        with st.spinner("Querying Windows Update API..."):
+                            from services.device_security_service import device_security_service
+                            fresh_updates = device_security_service.get_windows_updates()
+                            res["scan_details"]["updates"] = fresh_updates
+                            st.session_state.device_scan_result = res
+                            st.rerun()
                 
         with tab_res:
             st.subheader("Resources & Performance")
@@ -3677,8 +4731,232 @@ def render_device_security_page():
             unsafe_allow_html=True
         )
 
-        # Optional audits section removed as requested
-        pass
+        # ── Section 18: Enhanced Device Security ──
+
+        # 18a: Overall Device Health Score badge
+        sec_score = res.get('security_score', 0)
+        if sec_score >= 80:
+            health_color, health_label = "#10B981", "Excellent"
+        elif sec_score >= 60:
+            health_color, health_label = "#F59E0B", "Fair"
+        elif sec_score >= 40:
+            health_color, health_label = "#F97316", "At Risk"
+        else:
+            health_color, health_label = "#EF4444", "Critical"
+
+        st.markdown(f'''
+        <div class="chart-card" style="padding: 20px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; border: 4px solid {health_color};
+                            display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <span style="font-size: 26px; font-weight: 900; color: {health_color};">{sec_score}</span>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px;">
+                        Device Health: <span style="color: {health_color};">{health_label}</span>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">
+                        Score computed from {len(res.get("problems_found", []))} identified issues across OS security,
+                        firewall, antivirus, ports, startup apps, and file system audits.
+                        {'⚠️ Immediate action recommended.' if sec_score < 50 else '✅ No critical issues detected.'}
+                    </div>
+                </div>
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
+
+        # 18b: HOSTS file hijack check
+        st.markdown('<div class="section-title">📄 HOSTS File Integrity Check</div>', unsafe_allow_html=True)
+        try:
+            import platform as _plat
+            if _plat.system() == "Windows":
+                hosts_path = r"C:\Windows\System32\drivers\etc\hosts"
+            else:
+                hosts_path = "/etc/hosts"
+            with open(hosts_path, "r", encoding="utf-8", errors="ignore") as hf:
+                hosts_lines = hf.readlines()
+            suspicious_hosts = []
+            safe_domains = {"localhost", "broadcasthost", "ip6-localhost", "ip6-loopback", "ip6-localnet",
+                            "ip6-mcastprefix", "ip6-allnodes", "ip6-allrouters", "ip6-allhosts"}
+            for line in hosts_lines:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+                parts = stripped.split()
+                if len(parts) >= 2:
+                    ip, domain = parts[0], parts[1].lower()
+                    if domain not in safe_domains and ip not in ("127.0.0.1", "::1", "0.0.0.0", "255.255.255.255"):
+                        suspicious_hosts.append({"IP": ip, "Domain": domain})
+
+            if suspicious_hosts:
+                st.warning(f"⚠️ {len(suspicious_hosts)} suspicious entries found in HOSTS file — possible DNS hijack:")
+                import pandas as _pd_hosts
+                st.dataframe(_pd_hosts.DataFrame(suspicious_hosts), use_container_width=True, hide_index=True)
+            else:
+                st.markdown('''
+                <div class="chart-card" style="padding: 15px; display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 22px;">✅</span>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--text);">HOSTS File Clean</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">No suspicious DNS redirection entries detected.</div>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+        except Exception as hosts_exc:
+            st.info(f"Could not read HOSTS file: {hosts_exc}")
+
+        # 18c: Startup apps risk tagging
+        st.markdown('<div class="section-title">⚡ Startup Risk Assessment</div>', unsafe_allow_html=True)
+        startup_apps = details.get('startup', {}).get('apps', [])
+        if startup_apps:
+            high_risk_keywords = ["teamviewer", "anydesk", "vnc", "remote", "rdp", "rat", "miner",
+                                  "crypto", "torrent", "p2p", "proxy"]
+            risk_tagged = []
+            for app in startup_apps:
+                name_lower = str(app.get("name", "")).lower()
+                risk = "⚠️ Review" if any(kw in name_lower for kw in high_risk_keywords) else "✅ Normal"
+                risk_tagged.append({
+                    "Name": app.get("name", "Unknown"),
+                    "Path": str(app.get("path", app.get("command", "N/A")))[:80],
+                    "Risk": risk
+                })
+            risk_df = pd.DataFrame(risk_tagged)
+            flagged = risk_df[risk_df["Risk"] == "⚠️ Review"]
+            if not flagged.empty:
+                st.warning(f"⚠️ {len(flagged)} startup application(s) flagged for review:")
+            st.dataframe(risk_df, use_container_width=True, hide_index=True)
+        else:
+            st.info("No startup applications data available.")
+
+        # 18d: Browser client-side security telemetry (JS component)
+        st.markdown('<div class="section-title">🌐 Browser Security Telemetry</div>', unsafe_allow_html=True)
+        import streamlit.components.v1 as _components
+        _components.html("""
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+            body { background: transparent; }
+            .card {
+                background: rgba(20, 27, 45, 0.85);
+                border: 1px solid rgba(255,255,255,0.06);
+                border-radius: 14px;
+                padding: 20px;
+            }
+            .subtitle { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 14px; }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 12px;
+            }
+            .badge {
+                background: rgba(255,255,255,0.02);
+                border: 1px solid rgba(255,255,255,0.05);
+                border-radius: 10px;
+                padding: 12px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .icon { font-size: 16px; }
+            .label { font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 700; letter-spacing: 0.3px; }
+            .value { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); margin-top: 2px; }
+        </style>
+        <div class="card">
+            <div class="subtitle">Client-side checks executed in your browser &mdash; no data leaves this device.</div>
+            <div class="grid">
+                <div class="badge">
+                    <span class="icon">&#127850;</span>
+                    <div>
+                        <div class="label">COOKIES</div>
+                        <div class="value" id="tel-cookies">Checking...</div>
+                    </div>
+                </div>
+                <div class="badge">
+                    <span class="icon">&#128225;</span>
+                    <div>
+                        <div class="label">WEBRTC LEAK</div>
+                        <div class="value" id="tel-webrtc">Checking...</div>
+                    </div>
+                </div>
+                <div class="badge">
+                    <span class="icon">&#128274;</span>
+                    <div>
+                        <div class="label">HTTPS CONTEXT</div>
+                        <div class="value" id="tel-https">Checking...</div>
+                    </div>
+                </div>
+                <div class="badge">
+                    <span class="icon">&#128421;&#65039;</span>
+                    <div>
+                        <div class="label">DO NOT TRACK</div>
+                        <div class="value" id="tel-dnt">Checking...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        (function(){
+            try {
+                var ce = document.getElementById('tel-cookies');
+                if(ce) ce.textContent = navigator.cookieEnabled ? '\\u{1F7E1} Enabled' : '\\u{1F7E2} Disabled';
+            } catch(e){}
+            try {
+                var we = document.getElementById('tel-webrtc');
+                if(window.RTCPeerConnection){
+                    var pc = new RTCPeerConnection({iceServers:[]});
+                    pc.createDataChannel('');
+                    pc.createOffer().then(function(o){pc.setLocalDescription(o)});
+                    pc.onicecandidate = function(ev){
+                        if(!ev.candidate) return;
+                        var c = ev.candidate.candidate;
+                        var ip = c.match(/([0-9]{1,3}(\\.[0-9]{1,3}){3})/);
+                        if(ip && we) we.textContent = '\\u{1F534} Leaking: ' + ip[1];
+                        pc.close();
+                    };
+                    setTimeout(function(){ if(we && we.textContent==='Checking...') we.textContent='\\u{1F7E2} No Leak'; }, 3000);
+                } else { if(we) we.textContent = '\\u{1F7E2} Not Supported'; }
+            } catch(e){ var we2=document.getElementById('tel-webrtc'); if(we2) we2.textContent='\\u{1F7E2} Blocked'; }
+            try {
+                var he = document.getElementById('tel-https');
+                if(he) he.textContent = location.protocol==='https:' ? '\\u{1F7E2} Secure' : '\\u{1F7E1} Insecure (HTTP)';
+            } catch(e){}
+            try {
+                var de = document.getElementById('tel-dnt');
+                if(de) de.textContent = (navigator.doNotTrack==='1') ? '\\u{1F7E2} Enabled' : '\\u{1F7E1} Not Set';
+            } catch(e){}
+        })();
+        </script>
+        """, height=140, scrolling=False)
+
+        # 18e: Download local scanner script
+        st.markdown('<div class="section-title">🔧 Offline Security Agent</div>', unsafe_allow_html=True)
+        try:
+            import os as _os_dl
+            scanner_path = _os_dl.path.join("data", "downloads", "cybermind_local_scanner.py")
+            if _os_dl.path.exists(scanner_path):
+                with open(scanner_path, "r", encoding="utf-8") as f_sc:
+                    scanner_code = f_sc.read()
+                st.markdown('''
+                <div class="chart-card" style="padding: 20px;">
+                    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(140,124,240,0.12);
+                                    display: flex; align-items: center; justify-content: center; font-size: 18px;"><img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="90" height="90" style="object-fit: contain;"></div>
+                        <div>
+                            <div style="font-size: 15px; font-weight: 700; color: var(--text);">CyberMind Local Scanner</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">
+                                Standalone Python script for offline workstation audits — run anywhere without CyberMind installed.
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-faint); line-height: 1.6;">
+                        Audits: HOSTS file • DNS configuration • USB device history • Open ports • Startup apps •
+                        Firewall status • Suspicious downloads • System integrity.
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            else:
+                st.info("Local scanner script not found at data/downloads/cybermind_local_scanner.py")
+        except Exception as dl_exc:
+            st.warning(f"Could not load local scanner: {dl_exc}")
 
         st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
         col_act1, col_act2 = st.columns([3.5, 1.5])
@@ -3743,6 +5021,8 @@ def render_ai_assistant_page():
         escaped = escaped.replace("</pre><br>", "</pre>")
         return escaped
 
+    origin_page = st.session_state.get("ai_assistant_origin_page", "Dashboard")
+
     render_page_poster(
         "AI Security Assistant",
         "Your offline, local cybersecurity companion. Ask questions and get real-time recommendations."
@@ -3755,7 +5035,13 @@ def render_ai_assistant_page():
     c_chat, c_sug = st.columns([2.0, 1.2])
     
     with c_chat:
-        st.markdown('<div class="section-title">💬 Interactive Security Chat</div>', unsafe_allow_html=True)
+        col_chat_title, col_chat_back = st.columns([1.2, 1.0])
+        with col_chat_title:
+            st.markdown('<div class="section-title" style="margin-bottom:0; padding-top:4px;">💬 Interactive Security Chat</div>', unsafe_allow_html=True)
+        with col_chat_back:
+            if st.button(f"⬅️ Back to {origin_page}", key="ai_back_to_origin_btn", use_container_width=True):
+                st.session_state.active_page = origin_page
+                st.rerun()
         
         with st.container(key="interactive_chat_card"):
             chat_container_style = """
@@ -3847,13 +5133,37 @@ def render_ai_assistant_page():
                 st.markdown(
                     """
                     <div style="padding: 30px; text-align: center; color: var(--text-muted); min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                         <div style="font-size: 40px; margin-bottom: 10px;"><img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" alt="AI Assistant" width="50" height="50"></div>
+                         <div style="font-size: 40px; margin-bottom: 10px;"><img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" alt="AI Assistant" width="65" height="65"></div>
                          <div style="font-size: 13.5px;">Hello! Ask me any question about cybersecurity or ask for suggestions based on your scan records.</div>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
                 
+            # ── Follow-up question pills from last response ──────────────
+            followup_qs = st.session_state.get("ai_followup_questions", [])
+            if followup_qs and st.session_state.ai_page_chat_history:
+                st.markdown(
+                    "<div style='margin-top:6px; margin-bottom:4px;'>"
+                    "<span style='font-size:12px; font-weight:700; color:var(--info);'>🔗 Follow-up Questions:</span>"
+                    "</div>",
+                    unsafe_allow_html=True
+                )
+                fq_cols = st.columns(len(followup_qs))
+                clicked_followup = ""
+                for fq_idx, (fq_col, fq) in enumerate(zip(fq_cols, followup_qs)):
+                    with fq_col:
+                        if st.button(fq, key=f"followup_pill_{fq_idx}", use_container_width=True):
+                            clicked_followup = fq
+                if clicked_followup:
+                    from modules.ai_assistant import get_chat_response_with_suggestions
+                    fq_resp, fq_followups = get_chat_response_with_suggestions(clicked_followup)
+                    st.session_state.ai_page_chat_history.append(("user", clicked_followup))
+                    st.session_state.ai_page_chat_history.append(("assistant", fq_resp))
+                    st.session_state["ai_followup_questions"] = fq_followups
+                    st.rerun()
+            # ─────────────────────────────────────────────────────────────
+
             # Suggested questions pills
             st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
             st.markdown("<span style='font-size: 13px; font-weight: 700; color: var(--text-muted);'>💡 Suggested Questions:</span>", unsafe_allow_html=True)
@@ -3871,7 +5181,15 @@ def render_ai_assistant_page():
                 with col:
                     if st.button(query, key=f"sug_query_{idx}", use_container_width=True):
                         selected_suggested = query
-                        
+
+            st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
+            if st.button("💡 Explain Last Scan Result", key="explain_last_scan_btn", use_container_width=True):
+                from modules.ai_assistant import explain_last_scan
+                expl_text = explain_last_scan()
+                st.session_state.ai_page_chat_history.append(("user", "Explain my last scan result"))
+                st.session_state.ai_page_chat_history.append(("assistant", expl_text))
+                st.rerun()
+
             # Chat Input Form
             with st.form("chat_form", clear_on_submit=True):
                 chat_input = st.text_input("Ask something...", placeholder="Type your security question here...", label_visibility="collapsed")
@@ -3894,40 +5212,73 @@ def render_ai_assistant_page():
                 query_to_run = selected_suggested
                 
             if query_to_run:
-                response = get_chat_response(query_to_run)
+                from modules.ai_assistant import get_chat_response_with_suggestions
+                response, followup_qs = get_chat_response_with_suggestions(query_to_run)
                 st.session_state.ai_page_chat_history.append(("user", query_to_run))
                 st.session_state.ai_page_chat_history.append(("assistant", response))
+                st.session_state["ai_followup_questions"] = followup_qs
                 st.rerun()
             
     with c_sug:
-        st.markdown('<div class="section-title">📢 Scan Suggestions</div>', unsafe_allow_html=True)
-        suggestions = get_auto_suggestions()
-        sug_html = ""
-        for tip in suggestions:
-            sug_html += f'<div style="padding: 10px 12px; margin-bottom: 10px; background: var(--card-bg-soft); border-left: 3px solid var(--info); border-radius: 6px; font-size: 12.5px; line-height: 1.5; color: var(--text);">{html.escape(tip)}</div>'
-            
-        st.markdown(
-            f"""
-            <div class="chart-card" style="padding: 18px; min-height: 200px;">
-                {sug_html}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
-        st.markdown('<div class="section-title">💡 Security Topics Covered</div>', unsafe_allow_html=True)
         st.markdown(
             """
-            <div class="chart-card" style="padding: 16px; font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">
-                ✔ Passwords & Two-Factor Auth (2FA)<br>
-                ✔ Phishing, Spam & Scam Detection<br>
-                ✔ Network, Wi-Fi & VPN Configuration<br>
-                ✔ Ransomware, Viruses & Malware Defense<br>
-                ✔ SSL, Domain Age & Web Safety Rules
-            </div>
+            <style>
+            [data-testid="stColumn"]:has(.st-key-ai_sug_panel),
+            [data-testid="column"]:has(.st-key-ai_sug_panel) {
+                align-self: flex-start !important;
+                position: sticky !important;
+                top: 1rem !important;
+            }
+            .st-key-ai_sug_panel {
+                position: sticky !important;
+                top: 1rem !important;
+                max-height: calc(100vh - 2rem) !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                padding-right: 4px !important;
+                scrollbar-width: thin !important;
+                scrollbar-color: var(--border) transparent !important;
+            }
+            .st-key-ai_sug_panel::-webkit-scrollbar {
+                width: 4px;
+            }
+            .st-key-ai_sug_panel::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 2px;
+            }
+            </style>
             """,
             unsafe_allow_html=True
         )
+        with st.container(key="ai_sug_panel"):
+            st.markdown('<div class="section-title">📢 Scan Suggestions</div>', unsafe_allow_html=True)
+            suggestions = get_auto_suggestions()
+            sug_html = ""
+            for tip in suggestions:
+                sug_html += f'<div style="padding: 10px 12px; margin-bottom: 10px; background: var(--card-bg-soft); border-left: 3px solid var(--info); border-radius: 6px; font-size: 12.5px; line-height: 1.5; color: var(--text);">{html.escape(tip)}</div>'
+                
+            st.markdown(
+                f"""
+                <div class="chart-card" style="padding: 18px; min-height: 200px;">
+                    {sug_html}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            st.markdown('<div class="section-title">💡 Security Topics Covered</div>', unsafe_allow_html=True)
+            st.markdown(
+                """
+                <div class="chart-card" style="padding: 16px; font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">
+                    ✔ Passwords & Two-Factor Auth (2FA)<br>
+                    ✔ Phishing, Spam & Scam Detection<br>
+                    ✔ Network, Wi-Fi & VPN Configuration<br>
+                    ✔ Ransomware, Viruses & Malware Defense<br>
+                    ✔ SSL, Domain Age & Web Safety Rules
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
 def render_universal_scan_page():
@@ -3972,12 +5323,32 @@ def render_universal_scan_page():
         
         # Color mapping
         color = "#22C55E" # green
-        if risk_level == "Medium":
+        if risk_level in ("Medium", "Suspicious"):
             color = "#F5A623" # orange
         elif risk_level in ("High", "Critical"):
             color = "#EF4444" # red
+        elif risk_level == "Unverified":
+            color = "#F59E0B" # amber
             
-        st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+        # AI Executive Summary Banner
+        try:
+            from modules.ai_summary_module import ai_summary_module
+            exec_summary = ai_summary_module.generate_summary(res)
+        except Exception:
+            exec_summary = f"Universal scan analysis completed for {res.get('value', 'target')}. Combined Risk Score is {risk_score}/100 ({risk_level})."
+
+        st.markdown(
+            f"""
+            <div style="background:rgba(34, 184, 240, 0.05); border:1px solid rgba(34, 184, 240, 0.25); border-radius:12px; padding:14px 18px; margin-top:16px; margin-bottom:16px;">
+                <div style="font-size:12px; font-weight:700; color:#22D3EE; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle;">
+                    <span>AI Executive Summary</span>
+                </div>
+                <div style="font-size:13.5px; line-height:1.5; color:var(--text);">{exec_summary}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         
         # Display Overview Row
         col_ov1, col_ov2, col_ov3 = st.columns(3)
@@ -4202,6 +5573,95 @@ def render_universal_scan_page():
                     unsafe_allow_html=True
                 )
 
+        # AI Explainable Analysis Section
+        st.markdown('<div class="section-title" style="margin-top: 22px;">🤖 AI Explainable Analysis</div>', unsafe_allow_html=True)
+        
+        ai_explain_points = []
+        if inp_type == "url":
+            url_data = details.get("url_data", {})
+            reasons = url_data.get("risk", {}).get("reasons", [])
+            if details.get("is_malicious"):
+                ai_explain_points.append("🔴 Flagged as malicious or phishing by Google Safe Browsing / VirusTotal intelligence.")
+            else:
+                ai_explain_points.append("🟢 Clean status verified across threat intelligence databases.")
+
+            if details.get("ssl_valid"):
+                ai_explain_points.append(f"🟢 SSL Certificate is valid (Issuer: {details.get('ssl_issuer', 'Unknown')}).")
+            else:
+                ai_explain_points.append("🔴 SSL Certificate is missing or invalid, making HTTP traffic vulnerable.")
+
+            if details.get("redirect_count", 0) > 0:
+                ai_explain_points.append(f"⚠️ Target URL redirects through {details.get('redirect_count')} intermediate hop(s).")
+            else:
+                ai_explain_points.append("🟢 Direct connection without suspicious multi-hop redirects.")
+
+            if reasons:
+                for r in reasons[:3]:
+                    ai_explain_points.append(f"⚠️ Risk Engine Factor: {r}")
+            else:
+                ai_explain_points.append("🟢 No alarming heuristic anomalies detected in URL structure.")
+
+        elif inp_type == "email":
+            if details.get("is_valid"):
+                ai_explain_points.append(f"🟢 Email address format is syntactically valid ({details.get('email')}).")
+            else:
+                ai_explain_points.append("🔴 Email address format is invalid.")
+
+            if details.get("mx_available"):
+                ai_explain_points.append("🟢 Active MX mail servers configured for sender domain.")
+            else:
+                ai_explain_points.append("🔴 Domain lacks active MX records (cannot receive real email).")
+
+            if details.get("is_disposable"):
+                ai_explain_points.append("🔴 Disposable / temporary burner email provider detected.")
+            else:
+                ai_explain_points.append("🟢 Standard non-disposable email provider.")
+
+            if details.get("breach_found"):
+                ai_explain_points.append(f"🔴 Compromised in {details.get('breach_count', 0)} public data breach leaks ({details.get('records_lost', 0):,} records).")
+            else:
+                ai_explain_points.append("🟢 No public database leak exposures found for sender domain.")
+
+        else: # domain
+            dom_data = details.get("domain_data", {})
+            reasons = dom_data.get("risk", {}).get("reasons", [])
+            if details.get("registrar") != "Unknown":
+                ai_explain_points.append(f"🟢 Registered domain via WHOIS (Registrar: {details.get('registrar')}).")
+            else:
+                ai_explain_points.append("⚠️ Domain registrar WHOIS data is unverifiable or privacy-hidden.")
+
+            if details.get("ips"):
+                ai_explain_points.append(f"🟢 DNS active: Resolves to {len(details.get('ips'))} IP address(es) ({', '.join(details.get('ips')[:2])}).")
+            else:
+                ai_explain_points.append("🔴 Domain DNS resolution returned no active A records.")
+
+            if details.get("ssl_valid"):
+                ai_explain_points.append(f"🟢 SSL Certificate is valid (Issuer: {details.get('ssl_issuer', 'Unknown')}).")
+            else:
+                ai_explain_points.append("🔴 SSL Certificate is missing or invalid.")
+
+            if reasons:
+                for r in reasons[:3]:
+                    ai_explain_points.append(f"⚠️ Risk Engine Factor: {r}")
+
+        exp_html = "".join(f'<div style="font-size: 13px; line-height: 1.6; margin-bottom: 8px; color: var(--text); font-weight: 500;">{p}</div>' for p in ai_explain_points)
+        verdict_badge_color = "#22C55E" if risk_score < 30 else "#F5A623" if risk_score < 70 else "#EF4444"
+        verdict_text = "Target is safe for interaction." if risk_score < 30 else "Exercise caution due to identified risk factors." if risk_score < 70 else "High threat level detected. Block or isolate this asset."
+
+        st.markdown(
+            f"""
+            <div class="chart-card" style="padding: 20px; margin-bottom: 20px;">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">Key explanation factors synthesized by CyberMind Explain AI:</div>
+                {exp_html}
+                <div style="margin-top: 14px; background: rgba(108, 92, 231, 0.08); border: 1px solid rgba(108, 92, 231, 0.25); border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #A78BFA; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+                    <span>AI Final Verdict: {verdict_text}</span>
+                    <span class="badge" style="background: {verdict_badge_color}22; color: {verdict_badge_color}; padding: 4px 12px; font-size: 12px;">{risk_level.upper()} RISK</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
 
 def _save_upload(uploaded_file) -> str:
     suffix = Path(uploaded_file.name).suffix
@@ -4240,7 +5700,7 @@ def render_scanner_page(scanner_key: str):
         }
         ex_list = examples.get(scanner_key, [])
         if ex_list:
-            st.markdown("<span style='font-size:12.5px;color:var(--text-muted);font-weight:600;'>💡 Examples:</span>", unsafe_allow_html=True)
+            st.markdown("<span style='font-size:14.5px;color:var(--text-muted);font-weight:600;'>💡 Examples:</span>", unsafe_allow_html=True)
             cols = st.columns(len(ex_list))
             for idx, (label, val) in enumerate(ex_list):
                 with cols[idx]:
@@ -4264,6 +5724,7 @@ def render_scanner_page(scanner_key: str):
             if uploaded is None:
                 st.warning("Please choose a file first.")
             else:
+                st.session_state[f"scan_result_{scanner_key}"] = None
                 with st.spinner("Analyzing file..."):
                     path = _save_upload(uploaded)
                     result = run_scan(scanner_key, cfg["mod"], cfg["attr"], path)
@@ -4343,6 +5804,7 @@ def render_scanner_page(scanner_key: str):
             if not scan_val:
                 st.warning(f"Please enter a {cfg['value_label'].lower()} first.")
             else:
+                st.session_state[f"scan_result_{scanner_key}"] = None
                 with st.spinner("Running deep threat analysis..."):
                     result = run_scan(scanner_key, cfg["mod"], cfg["attr"], scan_val)
                     st.session_state[f"scan_result_{scanner_key}"] = result
@@ -4362,7 +5824,7 @@ def render_scanner_page(scanner_key: str):
         level = result["risk_level"]
         score = result["risk_score"]
         # --- Single source of truth: same values feed the screen and the export ---
-        d = compute_scan_display(result)
+        d = compute_scan_display(result, scanner_key=scanner_key)
         score = d["score"]; level = d["level"]; duration = d["duration"]
         ml_pred = d["ml_pred"]; prob_val = d["prob_val"]
         ml_available = d.get("ml_available", False)
@@ -4382,9 +5844,85 @@ def render_scanner_page(scanner_key: str):
         points = d["points"]; recs = d["recs"]
         risk_label = d["risk_label"]; threat_desc = d["threat_desc"]
 
+        # ── Simulated / Mock Analysis Warning Banner ───────────────────
+        if d.get("simulated") or result.get("simulated") or d.get("is_mock") or result.get("is_mock"):
+            _sim_reason = d.get("scan_error") or result.get("scan_error") or result.get("note") or "Live analyzer module encountered an error."
+            st.warning(f"⚠️ Live analysis was unavailable for this scan ({_sim_reason}) — the result below is placeholder data, not a verified analysis. Please retry.")
+
         # Color helpers
-        score_color = "var(--success)" if score < 30 else "var(--warning)" if score < 70 else "var(--danger)"
+        if level == "Safe":
+            score_color = "var(--success)"
+            level_color = "var(--success)"
+        elif level == "Unverified":
+            score_color = "#F59E0B"
+            level_color = "#F59E0B"
+        elif level == "Low":
+            score_color = "#60A5FA"
+            level_color = "#60A5FA"
+        elif level in ("Medium", "Suspicious"):
+            score_color = "var(--warning)"
+            level_color = "var(--warning)"
+        else:
+            score_color = "var(--danger)"
+            level_color = "var(--danger)"
+
         https_color = "var(--success)" if is_https == "Yes" else "var(--danger)"
+
+        # Scanner-specific cards (Cards 5 & 6)
+        card5_title = "HTTPS"
+        card5_value = "Valid" if is_https == "Yes" else "Invalid"
+        card5_sub = "Secure Connection" if is_https == "Yes" else "Unsecured"
+        card5_color = https_color
+
+        card6_title = "Domain Age"
+        card6_value = domain_age
+        card6_sub = domain_age_note
+        card6_color = "var(--text)"
+
+        if scanner_key == "File Scanner":
+            card5_title = "File Entropy"
+            card5_value = f"{entropy_val:.2f}" if isinstance(entropy_val, (int, float)) else str(entropy_val)
+            card5_sub = "Packed/Encrypted" if isinstance(entropy_val, (int, float)) and entropy_val > 7.0 else "Normal Structure"
+            card5_color = "var(--warning)" if isinstance(entropy_val, (int, float)) and entropy_val > 7.0 else "var(--success)"
+
+            card6_title = "File Format"
+            file_ext = str(target_val).split(".")[-1].upper() if "." in str(target_val) else "BINARY"
+            card6_value = file_ext[:10]
+            card6_sub = "File Extension"
+            card6_color = "var(--text)"
+
+        elif scanner_key == "IP Scanner":
+            card5_title = "IP Reputation"
+            card5_value = reputation_val
+            card5_sub = "Reputation Rating"
+            card5_color = "var(--success)" if reputation_val == "Excellent" else "var(--danger)"
+
+            card6_title = "Blacklist Check"
+            card6_value = blacklist_status
+            card6_sub = "Threat Databases"
+            card6_color = "var(--danger)" if blacklist_status == "Listed" else "var(--success)"
+
+        elif scanner_key == "Email Scanner":
+            card5_title = "Domain Reputation"
+            card5_value = reputation_val
+            card5_sub = "Sender Domain Rating"
+            card5_color = "var(--success)" if reputation_val == "Excellent" else "var(--danger)"
+
+            card6_title = "Blacklist Check"
+            card6_value = blacklist_status
+            card6_sub = "Spam & Phish Databases"
+            card6_color = "var(--danger)" if blacklist_status == "Listed" else "var(--success)"
+
+        elif scanner_key == "QR Code Scanner":
+            card5_title = "Target Type"
+            card5_value = "URL Link" if "://" in str(target_val) else "Text Data"
+            card5_sub = "Decoded Payload"
+            card5_color = "var(--text)"
+
+            card6_title = "Safety Check"
+            card6_value = "Safe Target" if score < 30 else "Risky Content"
+            card6_sub = "Security Assessment"
+            card6_color = score_color
 
         # ============================================================
         #  QUICK RESULT ROW (6 metric cards)
@@ -4399,13 +5937,13 @@ def render_scanner_page(scanner_key: str):
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
                     <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">Threat Level</div>
-                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{score_color};">{level.upper()}</div>
+                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{level_color};">{level.upper()}</div>
                     <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{threat_desc}</div>
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
-                    <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">AI Prediction</div>
-                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{score_color};">{ml_pred}</div>
-                    <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">Probability: {prob_val:.1f}%</div>
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">{d.get('ml_card_title', 'AI Prediction')}</div>
+                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{level_color};">{ml_pred}</div>
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{d.get('ml_subtitle', f'Confidence: {prob_val:.1f}%')}</div>
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
                     <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">Scan Time</div>
@@ -4413,14 +5951,14 @@ def render_scanner_page(scanner_key: str):
                     <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">Completed</div>
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
-                    <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">HTTPS</div>
-                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{https_color};">{"Valid" if is_https == "Yes" else "Invalid"}</div>
-                    <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{"Secure Connection" if is_https == "Yes" else "Unsecured"}</div>
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">{card5_title}</div>
+                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{card5_color};">{card5_value}</div>
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{card5_sub}</div>
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
-                    <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">Domain Age</div>
-                    <div class="metric-value" style="font-size:22px; font-weight:800; color:var(--text);">{domain_age}</div>
-                    <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{domain_age_note}</div>
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">{card6_title}</div>
+                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{card6_color};">{card6_value}</div>
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{card6_sub}</div>
                 </div>
             </div>
             """,
@@ -4430,31 +5968,50 @@ def render_scanner_page(scanner_key: str):
         # ── Brand Impersonation Card (online_valid_model) ─────────────────
         if scanner_key == "URL Scanner" and brand_impersonation and brand_impersonation != "Other":
             _bi_conf_pct = int((brand_confidence or 0) * 100)
-            _bi_color = "var(--danger)" if _bi_conf_pct >= 50 else "var(--warning)"
-            st.markdown(
-                f"""
-                <div style="background:rgba(242,84,91,0.06); border:1px solid rgba(242,84,91,0.25);
-                            border-radius:12px; padding:12px 18px; margin-bottom:14px;
-                            display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
-                    <div style="font-size:24px;">🎯</div>
-                    <div style="flex:1; min-width:160px;">
-                        <div style="font-size:12px; font-weight:700; color:var(--danger); margin-bottom:3px;">BRAND IMPERSONATION DETECTED</div>
-                        <div style="font-size:18px; font-weight:800; color:var(--text);">Targeting: {brand_impersonation}</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                            Predicted by <code style="color:#A78BFA;">online_valid_model</code> (RandomForest · 18 lexical features)
+            if _bi_conf_pct >= 70:
+                _bi_color = "var(--danger)"
+                st.markdown(
+                    f"""
+                    <div style="background:rgba(242,84,91,0.06); border:1px solid rgba(242,84,91,0.25);
+                                border-radius:12px; padding:12px 18px; margin-bottom:14px;
+                                display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+                        <div style="font-size:24px;">🎯</div>
+                        <div style="flex:1; min-width:160px;">
+                            <div style="font-size:12px; font-weight:700; color:var(--danger); margin-bottom:3px;">BRAND IMPERSONATION DETECTED</div>
+                            <div style="font-size:18px; font-weight:800; color:var(--text);">Targeting: {brand_impersonation}</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                                Predicted by <code style="color:#A78BFA;">online_valid_model</code> (RandomForest · 18 lexical features)
+                            </div>
+                        </div>
+                        <div style="min-width:120px; text-align:right;">
+                            <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:3px;">CONFIDENCE</div>
+                            <div style="font-size:20px; font-weight:800; color:{_bi_color};">{_bi_conf_pct}%</div>
+                            <div style="background:var(--border); border-radius:4px; height:5px; margin-top:5px;">
+                                <div style="background:{_bi_color}; border-radius:4px; height:5px; width:{_bi_conf_pct}%;"></div>
+                            </div>
                         </div>
                     </div>
-                    <div style="min-width:120px; text-align:right;">
-                        <div style="font-size:11px; color:var(--text-muted); font-weight:600; margin-bottom:3px;">CONFIDENCE</div>
-                        <div style="font-size:20px; font-weight:800; color:{_bi_color};">{_bi_conf_pct}%</div>
-                        <div style="background:var(--border); border-radius:4px; height:5px; margin-top:5px;">
-                            <div style="background:{_bi_color}; border-radius:4px; height:5px; width:{_bi_conf_pct}%;"></div>
+                    """,
+                    unsafe_allow_html=True
+                )
+            elif _bi_conf_pct >= 50:
+                st.markdown(
+                    f"""
+                    <div style="background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.25);
+                                border-radius:12px; padding:10px 16px; margin-bottom:14px;
+                                display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                        <div style="font-size:20px;">⚠️</div>
+                        <div style="flex:1; min-width:160px;">
+                            <div style="font-size:11px; font-weight:700; color:var(--warning); margin-bottom:2px;">WEAK BRAND RESEMBLANCE DETECTED (Low Confidence)</div>
+                            <div style="font-size:14px; font-weight:700; color:var(--text);">Targeting: {brand_impersonation} ({_bi_conf_pct}% Confidence)</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                                Model confidence is below 70% — likely not a significant brand impersonation threat.
+                            </div>
                         </div>
                     </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+                    """,
+                    unsafe_allow_html=True
+                )
         # ─────────────────────────────────────────────────────────────────
 
         # ── File ML Risk Card (file_signatures_model) ─────────────────────
@@ -4502,336 +6059,711 @@ def render_scanner_page(scanner_key: str):
             )
         # ─────────────────────────────────────────────────────────────────
 
+        analysis_data = result.get("analysis", {})
+
         # ============================================================
-        #  ROW 1: Risk Score | Detailed Analysis | Threat Intelligence
+        #  SCANNER RESULT TABS (Section 13 Layout)
         # ============================================================
-        col_row1_1, col_row1_2, col_row1_3 = st.columns(3, gap="large")
-        
-        with col_row1_1:
-            st.markdown('<div class="section-title">Risk Score</div>', unsafe_allow_html=True)
-            gauge_fig = circular_gauge(score, level)
-            st.plotly_chart(gauge_fig, use_container_width=True, config={"displayModeBar": False})
-            
-            alert_color = "rgba(34, 197, 94, 0.08)" if score < 30 else "rgba(245, 166, 35, 0.08)" if score < 70 else "rgba(242, 84, 91, 0.08)"
-            alert_text_color = "var(--success)" if score < 30 else "var(--warning)" if score < 70 else "var(--danger)"
-            alert_title = "This URL appears to be safe" if score < 30 else "Suspicious target detected" if score < 70 else "Dangerous target identified"
-            alert_desc = "No significant security risks detected" if score < 30 else "Proceed with caution" if score < 70 else "Block network access"
+        tab_overview, tab_features, tab_recs, tab_breach, tab_history = st.tabs([
+            "📊 Overview",
+            "🔎 Feature Analysis",
+            "🛡️ Recommendations",
+            "🕵️ Breach Intelligence",
+            "🕐 Scan History",
+        ])
+
+        # ── TAB 1: OVERVIEW ───────────────────────────────────────────
+        with tab_overview:
+            # 8.3 AI Executive Summary Card (with integrated action buttons)
+            try:
+                from modules.ai_summary_module import ai_summary_module
+                exec_summary = ai_summary_module.generate_summary(result)
+            except Exception:
+                exec_summary = "Scan analysis completed."
+
+            fb_key = f"fb_given_{scanner_key}"
+            is_fb_submitted = st.session_state.get(fb_key, False)
+
             st.markdown(
                 f"""
-                <div style="background:{alert_color}; border:1px solid {alert_text_color}4D; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:10px; margin-top:-10px;">
-                    <div style="font-size:20px;">{"🟢" if score < 30 else "🟡" if score < 70 else "🔴"}</div>
-                    <div>
-                        <div style="font-size:12.5px; font-weight:700; color:{alert_text_color};">{alert_title}</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">{alert_desc}</div>
+                <div style="background:rgba(34, 184, 240, 0.05); border:1px solid rgba(34, 184, 240, 0.25); border-radius:12px; padding:14px 18px 8px 18px; margin-bottom:14px;">
+                    <div style="font-size:12px; font-weight:700; color:#22D3EE; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle;">
+                        <span>AI Executive Summary</span>
                     </div>
+                    <div style="font-size:13.5px; line-height:1.5; color:var(--text); margin-bottom:10px;">{exec_summary}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
-        with col_row1_2:
-            st.markdown('<div class="section-title">Detailed Analysis</div>', unsafe_allow_html=True)
-            st.markdown(
-                f"""
-                <div class="chart-card" style="padding:0;">
-                    <table class="scan-table">
-                        <tr><td>URL</td><td style="color:var(--info); font-weight:600;">{html.escape(target_val)}</td></tr>
-                        <tr><td>Domain</td><td>{html.escape(hostname_val)}</td></tr>
-                        <tr><td>Scheme</td><td>{"HTTPS" if is_https == "Yes" else "HTTP"}</td></tr>
-                        <tr><td>Port</td><td>{"443" if is_https == "Yes" else "80"}</td></tr>
-                        <tr><td>IP Address</td><td>{html.escape(ip_val)}</td></tr>
-                        <tr><td>Response Code</td><td style="color:var(--success); font-weight:600;">200 OK</td></tr>
-                        <tr><td>Redirect</td><td>No Redirect</td></tr>
-                        <tr><td>Response Time</td><td>145 ms</td></tr>
-                        <tr><td>Content Type</td><td>text/html; charset=UTF-8</td></tr>
-                        <tr><td>Server</td><td>cloudflare</td></tr>
-                        <tr><td>Content Length</td><td>12.6 KB</td></tr>
-                        <tr><td>Last Scanned</td><td>May 24, 2025 10:30:45 AM</td></tr>
-                    </table>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            # Action buttons embedded inside card footer area
+            st.markdown("<div style='margin-top:-22px; padding:0 12px 10px 12px;'>", unsafe_allow_html=True)
+            if not is_fb_submitted:
+                col_fb1, col_fb2, col_fb3 = st.columns([1, 1, 4])
+                with col_fb1:
+                    if st.button("👍 Yes", key=f"fb_yes_{scanner_key}"):
+                        st.session_state[fb_key] = True
+                        try:
+                            from database.db import db
+                            db.execute(
+                                "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 1)",
+                                (scanner_key, str(result.get("value", "")), float(score))
+                            )
+                            st.toast("Thank you for your feedback!", icon="✅")
+                        except Exception:
+                            pass
+                        st.rerun()
+                with col_fb2:
+                    if st.button("👎 No", key=f"fb_no_{scanner_key}"):
+                        st.session_state[fb_key] = True
+                        try:
+                            from database.db import db
+                            db.execute(
+                                "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 0)",
+                                (scanner_key, str(result.get("value", "")), float(score))
+                            )
+                            st.toast("Feedback recorded. Models will adapt.", icon="📝")
+                        except Exception:
+                            pass
+                        st.rerun()
+                with col_fb3:
+                    if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
+                        if hasattr(st, "dialog"):
+                            render_scan_explainer_dialog()
+            else:
+                col_fb3, col_fb_msg = st.columns([2.5, 3.5])
+                with col_fb3:
+                    if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
+                        if hasattr(st, "dialog"):
+                            render_scan_explainer_dialog()
+                with col_fb_msg:
+                    st.markdown("<div style='font-size:12.5px; color:var(--success); font-weight:600; padding-top:6px;'>✅ Feedback Recorded</div>", unsafe_allow_html=True)
 
-        with col_row1_3:
-            st.markdown('<div class="section-title">Threat Intelligence</div>', unsafe_allow_html=True)
-            gsb_c = "var(--success)" if gsb_status == "Clean" else "var(--danger)"
-            vt_c = "var(--success)" if vt_status.startswith("0") else "var(--danger)"
-            bl_c = "var(--success)" if blacklist_status == "Not Found" else "var(--danger)"
-            rep_c = "var(--success)" if reputation_val == "Excellent" else "var(--danger)"
-            
-            st.markdown(
-                f"""
-                <div class="chart-card" style="padding:0;">
-                    <table class="scan-table">
-                        <tr><td>Google Safe Browsing</td><td style="color:{gsb_c};font-weight:600;">{gsb_status}</td></tr>
-                        <tr><td>VirusTotal</td><td style="color:{vt_c};font-weight:600;">{vt_status}</td></tr>
-                        <tr><td>PhishTank</td><td style="color:var(--success);font-weight:600;">Clean</td></tr>
-                        <tr><td>ThreatFox</td><td style="color:var(--success);font-weight:600;">Clean</td></tr>
-                        <tr><td>URLVoid</td><td style="color:var(--success);font-weight:600;">Clean</td></tr>
-                        <tr><td>Blacklist Check</td><td style="color:{bl_c};font-weight:600;">{blacklist_status}</td></tr>
-                        <tr><td>Reputation</td><td style="color:{rep_c};font-weight:600;">{reputation_val}</td></tr>
-                    </table>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            
-            st.markdown(
-                f"""
-                <div style="background:{alert_color}; border:1px solid {alert_text_color}4D; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:10px; margin-top:10px;">
-                    <div style="font-size:20px;">{"🟢" if score < 30 else "⚠️"}</div>
-                    <div>
-                        <div style="font-size:12.5px; font-weight:700; color:{alert_text_color};">{"No threats detected" if score < 30 else "Security warning!"}</div>
-                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">{"This URL is safe to visit" if score < 30 else "Threat markers found on domain."}</div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
-        # ============================================================
-        #  ROW 2: URL Features | Security Checks | AI Explanation
-        # ============================================================
-        st.markdown('<div style="height:10px"></div>', unsafe_allow_html=True)
-        col_row2_1, col_row2_2, col_row2_3 = st.columns(3, gap="large")
-        
-        with col_row2_1:
-            st.markdown('<div class="section-title">URL Features</div>', unsafe_allow_html=True)
-            st.markdown(
-                f"""
-                <div class="chart-card" style="padding:0;">
-                    <table class="scan-table">
-                        <tr><td>URL Length</td><td>{url_len}</td></tr>
-                        <tr><td>Digits</td><td>{digits}</td></tr>
-                        <tr><td>Hyphens</td><td>{hyphens}</td></tr>
-                        <tr><td>Dots</td><td>{dots}</td></tr>
-                        <tr><td>Special Characters</td><td>{specials}</td></tr>
-                        <tr><td>Subdomains</td><td>{subdomains}</td></tr>
-                        <tr><td>Entropy</td><td>{entropy_val:.2f} (Low)</td></tr>
-                        <tr><td>IP Based URL</td><td>{ip_based}</td></tr>
-                        <tr><td>Shortened URL</td><td>{shortened}</td></tr>
-                        <tr><td>Suspicious Words</td><td>None</td></tr>
-                    </table>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col_row2_2:
-            st.markdown('<div class="section-title">Security Checks</div>', unsafe_allow_html=True)
-            ssl_c = "var(--success)" if ssl_valid else "var(--danger)"
-            https_lbl_c = "var(--success)" if is_https == "Yes" else "var(--danger)"
-            st.markdown(
-                f"""
-                <div class="chart-card" style="padding:0;">
-                    <table class="scan-table">
-                        <tr><td>HTTPS</td><td style="color:{https_lbl_c}; font-weight:600;">{"Valid" if is_https == "Yes" else "Invalid"}</td></tr>
-                        <tr><td>SSL Certificate</td><td style="color:{ssl_c}; font-weight:600;">{ssl_status}</td></tr>
-                        <tr><td>Certificate Expiry</td><td style="color:#F5A623; font-weight:600;">{expiry_val}</td></tr>
-                        <tr><td>HSTS</td><td style="color:var(--success); font-weight:600;">Enabled</td></tr>
-                        <tr><td>Content Security Policy</td><td style="color:var(--success); font-weight:600;">Enabled</td></tr>
-                        <tr><td>X-Frame-Options</td><td style="color:var(--danger); font-weight:600;">DENY</td></tr>
-                        <tr><td>X-Content-Type-Options</td><td style="color:var(--success); font-weight:600;">nosniff</td></tr>
-                        <tr><td>Referrer-Policy</td><td style="color:var(--success); font-weight:600;">strict-origin-when-cross-origin</td></tr>
-                    </table>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col_row2_3:
-            st.markdown('<div class="section-title">AI Explanation</div>', unsafe_allow_html=True)
-            ai_icon = "✅" if score < 30 else "⚠️"
-            points_html = "".join(f'<div style="margin-bottom:8px; font-size:12.5px; color:var(--text); font-weight:500;">{ai_icon} {html.escape(str(p))}</div>' for p in points)
-            ai_summary = "Based on our analysis, this URL is safe." if score < 30 else "Elevated risk detected. Exercise caution."
-            st.markdown(
-                f"""
-                <div class="chart-card" style="padding:16px;">
-                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Our AI model has analyzed this URL based on multiple factors:</div>
-                    {points_html}
-                    <div style="margin-top:14px; background:rgba(108,92,231,0.08); border:1px solid rgba(108,92,231,0.2); border-radius:8px; padding:10px; font-size:12.5px; color:#A78BFA; font-weight:600; text-align:center;">
-                        {ai_summary}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        # ============================================================
-        #  ROW 3: Recommendations | Export Report
-        # ============================================================
-        st.markdown('<div style="height:10px"></div>', unsafe_allow_html=True)
-        col_row3_1, col_row3_2 = st.columns([2.3, 1], gap="large")
-        
-        with col_row3_1:
-            st.markdown('<div class="section-title">Recommendations</div>', unsafe_allow_html=True)
-            rec_icon = "🟢" if score < 30 else "🔴"
-            # Two-column bullet layout like the screenshot
-            mid = (len(recs) + 1) // 2
-            left_recs = recs[:mid]
-            right_recs = recs[mid:]
-            left_html = "".join(f'<div style="margin-bottom:8px; font-size:12.5px; color:var(--text); font-weight:500;">{rec_icon} {html.escape(str(r))}</div>' for r in left_recs)
-            right_html = "".join(f'<div style="margin-bottom:8px; font-size:12.5px; color:var(--text); font-weight:500;">{rec_icon} {html.escape(str(r))}</div>' for r in right_recs)
-            st.markdown(
-                f"""
-                <div class="chart-card" style="padding:16px;">
-                    <div class="bullet-grid">
-                        <div>{left_html}</div>
-                        <div>{right_html}</div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col_row3_2:
-            st.markdown(f'<div class="section-title">{t("Export Report")}</div>', unsafe_allow_html=True)
-            with st.container(key="export_report_container"):
-                dl_data, mime_type, file_name = export_report(result, "PDF")
+            col_row1_1, col_row1_2, col_row1_3 = st.columns(3, gap="large")
+            with col_row1_1:
+                st.markdown('<div class="section-title">Risk Score</div>', unsafe_allow_html=True)
+                gauge_fig = circular_gauge(score, level)
+                st.plotly_chart(gauge_fig, use_container_width=True, config={"displayModeBar": False})
                 
-                st.download_button(
-                    label="⬇ Download PDF Report",
-                    data=dl_data,
-                    file_name=file_name,
-                    mime=mime_type,
-                    key=f"dl_btn_{scanner_key}",
-                    use_container_width=True
+                alert_color = "rgba(245, 158, 11, 0.08)" if level == "Unverified" else ("rgba(34, 197, 94, 0.08)" if score < 30 else "rgba(245, 166, 35, 0.08)" if score < 70 else "rgba(242, 84, 91, 0.08)")
+                alert_text_color = "#F59E0B" if level == "Unverified" else ("var(--success)" if score < 30 else "var(--warning)" if score < 70 else "var(--danger)")
+                alert_title = "Target state is Unverified" if level == "Unverified" else ("This target appears to be safe" if score < 30 else "Suspicious target detected" if score < 70 else "Dangerous target identified")
+                alert_desc = "Insufficient data to verify safety — exercise caution" if level == "Unverified" else ("No significant security risks detected" if score < 30 else "Proceed with caution" if score < 70 else "Block network access")
+                st.markdown(
+                    f"""
+                    <div style="background:{alert_color}; border:1px solid {alert_text_color}4D; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:10px; margin-top:-10px;">
+                        <div style="font-size:20px;">{"⚠️" if level == "Unverified" else "🟢" if score < 30 else "🟡" if score < 70 else "🔴"}</div>
+                        <div>
+                            <div style="font-size:12.5px; font-weight:700; color:{alert_text_color};">{alert_title}</div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">{alert_desc}</div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
                 )
 
-        # ============================================================
-        #  RAW JSON
-        # ============================================================
-        st.markdown('<div class="section-title">Raw JSON Payload (Advanced)</div>', unsafe_allow_html=True)
-        with st.expander("View Full Scan Output Payload"):
-            st.json(result)
+            with col_row1_2:
+                st.markdown('<div class="section-title">Detailed Analysis</div>', unsafe_allow_html=True)
+                st.markdown(
+                    f"""
+                    <div class="chart-card" style="padding:0;">
+                        <table class="scan-table">
+                            <tr><td>URL</td><td style="color:var(--info); font-weight:600;">{html.escape(target_val)}</td></tr>
+                            <tr><td>Domain</td><td>{html.escape(hostname_val)}</td></tr>
+                            <tr><td>Scheme</td><td>{"HTTPS" if is_https == "Yes" else "HTTP"}</td></tr>
+                            <tr><td>Port</td><td>{"443" if is_https == "Yes" else "80"}</td></tr>
+                            <tr><td>IP Address</td><td>{html.escape(ip_val)}</td></tr>
+                            <tr><td>Response Code</td><td style="color:var(--success); font-weight:600;">200 OK</td></tr>
+                            <tr><td>Redirect</td><td>No Redirect</td></tr>
+                            <tr><td>Response Time</td><td>145 ms</td></tr>
+                            <tr><td>Content Type</td><td>text/html; charset=UTF-8</td></tr>
+                            <tr><td>Server</td><td>cloudflare</td></tr>
+                            <tr><td>Content Length</td><td>12.6 KB</td></tr>
+                            <tr><td>Last Scanned</td><td>{d['duration']}</td></tr>
+                        </table>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-        if scanner_key == "Website Scanner":
-            render_website_breach_intelligence(result["value"])
+            with col_row1_3:
+                st.markdown('<div class="section-title">Threat Intelligence</div>', unsafe_allow_html=True)
+                gsb_c = "var(--success)" if gsb_status == "Clean" else "var(--danger)"
+                vt_c = "var(--success)" if vt_status.startswith("0") else "var(--danger)"
+                bl_c = "var(--success)" if blacklist_status == "Not Found" else "var(--danger)"
+                rep_c = "var(--success)" if reputation_val == "Excellent" else "var(--danger)"
+                
+                st.markdown(
+                    f"""
+                    <div class="chart-card" style="padding:0;">
+                        <table class="scan-table">
+                            <tr><td>Google Safe Browsing</td><td style="color:{gsb_c};font-weight:600;">{gsb_status}</td></tr>
+                            <tr><td>VirusTotal</td><td style="color:{vt_c};font-weight:600;">{vt_status}</td></tr>
+                            <tr><td>PhishTank</td><td style="color:var(--success);font-weight:600;">Clean</td></tr>
+                            <tr><td>ThreatFox</td><td style="color:var(--success);font-weight:600;">Clean</td></tr>
+                            <tr><td>URLVoid</td><td style="color:var(--success);font-weight:600;">Clean</td></tr>
+                            <tr><td>Blacklist Check</td><td style="color:{bl_c};font-weight:600;">{blacklist_status}</td></tr>
+                            <tr><td>Reputation</td><td style="color:{rep_c};font-weight:600;">{reputation_val}</td></tr>
+                        </table>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-    st.markdown("<div style='height:26px'></div>", unsafe_allow_html=True)
+            # Consensus & Threat Category Badges
+            consensus = result.get("risk", {}).get("consensus", {})
+            threat_tags = analysis_data.get("google_safe_browsing", {}).get("threat_types", [])
+            if consensus or threat_tags:
+                st.markdown("<div style='display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; margin-bottom:12px;'>", unsafe_allow_html=True)
+                if consensus.get("summary"):
+                    st.markdown(f"<span class='badge badge-info' style='font-size:11px; padding:4px 10px;'>📡 Consensus: {consensus.get('summary')}</span>", unsafe_allow_html=True)
+                for tag in threat_tags:
+                    st.markdown(f"<span class='badge badge-malicious' style='font-size:11px; padding:4px 10px;'>🏷️ {tag}</span>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
-    left_col, right_col = st.columns([2.3, 1], gap="large")
+        # ── TAB 2: FEATURE ANALYSIS ───────────────────────────────────
+        with tab_features:
+            col_row2_1, col_row2_2, col_row2_3 = st.columns(3, gap="large")
+            with col_row2_1:
+                st.markdown('<div class="section-title">URL & Data Features</div>', unsafe_allow_html=True)
+                kw_val_color = 'var(--danger)' if d['suspicious_words'] != 'None' else 'var(--text)'
+                kw_val_weight = '600' if d['suspicious_words'] != 'None' else '400'
+                st.markdown(
+                    f"""
+                    <div class="chart-card" style="padding:0;">
+                        <table class="scan-table">
+                            <tr><td>URL Length</td><td>{url_len}</td></tr>
+                            <tr><td>Digits</td><td>{digits}</td></tr>
+                            <tr><td>Hyphens</td><td>{hyphens}</td></tr>
+                            <tr><td>Dots</td><td>{dots}</td></tr>
+                            <tr><td>Special Characters</td><td>{specials}</td></tr>
+                            <tr><td>Subdomains</td><td>{subdomains}</td></tr>
+                            <tr><td>Entropy</td><td>{entropy_val:.2f} (Low)</td></tr>
+                            <tr><td>IP Based URL</td><td>{ip_based}</td></tr>
+                            <tr><td>Shortened URL</td><td>{shortened}</td></tr>
+                            <tr><td>Suspicious Words</td><td style="color:{kw_val_color}; font-weight:{kw_val_weight};">{html.escape(d["suspicious_words"])}</td></tr>
+                        </table>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-    # Fetch live scan history from database
-    history_list = []
-    try:
-        from database.db import db
-        db_rows = db.fetchall(
-            """
-            SELECT target as value, risk_level as level, risk_score as score, 
-                   strftime('%H:%M:%S', scan_time) as time
-            FROM scan_history
-            WHERE scan_type = ?
-            ORDER BY scan_id DESC
-            LIMIT 8
-            """,
-            (scanner_key,)
-        )
-        for r in db_rows:
-            history_list.append({
-                "value": r["value"],
-                "level": r["level"],
-                "score": int(r["score"]),
-                "time": r["time"]
-            })
-    except Exception:
-        pass
+            with col_row2_2:
+                st.markdown('<div class="section-title">Security Checks</div>', unsafe_allow_html=True)
+                ssl_c = "var(--success)" if ssl_valid else "var(--danger)"
+                https_lbl_c = "var(--success)" if is_https == "Yes" else "var(--danger)"
+                st.markdown(
+                    f"""
+                    <div class="chart-card" style="padding:0;">
+                        <table class="scan-table">
+                            <tr><td>HTTPS</td><td style="color:{https_lbl_c}; font-weight:600;">{"Valid" if is_https == "Yes" else "Invalid"}</td></tr>
+                            <tr><td>SSL Certificate</td><td style="color:{ssl_c}; font-weight:600;">{ssl_status}</td></tr>
+                            <tr><td>Certificate Expiry</td><td style="color:#F5A623; font-weight:600;">{expiry_val}</td></tr>
+                            <tr><td>HSTS</td><td style="color:var(--success); font-weight:600;">Enabled</td></tr>
+                            <tr><td>Content Security Policy</td><td style="color:var(--success); font-weight:600;">Enabled</td></tr>
+                            <tr><td>X-Frame-Options</td><td style="color:var(--danger); font-weight:600;">DENY</td></tr>
+                            <tr><td>X-Content-Type-Options</td><td style="color:var(--success); font-weight:600;">nosniff</td></tr>
+                            <tr><td>Referrer-Policy</td><td style="color:var(--success); font-weight:600;">strict-origin-when-cross-origin</td></tr>
+                        </table>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-    if not history_list:
-        history_list = st.session_state.histories.get(scanner_key, [])
+            with col_row2_3:
+                st.markdown('<div class="section-title">AI Explanation</div>', unsafe_allow_html=True)
+                ai_icon = "✅" if score < 30 else "⚠️"
+                points_html = "".join(f'<div style="margin-bottom:8px; font-size:12.5px; color:var(--text); font-weight:500;">{ai_icon} {html.escape(str(p))}</div>' for p in points)
+                ai_summary = "Based on our analysis, this URL is safe." if score < 30 else "Elevated risk detected. Exercise caution."
+                st.markdown(
+                    f"""
+                    <div class="chart-card" style="padding:16px;">
+                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Our AI model has analyzed this target based on multiple factors:</div>
+                        {points_html}
+                        <div style="margin-top:14px; background:rgba(108,92,231,0.08); border:1px solid rgba(108,92,231,0.2); border-radius:8px; padding:10px; font-size:12.5px; color:#A78BFA; font-weight:600; text-align:center;">
+                            {ai_summary}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-    with left_col:
-        st.markdown('<div class="section-title">Scan History</div>', unsafe_allow_html=True)
-        rows_html = "".join(
-            f"<tr>"
-            f"<td>{html.escape(h['value'])}</td>"
-            f"<td><span class=\"badge {LEVEL_BADGE.get(h['level'], 'badge-suspicious')}\">{h['level']}</span></td>"
-            f"<td>{h['score']}/100</td>"
-            f"<td>{h['time']}</td>"
-            f"<td>👁️</td>"
-            f"</tr>"
-            for h in history_list
-        )
-        st.markdown(
-            f"""
-            <div class="chart-card">
-                <table class="scan-table">
-                    <tr><th>{cfg['value_label']}</th><th>Result</th><th>Risk Score</th><th>Scan Time</th><th>Action</th></tr>
-                    {rows_html}
-                </table>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            # MITRE ATT&CK Mapping
+            mitre_data = result.get("mitre_attack", {})
+            techniques = mitre_data.get("techniques", [])
+            if techniques:
+                with st.expander(f"🗺️ MITRE ATT&CK Mapping ({len(techniques)} Techniques)", expanded=True):
+                    m_cols = st.columns(min(len(techniques), 3))
+                    for idx, mitre_tech in enumerate(techniques):
+                        with m_cols[idx % 3]:
+                            st.markdown(
+                                f"<div style='background:rgba(167,139,250,0.06); border:1px solid rgba(167,139,250,0.25); border-radius:8px; padding:10px; margin-bottom:8px;'>"
+                                f"<div style='font-size:11px; font-weight:700; color:#A78BFA;'>{mitre_tech.get('id')} — {mitre_tech.get('tactic')}</div>"
+                                f"<div style='font-size:13px; font-weight:800; color:var(--text);'>{mitre_tech.get('name')}</div>"
+                                f"<div style='font-size:11px; color:var(--text-muted); margin-top:4px;'>{mitre_tech.get('description')}</div>"
+                                f"</div>",
+                                unsafe_allow_html=True
+                            )
 
-    # Fetch live statistics for donut chart and list items
-    safe_n, susp_n, mal_n = 0, 0, 0
-    try:
-        from database.db import db
-        res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level = 'Safe'", (scanner_key,))
-        safe_n = res["count"] if res else 0
+        # ── TAB 3: RECOMMENDATIONS ────────────────────────────────────
+        with tab_recs:
+            col_row3_1, col_row3_2 = st.columns([2.3, 1], gap="large")
+            with col_row3_1:
+                st.markdown('<div class="section-title">Security Recommendations</div>', unsafe_allow_html=True)
+                rec_icon = "🟢" if score < 30 else "🔴"
+                mid = (len(recs) + 1) // 2
+                left_recs = recs[:mid]
+                right_recs = recs[mid:]
+                left_html = "".join(f'<div style="margin-bottom:8px; font-size:12.5px; color:var(--text); font-weight:500;">{rec_icon} {html.escape(str(r))}</div>' for r in left_recs)
+                right_html = "".join(f'<div style="margin-bottom:8px; font-size:12.5px; color:var(--text); font-weight:500;">{rec_icon} {html.escape(str(r))}</div>' for r in right_recs)
+                st.markdown(
+                    f"""
+                    <div class="chart-card" style="padding:16px;">
+                        <div class="bullet-grid">
+                            <div>{left_html}</div>
+                            <div>{right_html}</div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-        res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level IN ('Low', 'Medium')", (scanner_key,))
-        susp_n = res["count"] if res else 0
+            with col_row3_2:
+                st.markdown(f'<div class="section-title">{t("Export Report")}</div>', unsafe_allow_html=True)
+                with st.container(key="export_report_container"):
+                    dl_data, mime_type, file_name = export_report(result, "PDF")
+                    st.download_button(
+                        label="⬇ Download PDF Report",
+                        data=dl_data,
+                        file_name=file_name,
+                        mime=mime_type,
+                        key=f"dl_btn_{scanner_key}",
+                        use_container_width=True
+                    )
 
-        res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level IN ('High', 'Critical')", (scanner_key,))
-        mal_n = res["count"] if res else 0
-    except Exception:
-        pass
+        # ── TAB 4: BREACH INTELLIGENCE & DEEP SCAN ────────────────────
+        with tab_breach:
+            if scanner_key == "Website Scanner":
+                render_website_breach_intelligence(result["value"])
+            elif scanner_key not in ("Website Scanner", "Domain Scanner", "Email Scanner"):
+                st.info(f"🕵️ Breach Intelligence scanning is primary for Web/Domain targets. Deep feature breakdown for {scanner_key}:")
 
-    if safe_n == 0 and susp_n == 0 and mal_n == 0:
-        safe_n, susp_n, mal_n = cfg["donut"]
+            # Redirect Chain
+            if scanner_key in ("URL Scanner", "Website Scanner") and "redirect_chain" in analysis_data:
+                chain_info = analysis_data.get("redirect_chain", {})
+                hops = chain_info.get("chain", [])
+                if hops:
+                    with st.expander(f"🔀 Redirect Chain ({chain_info.get('hops', 0)} Hops)", expanded=True):
+                        if chain_info.get("loop"):
+                            st.error("⚠️ Redirect loop detected in chain!")
+                        for idx, hop in enumerate(hops, 1):
+                            st.markdown(
+                                f"**Hop {idx}:** `{hop.get('url', '')}` &nbsp; "
+                                f"<span style='color:var(--info);'>[{hop.get('status_code', 200)}]</span> "
+                                f"<span style='color:var(--text-muted);'>({hop.get('server', 'N/A')})</span>",
+                                unsafe_allow_html=True
+                            )
 
-    # Fetch top list items (risky targets) from database
-    top_items = []
-    try:
-        from database.db import db
-        rows = db.fetchall(
-            """
-            SELECT target, risk_score
-            FROM scan_history
-            WHERE scan_type = ? AND risk_score > 0
-            ORDER BY risk_score DESC
-            LIMIT 4
-            """,
-            (scanner_key,)
-        )
-        top_items = [(r["target"], int(r["risk_score"])) for r in rows]
-    except Exception:
-        pass
+            # JS Behavior Flags
+            if scanner_key in ("URL Scanner", "Website Scanner") and "js_behavior" in analysis_data:
+                js_info = analysis_data.get("js_behavior", {})
+                flags = js_info.get("flags", [])
+                if flags:
+                    with st.expander(f"⚡ JS Behaviour Flags ({len(flags)} Detected)", expanded=True):
+                        for f in flags:
+                            sev_color = "var(--danger)" if f.get("severity") in ("critical", "high") else "var(--warning)"
+                            st.markdown(
+                                f"• <strong style='color:{sev_color};'>[{f.get('severity', '').upper()}] {f.get('name')}</strong>: "
+                                f"{f.get('description')} (Count: {f.get('count')})",
+                                unsafe_allow_html=True
+                            )
 
-    if not top_items:
-        top_items = cfg["list_items"]
+            # Homograph & Typosquatting
+            if scanner_key in ("URL Scanner", "Website Scanner", "Domain Scanner"):
+                hg = analysis_data.get("homograph", {})
+                ts = analysis_data.get("typosquat", {})
+                if hg.get("is_homograph") or ts.get("is_typosquat"):
+                    with st.expander("🔤 Homograph & Typosquatting Analysis", expanded=True):
+                        if hg.get("is_homograph"):
+                            st.warning(f"⚠️ Homograph Unicode characters detected! ASCII equivalent: `{hg.get('ascii_form')}`")
+                            for c in hg.get("confusable_chars", []):
+                                st.caption(f"Char '{c.get('char')}' ({c.get('unicode')}) → ASCII '{c.get('ascii_equiv')}'")
+                        if ts.get("is_typosquat"):
+                            st.info(f"💡 Potential typosquatting of popular domain: `{ts.get('closest')}` (Similarity: {int(ts.get('similarity',0)*100)}%)")
 
-    with right_col:
-        st.markdown(
-            f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div>""",
-            unsafe_allow_html=True
-        )
-        fig = donut_chart(
-            ["Safe", "Suspicious", "Malicious"], [safe_n, susp_n, mal_n],
-            ["#22C55E", "#F5A623", "#F2545B"], "Total Scans"
-        )
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-        st.markdown(
-            f"""
-            <div class="list-row"><span class="list-name"><span style="color:#22C55E">●</span> Safe</span><span class="list-val">{safe_n}</span></div>
-            <div class="list-row"><span class="list-name"><span style="color:#F5A623">●</span> Suspicious</span><span class="list-val">{susp_n}</span></div>
-            <div class="list-row"><span class="list-name"><span style="color:#F2545B">●</span> Malicious</span><span class="list-val">{mal_n}</span></div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            # Tech Stack Fingerprinting
+            if scanner_key in ("URL Scanner", "Website Scanner") and "tech_stack" in analysis_data:
+                techs = analysis_data.get("tech_stack", {}).get("technologies", [])
+                if techs:
+                    with st.expander(f"🛠️ Detected Technology Stack ({len(techs)})", expanded=True):
+                        t_cols = st.columns(min(len(techs), 4))
+                        for idx, tech_item in enumerate(techs):
+                            with t_cols[idx % 4]:
+                                st.markdown(
+                                    f"<div style='background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:8px 12px; margin-bottom:8px; text-align:center;'>"
+                                    f"<div style='font-size:12px; font-weight:700; color:var(--text);'>{tech_item.get('name')}</div>"
+                                    f"<div style='font-size:10px; color:var(--text-muted);'>{tech_item.get('category')}</div>"
+                                    f"</div>",
+                                    unsafe_allow_html=True
+                                )
 
-        list_rows = "".join(
-            f"""<div class="list-row"><span class="list-name">{html.escape(name)}</span><span class="list-val">{val}</span></div>"""
-            for name, val in top_items
-        )
-        st.markdown(
-            f"""<div class="chart-card"><div class="chart-card-title">{cfg['list_title']}</div>{list_rows}</div>""",
-            unsafe_allow_html=True
-        )
+            # Domain Subdomains & Attack Surface
+            if scanner_key == "Domain Scanner" and "subdomain_discovery" in analysis_data:
+                sub_info = analysis_data.get("subdomain_discovery", {})
+                subs = sub_info.get("subdomains", [])
+                if subs:
+                    with st.expander(f"🔍 Subdomain & Attack Surface Discovery ({sub_info.get('total', 0)} Found)", expanded=True):
+                        sub_df = [{"Subdomain": s.get("name"), "Discovery Source": s.get("source"), "IP": s.get("ip") or "Unresolved"} for s in subs]
+                        st.dataframe(sub_df, use_container_width=True)
+
+            # File Hex, Entropy, PE, & Macros
+            if scanner_key == "File Scanner":
+                hex_info = analysis_data.get("hex_signature", {})
+                ent_info = analysis_data.get("entropy_analysis", {})
+                pe_info = analysis_data.get("pe_metadata", {})
+                macro_info = analysis_data.get("macro_detection", {})
+
+                if hex_info.get("detected"):
+                    with st.expander("🔬 Hex / Magic Byte Signature", expanded=True):
+                        st.markdown(f"**Detected Type:** `{hex_info.get('file_type')}` — {hex_info.get('description')}")
+                        st.code(f"Hex Preview (First 16 bytes): {hex_info.get('hex_preview')}")
+
+                if ent_info.get("overall_entropy") is not None:
+                    with st.expander(f"📊 Shannon Entropy Analysis ({ent_info.get('overall_entropy')} / 8.0)", expanded=True):
+                        st.markdown(f"**Classification:** `{ent_info.get('classification')}`")
+                        if ent_info.get("section_entropies"):
+                            st.caption("Section Entropies (1KB chunks):")
+                            for sec in ent_info.get("section_entropies", [])[:5]:
+                                st.text(f"Offset {sec.get('offset')}: Entropy {sec.get('entropy')}")
+
+                if pe_info.get("is_pe"):
+                    with st.expander("⚙️ Windows PE Executable Metadata", expanded=True):
+                        st.markdown(f"**Architecture:** {pe_info.get('machine')} | **Subsystem:** {pe_info.get('subsystem')}")
+                        st.markdown(f"**Compile Time:** {pe_info.get('compile_time')} | **Packed:** `{'Yes' if pe_info.get('is_packed') else 'No'}`")
+                        if pe_info.get("suspicious_imports"):
+                            st.error(f"Suspicious APIs: {', '.join(pe_info.get('suspicious_imports'))}")
+
+                if macro_info.get("has_macros"):
+                    with st.expander("📝 Office Macro Security Check", expanded=True):
+                        st.warning(f"⚠️ VBA Macros detected ({macro_info.get('macro_count')} streams)")
+                        if macro_info.get("suspicious_items"):
+                            st.error(f"Suspicious keywords found: {', '.join(macro_info.get('suspicious_items'))}")
+
+            # Email Authentication & Disposable Email
+            if scanner_key == "Email Scanner" and "email_auth" in analysis_data:
+                auth = analysis_data.get("email_auth", {})
+                disp = analysis_data.get("disposable", {})
+                with st.expander("📧 Email Authentication & Disposable Check", expanded=True):
+                    c_spf, c_dkim, c_dmarc, c_disp = st.columns(4)
+                    with c_spf:
+                        st.metric("SPF Record", "Valid" if auth.get("spf", {}).get("present") else "Missing")
+                    with c_dkim:
+                        st.metric("DKIM Record", "Found" if auth.get("dkim", {}).get("present") else "Missing")
+                    with c_dmarc:
+                        st.metric("DMARC Record", auth.get("dmarc", {}).get("policy", "Missing").upper() if auth.get("dmarc", {}).get("present") else "Missing")
+                    with c_disp:
+                        st.metric("Disposable Email", "Yes" if disp.get("is_disposable") else "No")
+
+            # QR Redirect & Payment Fraud
+            if scanner_key == "QR Code Scanner":
+                qr_red = analysis_data.get("qr_redirect", {})
+                pay_qr = analysis_data.get("payment_qr", {})
+                if qr_red.get("is_suspicious") or pay_qr.get("is_payment"):
+                    with st.expander("🔳 QR Payload & Payment Fraud Analysis", expanded=True):
+                        if pay_qr.get("is_payment"):
+                            st.markdown("**Payment Details Detected:**")
+                            for k, v in pay_qr.get("payment_details", {}).items():
+                                st.text(f"{k}: {v}")
+                            for w in pay_qr.get("warnings", []):
+                                st.warning(w)
+                        if qr_red.get("risk_factors"):
+                            st.error(f"Redirect Warnings: {', '.join(qr_red.get('risk_factors'))}")
+
+            # Visual Preview / Screenshot
+            if scanner_key in ("URL Scanner", "Website Scanner"):
+                urlscan_data = analysis_data.get("urlscan", {})
+                screenshot_url = urlscan_data.get("screenshot") or urlscan_data.get("page", {}).get("screenshot")
+                if screenshot_url:
+                    with st.expander("🖼️ Live Website Screenshot Preview", expanded=True):
+                        st.image(screenshot_url, caption=f"Screenshot preview for {result.get('value')}", use_container_width=True)
+
+            # Antivirus Engine Results (VirusTotal)
+            vt_data = analysis_data.get("virustotal", {})
+            engine_res = vt_data.get("engine_results", [])
+            if engine_res:
+                with st.expander(f"🛡️ Antivirus Engine Results ({vt_data.get('malicious', 0)} / {vt_data.get('total', len(engine_res))} Flagged)", expanded=True):
+                    vt_df = [{"Antivirus Engine": e.get("engine"), "Category": e.get("category"), "Verdict": e.get("result")} for e in engine_res]
+                    st.dataframe(vt_df, use_container_width=True)
+
+            # Network Ownership & Abuse Contact Card (IP Scanner)
+            if scanner_key == "IP Intelligence":
+                ipinfo_data = analysis_data.get("ipinfo", {})
+                abuse_data = analysis_data.get("abuseipdb", {})
+                if ipinfo_data or abuse_data:
+                    with st.expander("🏢 Network Ownership & Abuse Contact", expanded=True):
+                        st.markdown(f"**Organization / ISP:** `{ipinfo_data.get('org', 'N/A')}`")
+                        st.markdown(f"**ASN:** `{ipinfo_data.get('asn', 'N/A')}`")
+                        st.markdown(f"**Abuse Confidence Score:** `{abuse_data.get('abuse_score', 0)}%` (Total Reports: `{abuse_data.get('total_reports', 0)}`)")
+
+        # ── TAB 5: SCAN HISTORY & ANALYTICS ───────────────────────────
+        with tab_history:
+            tab_hist_col1, tab_hist_col2 = st.columns([2.3, 1], gap="large")
+
+            # Fetch live scan history from database
+            hist_tab_items = []
+            try:
+                from database.db import db
+                db_rows_tab = db.fetchall(
+                    """
+                    SELECT target as value, risk_level as level, risk_score as score, 
+                           strftime('%H:%M:%S', scan_time) as time
+                    FROM scan_history
+                    WHERE scan_type = ?
+                    ORDER BY scan_id DESC
+                    LIMIT 8
+                    """,
+                    (scanner_key,)
+                )
+                for r in db_rows_tab:
+                    hist_tab_items.append({
+                        "value": r["value"],
+                        "level": r["level"],
+                        "score": int(r["score"]),
+                        "time": r["time"]
+                    })
+            except Exception:
+                pass
+
+            if not hist_tab_items:
+                hist_tab_items = st.session_state.get("histories", {}).get(scanner_key, [])
+
+            with tab_hist_col1:
+                st.markdown(f'<div class="section-title">{scanner_key} Scan History</div>', unsafe_allow_html=True)
+                if hist_tab_items:
+                    rows_html_tab = "".join(
+                        f"<tr>"
+                        f"<td>{html.escape(h['value'])}</td>"
+                        f"<td><span class=\"badge {LEVEL_BADGE.get(h['level'], 'badge-suspicious')}\">{h['level']}</span></td>"
+                        f"<td>{h['score']}/100</td>"
+                        f"<td>{h['time']}</td>"
+                        f"<td>👁️</td>"
+                        f"</tr>"
+                        for h in hist_tab_items
+                    )
+                    st.markdown(
+                        f"""
+                        <div class="chart-card">
+                            <table class="scan-table">
+                                <tr><th>{cfg['value_label']}</th><th>Result</th><th>Risk Score</th><th>Scan Time</th><th>Action</th></tr>
+                                {rows_html_tab}
+                            </table>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                else:
+                    st.info("No scan history recorded yet for this scanner.")
+
+            # Fetch statistics for Analytics inside tab_history
+            tab_safe_n, tab_susp_n, tab_mal_n = 0, 0, 0
+            try:
+                from database.db import db
+                res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level = 'Safe'", (scanner_key,))
+                tab_safe_n = res["count"] if res else 0
+
+                res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level IN ('Low', 'Medium')", (scanner_key,))
+                tab_susp_n = res["count"] if res else 0
+
+                res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level IN ('High', 'Critical')", (scanner_key,))
+                tab_mal_n = res["count"] if res else 0
+            except Exception:
+                pass
+
+            if tab_safe_n == 0 and tab_susp_n == 0 and tab_mal_n == 0:
+                tab_safe_n, tab_susp_n, tab_mal_n = cfg["donut"]
+
+            tab_top_items = []
+            try:
+                from database.db import db
+                rows = db.fetchall(
+                    """
+                    SELECT target, risk_score
+                    FROM scan_history
+                    WHERE scan_type = ? AND risk_score > 0
+                    ORDER BY risk_score DESC
+                    LIMIT 4
+                    """,
+                    (scanner_key,)
+                )
+                tab_top_items = [(r["target"], int(r["risk_score"])) for r in rows]
+            except Exception:
+                pass
+
+            if not tab_top_items:
+                tab_top_items = cfg["list_items"]
+
+            with tab_hist_col2:
+                st.markdown(
+                    f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div>""",
+                    unsafe_allow_html=True
+                )
+                fig_tab = donut_chart(
+                    ["Safe", "Suspicious", "Malicious"], [tab_safe_n, tab_susp_n, tab_mal_n],
+                    ["#22C55E", "#F5A623", "#F2545B"], "Total Scans"
+                )
+                st.plotly_chart(fig_tab, use_container_width=True, config={"displayModeBar": False})
+                st.markdown(
+                    f"""
+                    <div class="list-row"><span class="list-name"><span style="color:#22C55E">●</span> Safe</span><span class="list-val">{tab_safe_n}</span></div>
+                    <div class="list-row"><span class="list-name"><span style="color:#F5A623">●</span> Suspicious</span><span class="list-val">{tab_susp_n}</span></div>
+                    <div class="list-row"><span class="list-name"><span style="color:#F2545B">●</span> Malicious</span><span class="list-val">{tab_mal_n}</span></div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                tab_list_rows = "".join(
+                    f"""<div class="list-row"><span class="list-name">{html.escape(name)}</span><span class="list-val">{val}</span></div>"""
+                    for name, val in tab_top_items
+                )
+                st.markdown(
+                    f"""<div class="chart-card"><div class="chart-card-title">{cfg['list_title']}</div>{tab_list_rows}</div>""",
+                    unsafe_allow_html=True
+                )
+
+            st.markdown('<div style="height:14px"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="section-title">Raw JSON Payload (Advanced)</div>', unsafe_allow_html=True)
+            with st.expander("View Full Scan Output Payload", expanded=False):
+                st.json(result)
+
+    if not result:
+        st.markdown("<div style='height:26px'></div>", unsafe_allow_html=True)
+
+        left_col, right_col = st.columns([2.3, 1], gap="large")
+
+        # Fetch live scan history from database
+        history_list = []
+        try:
+            from database.db import db
+            db_rows = db.fetchall(
+                """
+                SELECT target as value, risk_level as level, risk_score as score, 
+                       strftime('%H:%M:%S', scan_time) as time
+                FROM scan_history
+                WHERE scan_type = ?
+                ORDER BY scan_id DESC
+                LIMIT 8
+                """,
+                (scanner_key,)
+            )
+            for r in db_rows:
+                history_list.append({
+                    "value": r["value"],
+                    "level": r["level"],
+                    "score": int(r["score"]),
+                    "time": r["time"]
+                })
+        except Exception:
+            pass
+
+        if not history_list:
+            history_list = st.session_state.histories.get(scanner_key, [])
+
+        with left_col:
+            st.markdown('<div class="section-title">Scan History</div>', unsafe_allow_html=True)
+            rows_html = "".join(
+                f"<tr>"
+                f"<td>{html.escape(h['value'])}</td>"
+                f"<td><span class=\"badge {LEVEL_BADGE.get(h['level'], 'badge-suspicious')}\">{h['level']}</span></td>"
+                f"<td>{h['score']}/100</td>"
+                f"<td>{h['time']}</td>"
+                f"<td>👁️</td>"
+                f"</tr>"
+                for h in history_list
+            )
+            st.markdown(
+                f"""
+                <div class="chart-card">
+                    <table class="scan-table">
+                        <tr><th>{cfg['value_label']}</th><th>Result</th><th>Risk Score</th><th>Scan Time</th><th>Action</th></tr>
+                        {rows_html}
+                    </table>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        # Fetch live statistics for donut chart and list items
+        safe_n, susp_n, mal_n = 0, 0, 0
+        try:
+            from database.db import db
+            res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level = 'Safe'", (scanner_key,))
+            safe_n = res["count"] if res else 0
+
+            res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level IN ('Low', 'Medium')", (scanner_key,))
+            susp_n = res["count"] if res else 0
+
+            res = db.fetchone("SELECT COUNT(*) as count FROM scan_history WHERE scan_type = ? AND risk_level IN ('High', 'Critical')", (scanner_key,))
+            mal_n = res["count"] if res else 0
+        except Exception:
+            pass
+
+        if safe_n == 0 and susp_n == 0 and mal_n == 0:
+            safe_n, susp_n, mal_n = cfg["donut"]
+
+        # Fetch top list items (risky targets) from database
+        top_items = []
+        try:
+            from database.db import db
+            rows = db.fetchall(
+                """
+                SELECT target, risk_score
+                FROM scan_history
+                WHERE scan_type = ? AND risk_score > 0
+                ORDER BY risk_score DESC
+                LIMIT 4
+                """,
+                (scanner_key,)
+            )
+            top_items = [(r["target"], int(r["risk_score"])) for r in rows]
+        except Exception:
+            pass
+
+        if not top_items:
+            top_items = cfg["list_items"]
+
+        with right_col:
+            st.markdown(
+                f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div>""",
+                unsafe_allow_html=True
+            )
+            fig = donut_chart(
+                ["Safe", "Suspicious", "Malicious"], [safe_n, susp_n, mal_n],
+                ["#22C55E", "#F5A623", "#F2545B"], "Total Scans"
+            )
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+            st.markdown(
+                f"""
+                <div class="list-row"><span class="list-name"><span style="color:#22C55E">●</span> Safe</span><span class="list-val">{safe_n}</span></div>
+                <div class="list-row"><span class="list-name"><span style="color:#F5A623">●</span> Suspicious</span><span class="list-val">{susp_n}</span></div>
+                <div class="list-row"><span class="list-name"><span style="color:#F2545B">●</span> Malicious</span><span class="list-val">{mal_n}</span></div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            list_rows = "".join(
+                f"""<div class="list-row"><span class="list-name">{html.escape(name)}</span><span class="list-val">{val}</span></div>"""
+                for name, val in top_items
+            )
+            st.markdown(
+                f"""<div class="chart-card"><div class="chart-card-title">{cfg['list_title']}</div>{list_rows}</div>""",
+                unsafe_allow_html=True
+            )
 # Generic placeholder page (non-scanner nav items)
 
 
@@ -4897,6 +6829,20 @@ def render_settings_page():
             st.toggle(t("Dark Mode"), key="widget_dark_mode", on_change=update_dark_mode)
             st.toggle(t("Auto Updates"), key="widget_auto_updates", on_change=update_auto_updates)
             
+            # ── Section 6 Settings Additions ──────────────────────────
+            if "settings_offline_mode" not in st.session_state:
+                st.session_state.settings_offline_mode = False
+            
+            def update_offline_mode():
+                new_state = st.session_state.widget_offline_mode
+                st.session_state.settings_offline_mode = new_state
+                from core.offline_mode import offline_mode
+                offline_mode.toggle(new_state)
+                st.session_state["show_offline_toast"] = True
+                st.session_state["offline_toast_time"] = time.time()
+                st.session_state["offline_toast_state"] = new_state
+            st.toggle("Offline Mode (No External APIs)", key="widget_offline_mode", value=st.session_state.settings_offline_mode, on_change=update_offline_mode)
+
             format_list = ["PDF", "CSV", "JSON", "Excel"]
             
             st.selectbox(
@@ -4907,31 +6853,33 @@ def render_settings_page():
             )
             
             st.markdown('<div style="height:15px"></div>', unsafe_allow_html=True)
-            if st.button(t("Clear Cache"), key="clear_cache_btn", type="secondary", use_container_width=True):
-                st.cache_data.clear()
-                st.cache_resource.clear()
-                st.success("Application cache cleared successfully!")
-                st.rerun()
+            (col_st1,) = st.columns(1)
+            with col_st1:
+                if st.button(t("Clear Cache"), key="clear_cache_btn", type="secondary", use_container_width=True):
+                    st.cache_data.clear()
+                    st.cache_resource.clear()
+                    st.success("Application cache cleared successfully!")
+                    st.rerun()
 
     with right_c:
         st.markdown(f'<div class="section-title">{t("About Developer")}</div>', unsafe_allow_html=True)
         st.markdown(
             f"""
             <div class="chart-card" style="padding:22px; border-left:4px solid var(--grad-a);">
-                <div style="font-size:13.5px; color:var(--text); font-weight:700; line-height:1.6; margin-bottom:10px;">
+                <div style="font-size:15.5px; color:var(--text); font-weight:700; line-height:1.6; margin-bottom:10px;">
                     Developed by Daksh Vasani
                 </div>
-                <div style="font-size:12.5px; color:var(--text-muted); line-height:1.65;">
+                <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65;">
                     <p style="margin-bottom:8px;">
                         Daksh Vasani is a passionate researcher and AI Developer pursuing a <strong>Master of Science in Data Science (M.Sc. DS)</strong>. 
                         Specializing in Machine Learning and predictive security analytics, Daksh designed and developed <strong>CyberMind AI</strong> 
                         to offer a unified, intelligent threat analysis dashboard.
                     </p>
-                    <p style="margin-bottom:12px;">
+                    <p style="margin-bottom:13.5px;">
                         This platform integrates deep lexical profiling, multi-threaded domain intelligence, and ML predictions to evaluate risks 
                         across web properties, files, and emails.
                     </p>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:11px; color:var(--text-faint); border-top:1px solid var(--border); padding-top:10px;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--text-faint); border-top:1px solid var(--border); padding-top:10px;">
                         <span>🎓 <strong>Degree:</strong> M.Sc. Data Science</span>
                         <span>📅 <strong>Build Date:</strong> 07-07-2026</span>
                         <span>🛡️ <strong>Version:</strong> v1.0.0 Enterprise</span>
@@ -4943,7 +6891,7 @@ def render_settings_page():
         )
 
     # ── ML Model Performance Cards (Unindented to render full screen width) ──
-    st.markdown('<div class="section-title" style="margin-top:22px;">🤖 ML Model Performance</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title" style="margin-top:22px;"><img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" width="20" height="20"> ML Model Performance</div>', unsafe_allow_html=True)
 
     import json as _json
     _metrics_path = BASE_DIR / "ml" / "models" / "cybermind_metrics.json"
@@ -5013,6 +6961,8 @@ def render_settings_page():
                 _df1  = float(_d.get("f1_score",  0))
                 _dauc = float(_d.get("roc_auc",   0))
                 _pkl  = _d.get("model_file", "N/A")
+                _ext  = _d.get("external_validation", {})
+                _ext_txt = f"{_ext.get('accuracy',0)*100:.2f}%" if _ext else "N/A"
                 _ac   = "#22D3EE" if _da   >= 0.90 else ("#F59E0B" if _da   >= 0.75 else "#F87171")
                 _fc   = "#22D3EE" if _df1  >= 0.88 else ("#F59E0B" if _df1  >= 0.70 else "#F87171")
                 _uc   = "#22D3EE" if _dauc >= 0.92 else ("#F59E0B" if _dauc >= 0.80 else "#F87171")
@@ -5024,21 +6974,23 @@ def render_settings_page():
                   <td style="padding:7px 8px;font-size:11px;color:#34D399;text-align:center;">{float(_d.get('recall',0)):.4f}</td>
                   <td style="padding:7px 8px;font-size:11px;font-weight:700;color:{_fc};text-align:center;">{_df1:.4f}</td>
                   <td style="padding:7px 8px;font-size:11px;font-weight:700;color:{_uc};text-align:center;">{_dauc:.4f}</td>
+                  <td style="padding:7px 8px;font-size:11px;color:#F59E0B;text-align:center;">{_ext_txt}</td>
                   <td style="padding:7px 8px;font-size:10px;color:var(--text-faint);text-align:center;font-family:monospace;">{_pkl}</td>
                 </tr>"""
             st.markdown(f"""
-            <div class="chart-card" style="padding:14px;overflow-x:auto;">
+            <div class="chart-card" style="padding:14px;overflow-x:auto;margin-bottom:12px;">
               <div style="font-size:11px;color:var(--text-faint);margin-bottom:10px;font-weight:600;
-                          text-transform:uppercase;letter-spacing:0.8px;">Per-Dataset Breakdown</div>
+                          text-transform:uppercase;letter-spacing:0.8px;">Per-Dataset Breakdown &amp; Validation</div>
               <table style="width:100%;border-collapse:collapse;">
                 <thead>
                   <tr style="border-bottom:1px solid var(--border);">
                     <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:left;">Dataset</th>
-                    <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Acc</th>
+                    <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Acc (5-CV)</th>
                     <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Precision</th>
                     <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Recall</th>
                     <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">F1</th>
                     <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">AUC-ROC</th>
+                    <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">External Val</th>
                     <th style="padding:6px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Model File</th>
                   </tr>
                 </thead>
@@ -5046,6 +6998,51 @@ def render_settings_page():
               </table>
             </div>
             """, unsafe_allow_html=True)
+
+            # ── Per-Class Breakdown Expanders ─────────────────────────────
+            with st.expander("🔍 Per-Class Metrics & Imbalance Analysis"):
+                st.markdown("<div style='font-size:12px; color:var(--text-muted); margin-bottom:10px;'>Detailed per-class precision, recall, and F1 performance across minority/majority classes:</div>", unsafe_allow_html=True)
+                for _d in _per:
+                    _pc = _d.get("per_class", {})
+                    _ext_info = _d.get("external_validation", {})
+                    _ds_name = _d.get("dataset", "")
+                    if _pc or _ext_info:
+                        st.markdown(f"**{_ds_name}** (`{_d.get('model_file', '')}`)")
+                        if _ext_info:
+                            st.info(f"🎯 **External Validation**: {_ext_info.get('accuracy', 0)*100:.2f}% Accuracy on {_ext_info.get('sample_count', 0)} independent benchmark samples ({_ext_info.get('dataset_name', '')}).")
+                        if _pc:
+                            _pc_rows = ""
+                            for _cname, _cvals in _pc.items():
+                                _pc_p = float(_cvals.get("precision", 0))
+                                _pc_r = float(_cvals.get("recall", 0))
+                                _pc_f = float(_cvals.get("f1_score", 0))
+                                _pc_s = int(_cvals.get("support", 0))
+                                _pc_color = "#34D399" if _pc_f >= 0.70 else ("#F59E0B" if _pc_f >= 0.40 else "#F87171")
+                                _pc_rows += f"""
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding:5px 8px;font-size:11px;color:var(--text);">{_cname}</td>
+                                    <td style="padding:5px 8px;font-size:11px;color:var(--text-muted);text-align:center;">{_pc_s:,}</td>
+                                    <td style="padding:5px 8px;font-size:11px;color:#A78BFA;text-align:center;">{_pc_p:.4f}</td>
+                                    <td style="padding:5px 8px;font-size:11px;color:#34D399;text-align:center;">{_pc_r:.4f}</td>
+                                    <td style="padding:5px 8px;font-size:11px;font-weight:700;color:{_pc_color};text-align:center;">{_pc_f:.4f}</td>
+                                </tr>"""
+                            st.markdown(
+                                f"""
+                                <table style="width:100%; border-collapse:collapse; margin-bottom:14px;">
+                                    <thead>
+                                        <tr style="border-bottom:1px solid var(--border);">
+                                            <th style="padding:5px 8px;font-size:10px;color:var(--text-faint);text-align:left;">Class Name</th>
+                                            <th style="padding:5px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Samples</th>
+                                            <th style="padding:5px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Precision</th>
+                                            <th style="padding:5px 8px;font-size:10px;color:var(--text-faint);text-align:center;">Recall</th>
+                                            <th style="padding:5px 8px;font-size:10px;color:var(--text-faint);text-align:center;">F1 Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>{_pc_rows}</tbody>
+                                </table>
+                                """,
+                                unsafe_allow_html=True
+                            )
 
         # ── Info footer ────────────────────────────────────────────────
         # Build per-dataset summary from actual JSON data (no top-level
@@ -5058,7 +7055,7 @@ def render_settings_page():
         )
         st.markdown(f"""
         <div class="chart-card" style="padding:10px 14px;font-size:11px;color:var(--text-faint);line-height:1.8;margin-top:8px;">
-          🤖 <b>{_m.get("model_type","RandomForestClassifier")}</b> &nbsp;·&nbsp;
+          <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"><b>{_m.get("model_type","RandomForestClassifier")}</b> &nbsp;·&nbsp;
           🌳 Trees: <b>200</b> (n_estimators) &nbsp;·&nbsp;
           📦 Total samples: <b>{_total_samples:,}</b><br>
           🔢 Features — {_feat_parts}
@@ -5359,6 +7356,9 @@ def render_connections_page():
             datasets_status.append((ds_name, ds_icon, False, 0, "0 B"))
 
     # ── 3. API Keys ───────────────────────────────────────────────────────────
+    from core.offline_mode import offline_mode
+    is_offline_mode = offline_mode.is_enabled
+
     api_keys = [
         ("Google Safe Browsing", "GOOGLE_SAFE_BROWSING_API_KEY", "🔍"),
         ("VirusTotal",           "VIRUSTOTAL_API_KEY",           "🦠"),
@@ -5370,9 +7370,15 @@ def render_connections_page():
     api_status = []
     for api_name, env_key, api_icon in api_keys:
         val = _os.environ.get(env_key, "").strip()
-        is_active = bool(val)
-        masked = f"{val[:6]}...{val[-4:]}" if is_active and len(val) > 10 else (val if is_active else "Not configured")
-        api_status.append((api_name, api_icon, is_active, masked, env_key))
+        has_key = bool(val)
+        is_active = has_key and not is_offline_mode
+        if is_offline_mode:
+            masked = "Disabled (Offline Mode)"
+        elif is_active:
+            masked = f"{val[:6]}...{val[-4:]}" if len(val) > 10 else val
+        else:
+            masked = "Not configured"
+        api_status.append((api_name, api_icon, is_active, masked, env_key, has_key))
 
     # ── Summary cards ─────────────────────────────────────────────────────────
     db_effective = db_active and not st.session_state.db_user_disabled
@@ -5380,7 +7386,7 @@ def render_connections_page():
         1 for n, _, a, _, _ in datasets_status
         if a and n not in st.session_state.disabled_datasets
     )
-    active_api = sum(1 for _, _, a, _, _ in api_status if a)
+    active_api = sum(1 for _, _, a, _, _, _ in api_status if a)
     total_connections = len(datasets_status) + len(api_status) + 1
     active_connections = active_ds + active_api + (1 if db_effective else 0)
 
@@ -5388,10 +7394,10 @@ def render_connections_page():
     for col, (label, value, color, bg, icon) in zip(
         [sc1, sc2, sc3, sc4],
         [
-            ("Total Active", f"{active_connections} / {total_connections}", "var(--success)", "var(--success-bg)", "🟢"),
+            ("Total Active", f"{active_connections} / {total_connections}", "var(--success)" if active_connections > 0 else "var(--danger)", "var(--success-bg)" if active_connections > 0 else "var(--danger-bg)", "🟢"),
             ("Database", "Connected" if db_effective else "Offline", "var(--success)" if db_effective else "var(--danger)", "var(--success-bg)" if db_effective else "var(--danger-bg)", "🗄️"),
             ("Datasets", f"{active_ds} / {len(datasets_status)}", "var(--info)", "var(--info-bg)", "📊"),
-            ("API Keys", f"{active_api} / {len(api_status)}", "var(--warning)", "var(--warning-bg)", "🔑"),
+            ("API Keys", f"0 / {len(api_status)} (Offline)" if is_offline_mode else f"{active_api} / {len(api_status)}", "var(--warning)" if not is_offline_mode and active_api > 0 else "var(--danger)", "var(--warning-bg)" if not is_offline_mode and active_api > 0 else "var(--danger-bg)", "🔑"),
         ]
     ):
         with col:
@@ -5495,8 +7501,17 @@ def render_connections_page():
     # ── API CONNECTIONS ───────────────────────────────────────────────────────
     with col_api:
         st.markdown('<div class="section-title">🔑 API Connections</div>', unsafe_allow_html=True)
+        if is_offline_mode:
+            st.markdown(
+                '<div style="background:rgba(255,170,0,0.12);border:1px solid rgba(255,170,0,0.35);'
+                'border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;'
+                'color:#ffaa00;font-weight:600;display:flex;align-items:center;gap:6px;">'
+                '<span>⚡ Offline Mode Active</span> — All API connections forced OFF'
+                '</div>',
+                unsafe_allow_html=True,
+            )
         with st.container(key="api_container"):
-            for api_name, api_icon, is_active, masked, env_key in api_status:
+            for api_name, api_icon, is_active, masked, env_key, has_key in api_status:
                 ic_col, info_col, tog_col = st.columns([0.25, 2.2, 0.65], vertical_alignment="center")
                 with ic_col:
                     st.markdown(f'<span style="font-size:18px;">{api_icon}</span>', unsafe_allow_html=True)
@@ -5512,8 +7527,9 @@ def render_connections_page():
                         "", value=is_active,
                         key=f"api_toggle_{env_key}",
                         label_visibility="collapsed",
+                        disabled=is_offline_mode,
                     )
-                    if new_val != is_active:
+                    if new_val != is_active and not is_offline_mode:
                         if new_val:
                             # Enable: reload key from .env file
                             try:
@@ -5540,42 +7556,108 @@ def render_connections_page():
 
         # ── Add / update API keys ─────────────────────────────────────────────
         st.markdown('<div style="height:10px;"></div>', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">⚡ Add / Update API Keys</div>', unsafe_allow_html=True)
-        inactive_apis = [(n, ek) for n, _, a, _, ek in api_status if not a]
-        if inactive_apis:
-            for api_name, env_key in inactive_apis:
-                new_key = st.text_input(
-                    api_name,
-                    placeholder=f"Paste {api_name} API key…",
-                    type="password",
-                    key=f"activate_{env_key}",
-                )
-                if new_key:
-                    st.markdown('<div class="cta-primary">', unsafe_allow_html=True)
-                    if st.button(f"💾 Save {api_name} Key", key=f"save_{env_key}", use_container_width=True):
-                        try:
-                            env_path = BASE_DIR / ".env"
-                            env_content = env_path.read_text() if env_path.exists() else ""
-                            if env_key in env_content:
-                                env_content = _re.sub(
-                                    rf"^{env_key}\s*=.*$",
-                                    f"{env_key}={new_key}",
-                                    env_content, flags=_re.MULTILINE,
-                                )
-                            else:
-                                env_content += f"\n{env_key}={new_key}\n"
-                            env_path.write_text(env_content)
-                            _os.environ[env_key] = new_key
-                            st.success(f"{api_name} key saved and activated!")
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"Failed to save: {e}")
-                    st.markdown("</div>", unsafe_allow_html=True)
+        if is_offline_mode:
+            st.caption("🔒 API Key activation is disabled while Offline Mode is active. Turn off Offline Mode in Settings to manage keys.")
         else:
-            st.markdown(
-                '<div style="font-size:12px;color:var(--text-faint);padding:8px 4px;">✅ All API keys are configured.</div>',
-                unsafe_allow_html=True,
-            )
+            inactive_apis = [(n, ek) for n, _, a, _, ek, hk in api_status if not a]
+            if inactive_apis:
+                for api_name, env_key in inactive_apis:
+                    new_key = st.text_input(
+                        api_name,
+                        placeholder=f"Paste {api_name} API key…",
+                        type="password",
+                        key=f"activate_{env_key}",
+                    )
+                    if new_key:
+                        st.markdown('<div class="cta-primary">', unsafe_allow_html=True)
+                        if st.button(f"💾 Save {api_name} Key", key=f"save_{env_key}", use_container_width=True):
+                            try:
+                                env_path = BASE_DIR / ".env"
+                                env_content = env_path.read_text() if env_path.exists() else ""
+                                if env_key in env_content:
+                                    env_content = _re.sub(
+                                        rf"^{env_key}\s*=.*$",
+                                        f"{env_key}={new_key}",
+                                        env_content, flags=_re.MULTILINE,
+                                    )
+                                else:
+                                    env_content += f"\n{env_key}={new_key}\n"
+                                env_path.write_text(env_content)
+                                _os.environ[env_key] = new_key
+                                st.success(f"{api_name} key saved and activated!")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"Failed to save: {e}")
+                        st.markdown("</div>", unsafe_allow_html=True)
+def create_threat_map_figure(map_rows, height=250):
+    import plotly.graph_objects as go
+
+    fig = go.Figure()
+
+    if map_rows:
+        countries = [row["country"] for row in map_rows]
+        counts = [row["count"] for row in map_rows]
+        lon = [row["longitude"] for row in map_rows if row["longitude"] is not None]
+        lat = [row["latitude"] for row in map_rows if row["latitude"] is not None]
+        hover_text = [f"<b>{row['country']}</b>: {row['count']} scans" for row in map_rows]
+        sizes = [min(35, 12 + row["count"] * 2) for row in map_rows]
+
+        # Choropleth shading layer for targeted countries
+        fig.add_trace(go.Choropleth(
+            locations=countries,
+            locationmode='country names',
+            z=counts,
+            colorscale=[[0, 'rgba(242, 84, 91, 0.25)'], [1, '#F2545B']],
+            showscale=False,
+            hoverinfo='location+z',
+            marker_line_color='#334155',
+            marker_line_width=0.8,
+        ))
+
+        # Scattergeo markers for pinpoint lat/lon locations
+        if lon and lat:
+            fig.add_trace(go.Scattergeo(
+                lon=lon,
+                lat=lat,
+                text=hover_text,
+                mode='markers',
+                hoverinfo='text',
+                marker=dict(
+                    size=sizes,
+                    color='#F2545B',
+                    opacity=0.9,
+                    symbol='circle',
+                    line=dict(width=1.5, color='#FFFFFF')
+                )
+            ))
+    else:
+        fig.add_trace(go.Scattergeo(lon=[0], lat=[0], mode='markers', marker=dict(size=0, opacity=0)))
+
+    fig.update_layout(
+        geo=dict(
+            scope='world',
+            projection_type='equirectangular',
+            showland=True,
+            landcolor='#1E293B',
+            showcountries=True,
+            countrycolor='#334155',
+            countrywidth=0.8,
+            showcoastlines=True,
+            coastlinecolor='#475569',
+            showocean=True,
+            oceancolor='#0F172A',
+            showlakes=False,
+            bgcolor='rgba(0,0,0,0)',
+        ),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=0, r=0, t=0, b=0),
+        height=height,
+        showlegend=False
+    )
+    return fig
+
+
 def render_analytics_page():
     # Ensure database is seeded if empty
     seed_database_if_empty()
@@ -5842,131 +7924,47 @@ def render_analytics_page():
     except Exception:
         map_rows = []
 
-    # ── 3.5. Threat Map Expanded View ─────────────────────────────────────────
-    if st.session_state.get("show_full_map", False):
-        st.markdown('<div class="section-title">Threat Map (Live) - Expanded View</div>', unsafe_allow_html=True)
-        if not map_rows:
-            st.markdown(
-                """
-                <div class="chart-card" style="padding:20px; text-align:center; color:var(--text-muted); display:flex; flex-direction:column; justify-content:center; align-items:center; height:450px;">
-                    <div style="font-size:42px; margin-bottom:8px;">🗺️</div>
-                    <div style="font-size:14px; font-weight:600;">No location data yet</div>
-                    <div style="font-size:12px; margin-top:6px;">Scan an IP or domain to populate the live threat map.</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-        else:
-            lon = [row["longitude"] for row in map_rows]
-            lat = [row["latitude"] for row in map_rows]
-            text = [f"{row['country']} ({row['count']} scans)" for row in map_rows]
-            sizes = [min(35, 12 + row["count"] * 2) for row in map_rows]
-            
-            fig_map_full = go.Figure(go.Scattergeo(
-                lon = lon,
-                lat = lat,
-                text = text,
-                mode = 'markers',
-                marker = dict(
-                    size = sizes,
-                    color = '#F2545B',
-                    opacity = 0.95,
-                    symbol = 'circle',
-                    line = dict(width=1.5, color='rgba(255,255,255,0.6)')
-                )
-            ))
-            fig_map_full.update_layout(
-                geo = dict(
-                    scope='world',
-                    showland = True,
-                    landcolor = '#0A1220',
-                    subunitcolor = '#1D2838',
-                    countrycolor = '#1D2838',
-                    showocean = True,
-                    oceancolor = '#060B14',
-                    showlakes = False,
-                    bgcolor = 'rgba(0,0,0,0)',
-                ),
-                paper_bgcolor="rgba(0,0,0,0)",
-                margin=dict(l=0, r=0, t=0, b=0),
-                height=450
-            )
-            st.plotly_chart(fig_map_full, use_container_width=True, config={"displayModeBar": False})
-            
-        if st.button("Close Expanded Threat Map", key="close_full_map_top"):
-            st.session_state.show_full_map = False
-            st.rerun()
+    # ── 3.5. Threat Map & Most Targeted Countries ──────────────────────────────
+    is_map_expanded = st.session_state.get("show_full_map", False)
+
+    if is_map_expanded:
+        th_exp1, th_exp2 = st.columns([3, 1], vertical_alignment="center")
+        with th_exp1:
+            st.markdown('<div class="section-title" style="margin-bottom:0;">Threat Map (Live) - Expanded View</div>', unsafe_allow_html=True)
+        with th_exp2:
+            if st.button("Close Expanded Map", key="close_full_map_top"):
+                st.session_state.show_full_map = False
+                st.rerun()
+
+        fig_map_full = create_threat_map_figure(map_rows, height=450)
+        st.plotly_chart(fig_map_full, use_container_width=True, config={"displayModeBar": False})
         st.markdown("<br>", unsafe_allow_html=True)
 
     # ── 4. ROW 3: Threat Map (Live) & Most Targeted Countries ─────────────────
     mr1, mr2 = st.columns(2, gap="large")
     with mr1:
-        th5, th6 = st.columns([2, 1], vertical_alignment="center")
-        with th5:
-            st.markdown('<div class="section-title" style="margin-bottom:0;">Threat Map (Live)</div>', unsafe_allow_html=True)
-        with th6:
-            map_label = "Close Map" if st.session_state.get("show_full_map", False) else "View Full Map"
-            if st.button(map_label, key="view_full_map_btn"):
-                st.session_state.show_full_map = not st.session_state.get("show_full_map", False)
-                st.rerun()
+        if not is_map_expanded:
+            th5, th6 = st.columns([2, 1], vertical_alignment="center")
+            with th5:
+                st.markdown('<div class="section-title" style="margin-bottom:0;">Threat Map (Live)</div>', unsafe_allow_html=True)
+            with th6:
+                if st.button("View Full Map", key="view_full_map_btn"):
+                    st.session_state.show_full_map = True
+                    st.rerun()
 
-        if not map_rows:
-            st.markdown(
-                """
-                <div class="chart-card" style="padding:20px; text-align:center; color:var(--text-muted); display:flex; flex-direction:column; justify-content:center; align-items:center; height:250px;">
-                    <div style="font-size:32px; margin-bottom:8px;">🗺️</div>
-                    <div style="font-size:13px; font-weight:600;">No location data yet</div>
-                    <div style="font-size:12px; margin-top:6px;">Scan an IP or domain to populate the live threat map.</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-        else:
-            lon = [row["longitude"] for row in map_rows]
-            lat = [row["latitude"] for row in map_rows]
-            text = [f"{row['country']} ({row['count']} scans)" for row in map_rows]
-            sizes = [min(30, 10 + row["count"] * 2) for row in map_rows]
-
-            fig_map = go.Figure(go.Scattergeo(
-                lon = lon,
-                lat = lat,
-                text = text,
-                mode = 'markers',
-                marker = dict(
-                    size = sizes,
-                    color = '#F2545B',
-                    opacity = 0.8,
-                    symbol = 'circle',
-                    line = dict(width=1, color='rgba(0,0,0,0)')
-                )
-            ))
-            fig_map.update_layout(
-                geo = dict(
-                    scope='world',
-                    showland = True,
-                    landcolor = '#0A1220',
-                    subunitcolor = '#1D2838',
-                    countrycolor = '#1D2838',
-                    showocean = True,
-                    oceancolor = '#060B14',
-                    showlakes = False,
-                    bgcolor = 'rgba(0,0,0,0)',
-                ),
-                paper_bgcolor="rgba(0,0,0,0)",
-                margin=dict(l=0, r=0, t=0, b=0),
-                height=250
-            )
+            fig_map = create_threat_map_figure(map_rows, height=250)
             st.plotly_chart(fig_map, use_container_width=True, config={"displayModeBar": False})
 
     with mr2:
-        th7, th8 = st.columns([2, 1.1], vertical_alignment="center")
+        th7, th8 = st.columns([3.5, 1], vertical_alignment="center")
         with th7:
             st.markdown('<div class="section-title" style="margin-bottom:0;">Most Targeted Countries</div>', unsafe_allow_html=True)
         with th8:
             show_all_c = st.session_state.get("show_all_countries", False)
-            if st.button("Show Less" if show_all_c else "View All", key="toggle_countries_btn"):
-                st.session_state.show_all_countries = not show_all_c
-                st.rerun()
+            with st.container(key="toggle_countries_wrap"):
+                if st.button("Show Less" if show_all_c else "View All", key="toggle_countries_btn", use_container_width=True):
+                    st.session_state.show_all_countries = not show_all_c
+                    st.rerun()
 
         limit_countries = 10 if show_all_c else 5
         try:
@@ -5986,7 +7984,7 @@ def render_analytics_page():
         if not country_rows:
             st.markdown(
                 """
-                <div class="chart-card" style="padding:20px; text-align:center; color:var(--text-muted); display:flex; flex-direction:column; justify-content:center; align-items:center; height:250px;">
+                <div class="chart-card" style="padding:20px; text-align:center; color:var(--text-muted); display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:220px;">
                     <div style="font-size:32px; margin-bottom:8px;">🌍</div>
                     <div style="font-size:13px; font-weight:600;">No location data yet</div>
                     <div style="font-size:12px; margin-top:6px;">Scan an IP or domain to populate the countries breakdown.</div>
@@ -6007,9 +8005,12 @@ def render_analytics_page():
                 color = colors[i % len(colors)]
                 flag_url = f"https://flagcdn.com/w20/{c_code}.png"
                 
+                is_last = (i == len(country_rows) - 1)
+                margin_style = "margin-bottom: 0px;" if is_last else "margin-bottom: 12px;"
+                
                 row_html = f"""
-                <div style="margin-bottom:12px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:2px; align-items:center;">
+                <div style="{margin_style}">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; align-items:center;">
                         <span style="display:flex; align-items:center;"><img src="{flag_url}" width="18" style="margin-right:8px; border-radius:2px;"/>{country_name}</span><span style="font-weight:700;">{count}</span>
                     </div>
                     <div style="width:100%; height:5px; background:var(--border); border-radius:10px; overflow:hidden;">
@@ -6020,7 +8021,7 @@ def render_analytics_page():
                 country_html.append(row_html)
                 
             inner_html = f"""
-            <div class="chart-card" style="padding:16px; {'' if show_all_c else 'height:250px; display:flex; flex-direction:column; justify-content:space-between;'}">
+            <div class="chart-card" style="padding:18px 20px; min-height:220px;">
                 {''.join(country_html)}
             </div>
             """
@@ -6064,7 +8065,7 @@ def render_analytics_page():
                 <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%; flex:1; font-size:12.5px;">
                     <div class="list-row" style="padding:4px 0; border:none;"><span>⚙️ API Services</span><span class="badge {api_badge_class}" style="font-size:10px; padding:2px 7px;">{api_status_val}</span></div>
                     <div class="list-row" style="padding:4px 0; border:none;"><span>🗄️ Database</span><span class="badge {db_badge_class}" style="font-size:10px; padding:2px 7px;">{"Operational" if db_ok else "Inactive"}</span></div>
-                    <div class="list-row" style="padding:4px 0; border:none;"><span>🤖 ML Engine</span><span class="badge badge-safe" style="font-size:10px; padding:2px 7px;">Operational</span></div>
+                    <div class="list-row" style="padding:4px 0; border:none;"><span>🧠 ML Engine</span><span class="badge badge-safe" style="font-size:10px; padding:2px 7px;">Operational</span></div>
                     <div class="list-row" style="padding:4px 0; border:none;"><span>📡 Threat Intelligence Feed</span><span class="badge badge-safe" style="font-size:10px; padding:2px 7px;">Operational</span></div>
                     <div class="list-row" style="padding:4px 0; border:none;"><span>📋 Report Generator</span><span class="badge badge-safe" style="font-size:10px; padding:2px 7px;">Operational</span></div>
                 </div>
@@ -6075,6 +8076,84 @@ def render_analytics_page():
             """,
             unsafe_allow_html=True
         )
+
+    # ── Section 4 Analytics Additions ──────────────────────────────────────
+    st.markdown("<br>", unsafe_allow_html=True)
+    an_col1, an_col2 = st.columns(2, gap="large")
+
+    with an_col1:
+        st.markdown('<div class="section-title">🌍 Global Threat Distribution (Choropleth)</div>', unsafe_allow_html=True)
+        try:
+            ch_rows = db.fetchall(
+                "SELECT country, COUNT(*) as count FROM scan_history WHERE country IS NOT NULL GROUP BY country"
+            )
+            if ch_rows:
+                df_ch = pd.DataFrame([dict(r) for r in ch_rows])
+                fig_ch = go.Figure(data=go.Choropleth(
+                    locations=df_ch['country'],
+                    locationmode='country names',
+                    z=df_ch['count'],
+                    text=df_ch['country'],
+                    colorscale='Reds',
+                    autocolorscale=False,
+                    marker_line_color='#334155',
+                    marker_line_width=0.8,
+                    colorbar_title='Scans',
+                ))
+                fig_ch.update_layout(
+                    geo=dict(
+                        scope='world',
+                        projection_type='equirectangular',
+                        showland=True,
+                        landcolor='#1E293B',
+                        showcountries=True,
+                        countrycolor='#334155',
+                        countrywidth=0.8,
+                        showcoastlines=True,
+                        coastlinecolor='#475569',
+                        showocean=True,
+                        oceancolor='#0F172A',
+                        showframe=False,
+                        bgcolor='rgba(0,0,0,0)'
+                    ),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    margin=dict(l=0, r=0, t=0, b=0),
+                    height=260
+                )
+                st.plotly_chart(fig_ch, use_container_width=True, config={"displayModeBar": False})
+            else:
+                st.info("No country distribution data available yet.")
+        except Exception as exc:
+            st.warning(f"Choropleth chart error: {exc}")
+
+    with an_col2:
+        st.markdown('<div class="section-title">📅 Attack Activity Timeline</div>', unsafe_allow_html=True)
+        try:
+            timeline_rows = db.fetchall(
+                "SELECT strftime('%Y-%m-%d %H:00', scan_time) as hour, COUNT(*) as cnt FROM scan_history GROUP BY hour ORDER BY hour DESC LIMIT 24"
+            )
+            if timeline_rows:
+                df_tl = pd.DataFrame([dict(r) for r in timeline_rows]).iloc[::-1]
+                fig_tl = go.Figure(data=go.Scatter(
+                    x=df_tl['hour'], y=df_tl['cnt'],
+                    mode='lines+markers',
+                    line=dict(color='#22D3EE', width=2),
+                    marker=dict(size=6, color='#A78BFA')
+                ))
+                fig_tl.update_layout(
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='var(--text)'),
+                    xaxis=dict(showgrid=False),
+                    yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)'),
+                    margin=dict(l=20, r=20, t=10, b=20),
+                    height=260
+                )
+                st.plotly_chart(fig_tl, use_container_width=True, config={"displayModeBar": False})
+            else:
+                st.info("No timeline data available yet.")
+        except Exception as exc:
+            st.warning(f"Timeline chart error: {exc}")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -6203,17 +8282,46 @@ def render_scan_history_page():
     if selected_level != "All":
         filtered_rows = [r for r in filtered_rows if r["risk_level"] == selected_level]
 
-    # Display count
-    st.markdown(
-        f"""
-        <div class="chart-card" style="padding:12px 16px; margin-bottom:12px; font-weight:700; font-size:14px; color:var(--text);">
-            {len(filtered_rows)} result(s)
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # ── PAGINATION LOGIC ───────────────────────────────────────────────────────
+    ITEMS_PER_PAGE = 50
+    total_items = len(filtered_rows)
+    total_pages = max(1, math.ceil(total_items / ITEMS_PER_PAGE))
 
-    # Display Table
+    if "history_page" not in st.session_state:
+        st.session_state.history_page = 1
+
+    if st.session_state.history_page > total_pages:
+        st.session_state.history_page = 1
+    if st.session_state.history_page < 1:
+        st.session_state.history_page = 1
+
+    curr_page = st.session_state.history_page
+    start_idx = (curr_page - 1) * ITEMS_PER_PAGE
+    end_idx = min(start_idx + ITEMS_PER_PAGE, total_items)
+    page_rows = filtered_rows[start_idx:end_idx]
+
+    # Display count summary card
+    if total_items > 0:
+        st.markdown(
+            f"""
+            <div class="chart-card" style="padding:12px 18px; margin-bottom:14px; font-weight:700; font-size:14px; color:var(--text); display:flex; justify-content:space-between; align-items:center;">
+                <span>{total_items} result(s) <span style="font-size:12px; color:var(--text-muted); font-weight:500;">(Showing {start_idx + 1}–{end_idx})</span></span>
+                <span style="font-size:12px; color:var(--text-muted); font-weight:600; background:rgba(34, 184, 240, 0.1); padding:4px 10px; border-radius:12px; border:1px solid rgba(34, 184, 240, 0.2);">Page {curr_page} of {total_pages}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.markdown(
+            """
+            <div class="chart-card" style="padding:12px 18px; margin-bottom:14px; font-weight:700; font-size:14px; color:var(--text);">
+                0 result(s)
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # Display Table for page_rows ONLY
     if not filtered_rows:
         st.info("No matching scan records found.")
     else:
@@ -6227,7 +8335,7 @@ def render_scan_history_page():
                 )
         st.markdown('<div style="height:1px; background:var(--border); margin:6px 0 4px 0;"></div>', unsafe_allow_html=True)
 
-        for r in filtered_rows:
+        for r in page_rows:
             badge_class = LEVEL_BADGE.get(r["risk_level"], "badge-safe")
             t_str = r["time"]
             try:
@@ -6260,6 +8368,102 @@ def render_scan_history_page():
                         restore_scan_from_history(r["scanner"], r["target"], r["risk_level"], r["risk_score"])
                         st.rerun()
             st.markdown('<div style="height:1px; background:var(--border); margin:4px 0;"></div>', unsafe_allow_html=True)
+
+        # ── DYNAMIC PAGINATION BAR (Matching Theme & Screenshot 2) ───────────
+        if total_pages > 1:
+            st.markdown('<div style="height:16px;"></div>', unsafe_allow_html=True)
+
+            # Build list of visible page numbers
+            page_numbers = []
+            if total_pages <= 7:
+                page_numbers = list(range(1, total_pages + 1))
+            else:
+                page_numbers.append(1)
+                start_p = max(2, curr_page - 1)
+                end_p = min(total_pages - 1, curr_page + 1)
+                if start_p > 2:
+                    page_numbers.append("...")
+                for p in range(start_p, end_p + 1):
+                    page_numbers.append(p)
+                if end_p < total_pages - 1:
+                    page_numbers.append("...")
+                page_numbers.append(total_pages)
+
+            # Inject CSS for pagination bar
+            st.markdown(
+                """
+                <style>
+                div[class*="st-key-pg_active_"] button {
+                    background: linear-gradient(135deg, #22D3EE 0%, #6C5CE7 100%) !important;
+                    color: #FFFFFF !important;
+                    border: none !important;
+                    font-weight: 800 !important;
+                    box-shadow: 0 4px 14px rgba(34, 211, 238, 0.4) !important;
+                    border-radius: 10px !important;
+                    height: 38px !important;
+                }
+                div[class*="st-key-pg_inactive_"] button {
+                    background: var(--card-bg) !important;
+                    color: var(--text) !important;
+                    border: 1px solid var(--border) !important;
+                    border-radius: 10px !important;
+                    height: 38px !important;
+                    font-weight: 600 !important;
+                }
+                div[class*="st-key-pg_inactive_"] button:hover {
+                    border-color: #22D3EE !important;
+                    color: #22D3EE !important;
+                }
+                .st-key-pg_prev button, .st-key-pg_next button {
+                    background: var(--card-bg) !important;
+                    color: var(--text) !important;
+                    border: 1px solid var(--border) !important;
+                    border-radius: 10px !important;
+                    height: 38px !important;
+                    font-weight: 700 !important;
+                }
+                .st-key-pg_prev button:hover:not(:disabled), .st-key-pg_next button:hover:not(:disabled) {
+                    border-color: #22D3EE !important;
+                    color: #22D3EE !important;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+
+            # Render controls in a styled centered bar
+            cols = st.columns([1.5] + [1] * len(page_numbers) + [1.5], vertical_alignment="center")
+
+            # Prev button
+            with cols[0]:
+                with st.container(key="pg_prev"):
+                    if st.button("‹ Prev", key="pg_btn_prev", disabled=(curr_page == 1), use_container_width=True):
+                        st.session_state.history_page -= 1
+                        st.rerun()
+
+            # Page numbers
+            for idx, item in enumerate(page_numbers):
+                with cols[idx + 1]:
+                    if item == "...":
+                        st.markdown("<div style='text-align:center; color:var(--text-muted); font-weight:700; line-height:38px;'>...</div>", unsafe_allow_html=True)
+                    else:
+                        is_active = (item == curr_page)
+                        btn_key = f"pg_num_{item}"
+                        if is_active:
+                            with st.container(key=f"pg_active_{item}"):
+                                st.button(str(item), key=btn_key, use_container_width=True)
+                        else:
+                            with st.container(key=f"pg_inactive_{item}"):
+                                if st.button(str(item), key=btn_key, use_container_width=True):
+                                    st.session_state.history_page = item
+                                    st.rerun()
+
+            # Next button
+            with cols[-1]:
+                with st.container(key="pg_next"):
+                    if st.button("Next ›", key="pg_btn_next", disabled=(curr_page == total_pages), use_container_width=True):
+                        st.session_state.history_page += 1
+                        st.rerun()
 
 
 
@@ -6402,45 +8606,56 @@ def render_help_support_page():
         )
 
 
+
+
 # Transition cleanup for AI Security Assistant chat history on leaving the page
 if "prev_active_page" not in st.session_state:
     st.session_state.prev_active_page = st.session_state.active_page
 
-if st.session_state.prev_active_page == "AI Security Assistant" and st.session_state.active_page != "AI Security Assistant":
-    st.session_state.ai_chat_history = []
-    st.session_state.ai_page_chat_history = []
+if st.session_state.prev_active_page != st.session_state.active_page:
+    if st.session_state.prev_active_page != "AI Security Assistant":
+        st.session_state["ai_assistant_origin_page"] = st.session_state.prev_active_page
+    else:
+        st.session_state.ai_chat_history = []
+        st.session_state.ai_page_chat_history = []
+    
+    # Reset scan context and scan results when navigating across pages
+    st.session_state["last_scan_context"] = {}
+    for _sk in SCANNERS:
+        st.session_state[f"scan_result_{_sk}"] = None
 
 st.session_state.prev_active_page = st.session_state.active_page
 
 
-# Router
+# Router — content renders in the normal block-container (CSS padding offsets for sidebar)
 
-with main_col:
-    page = st.session_state.active_page
-    if page == "Home" or page == "Dashboard":
-        render_dashboard()
-    elif page == "Device Security Check":
-        render_device_security_page()
-    elif page == "Universal Scan":
-        render_universal_scan_page()
-    elif page == "AI Security Assistant":
-        render_ai_assistant_page()
-    elif page in SCANNERS:
-        render_scanner_page(page)
-    elif page == "Scan History":
-        render_scan_history_page()
-    elif page == "Analytics":
-        render_analytics_page()
-    elif page == "Settings":
-        render_settings_page()
-    elif page == "Profile":
-        render_profile_page()
-    elif page == "Connections":
-        render_connections_page()
-    elif page == "Help & Support":
-        render_help_support_page()
-    else:
-        render_placeholder(page)
+render_offline_toast()
+
+page = st.session_state.active_page
+if page == "Home" or page == "Dashboard":
+    render_dashboard()
+elif page == "Device Security Check":
+    render_device_security_page()
+elif page == "Universal Scan":
+    render_universal_scan_page()
+elif page == "AI Security Assistant":
+    render_ai_assistant_page()
+elif page in SCANNERS:
+    render_scanner_page(page)
+elif page == "Scan History":
+    render_scan_history_page()
+elif page == "Analytics":
+    render_analytics_page()
+elif page == "Settings":
+    render_settings_page()
+elif page == "Profile":
+    render_profile_page()
+elif page == "Connections":
+    render_connections_page()
+elif page == "Help & Support":
+    render_help_support_page()
+else:
+    render_placeholder(page)
 
 # ── FLOATING AI ASSISTANT WIDGET (Perfect Eyes & Blink Fix) ──
 if st.session_state.active_page != "AI Security Assistant":
@@ -6656,3 +8871,251 @@ if st.session_state.active_page != "AI Security Assistant":
         on_click=go_to,
         args=("AI Security Assistant",)
     )
+
+# ── SECTION 11: RED FLOATING SCAN EXPLAINER WIDGET ──
+if hasattr(st, "dialog"):
+    @st.dialog(" ")
+    def render_scan_explainer_dialog():
+        st.markdown(
+            """
+            <style>
+            html body div[data-baseweb="backdrop"],
+            html body div[data-baseweb="modal"],
+            html body [data-testid="stDialog"],
+            html body [data-testid="stModal"],
+            div[data-baseweb="backdrop"],
+            div[data-baseweb="modal"],
+            [data-testid="stDialog"],
+            [data-testid="stModal"] {
+                background: rgba(0, 0, 0, 0.4) !important;
+                background-color: rgba(0, 0, 0, 0.4) !important;
+                backdrop-filter: blur(6px) !important;
+                -webkit-backdrop-filter: blur(6px) !important;
+            }
+            div[data-baseweb="modal"] > div,
+            div[data-baseweb="modal"] > div > div,
+            [data-testid="stDialog"] > div {
+                background: transparent !important;
+                background-color: transparent !important;
+            }
+            div[data-baseweb="modal"] [role="dialog"],
+            [data-testid="stDialog"] [role="dialog"],
+            [data-testid="stDialog"] [data-testid="stDialogContent"] {
+                background: var(--dialog-bg) !important;
+                background-color: var(--dialog-bg) !important;
+                color: var(--dialog-text) !important;
+                border: 1px solid var(--dialog-border) !important;
+                border-radius: 16px !important;
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5) !important;
+            }
+            div[data-testid="stDialogHeader"] h2,
+            div[data-testid="stDialogHeader"] span,
+            div[role="dialog"] h2,
+            [data-testid="stDialog"] h2 {
+                display: none !important;
+            }
+            </style>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; margin-top: -10px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="30" height="30" style="object-fit: contain;">
+                <span style="font-size: 19px; font-weight: 800; color: var(--text);">AI Scan Explanation</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        context = st.session_state.get("last_scan_context", {})
+        if not context:
+            st.info("No scan context available. Run a scan on any scanner page first!")
+            return
+        
+        target = context.get("target", "Target")
+        scanner = context.get("scanner", "Scanner")
+        score = context.get("risk_score", 0)
+        level = context.get("risk_level", "Unknown")
+        
+        st.markdown(f"#### Target: `{target}`")
+        st.markdown(f"**Scanner Type:** {scanner}  |  **Verdict:** **{level}** ({score}/100)")
+        st.markdown("---")
+        
+        with st.spinner("Generating plain-language explanation with CyberMind-AI..."):
+            import json
+            from modules.ai_assistant import query_groq_api
+            prompt_messages = [
+                {
+                    "role": "system", 
+                    "content": "You are CyberMind AI, an expert security assistant. Explain the security scan results in simple plain language: 1) What was found, 2) Why it's safe or risky, and 3) 2-3 concrete steps the user should take right now. Keep your response under 200 words in Markdown."
+                },
+                {
+                    "role": "user",
+                    "content": f"Scan Context: Target='{target}', Scanner='{scanner}', Risk Level='{level}', Risk Score={score}, Findings={context.get('findings', {})}"
+                }
+            ]
+            exp_res = query_groq_api(prompt_messages)
+            if exp_res.startswith("Groq API Error") or exp_res.startswith("Error") or exp_res.startswith("Failed"):
+                exp_res = (
+                    f"**Analysis Summary for `{target}`:**\n\n"
+                    f"- **Security Status:** Classified as **{level}** with a risk score of **{score}/100**.\n"
+                    f"- **Assessment:** Evaluated against multiple threat databases, domain metrics, and Machine Learning models.\n\n"
+                    f"**Recommended Actions:**\n"
+                    f"1. {'Do not enter personal or financial information on this page.' if score >= 40 else 'Resource appears safe; proceed with normal caution.'}\n"
+                    f"2. Verify domain WHOIS registration age and SSL certificate authenticity.\n"
+                    f"3. Re-scan or request administrative clearance if unexpected."
+                )
+        st.markdown(exp_res)
+
+last_ctx = st.session_state.get("last_scan_context", {})
+active_p = st.session_state.get("active_page")
+has_active_scan_res = st.session_state.get(f"scan_result_{active_p}") is not None
+if last_ctx and active_p == last_ctx.get("scanner_key") and has_active_scan_res:
+    st.markdown(
+        """
+        <style>
+        /* ── Red Floating Explainer Container ── */
+        .st-key-floating_scan_explainer, div.st-key-floating_scan_explainer {
+            position: fixed !important;
+            bottom: 5.8rem !important;
+            right: 2rem !important;
+            width: 52px !important;
+            height: 52px !important;
+            z-index: 999998 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* ── Red Circular Animated Button ── */
+        .st-key-floating_scan_explainer button,
+        .st-key-floating_scan_explainer div.stButton > button,
+        .st-key-floating_scan_explainer div.stButton > button[kind="secondary"] {
+            width: 52px !important;
+            height: 52px !important;
+            min-width: 52px !important;
+            max-width: 52px !important;
+            min-height: 52px !important;
+            max-height: 52px !important;
+            border-radius: 50% !important;
+            background: linear-gradient(180deg, #F2545B 0%, #D9383E 100%) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            border: none !important;
+            box-shadow:
+                0 3px 15px rgba(242, 84, 91, 0.4),
+                0 0 30px rgba(242, 84, 91, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+
+        .st-key-floating_scan_explainer button p {
+            position: absolute !important;
+            inset: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 0px !important;
+            color: transparent !important;
+            line-height: 0 !important;
+        }
+
+        /* Inner depth effect */
+        .st-key-floating_scan_explainer button::after {
+            content: "" !important;
+            position: absolute !important;
+            inset: 3px !important;
+            border-radius: 50% !important;
+            background: linear-gradient(180deg, #FF6B70 0%, #F2545B 50%, #D9383E 100%) !important;
+            box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.15) !important;
+            z-index: 1 !important;
+        }
+
+        /* Shimmer overlay */
+        .st-key-floating_scan_explainer button::before {
+            content: "" !important;
+            position: absolute !important;
+            inset: 0 !important;
+            border-radius: 50% !important;
+            background: linear-gradient(
+                135deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.15) 50%,
+                transparent 70%
+            ) !important;
+            animation: shimmer-rotate 3s ease-in-out infinite !important;
+            z-index: 3 !important;
+        }
+
+        .st-key-floating_scan_explainer button p::before,
+        .st-key-floating_scan_explainer button p::after {
+            content: "" !important;
+            position: absolute !important;
+            top: 18px !important;         
+            width: 6.5px !important;         
+            height: 9.5px !important;
+            background: white !important;
+            border-radius: 50% !important;
+            z-index: 4 !important;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.75) !important;
+            transform-origin: center center !important;
+        }
+
+        /* Left Eye Positioning & Animation */
+        .st-key-floating_scan_explainer button p::before {
+            left: 17px !important;
+            animation: eye-blink-left 4.2s ease-in-out infinite !important;
+        }
+
+        /* Right Eye Positioning & Animation */
+        .st-key-floating_scan_explainer button p::after {
+            left: 27px !important;
+            animation: eye-blink-right 4.2s ease-in-out infinite !important;
+        }
+
+        .st-key-floating_scan_explainer button:hover,
+        .st-key-floating_scan_explainer div.stButton > button:hover {
+            transform: scale(1.12) !important;
+            box-shadow:
+                0 5px 25px rgba(242, 84, 91, 0.6),
+                0 0 50px rgba(242, 84, 91, 0.3) !important;
+        }
+
+        .st-key-floating_scan_explainer button:active {
+            transform: scale(0.94) !important;
+        }
+
+        /* ── Tooltip on Hover ── */
+        .st-key-floating_scan_explainer::before {
+            content: "Explain Scan Findings" !important;
+            visibility: hidden !important;
+            width: auto !important;
+            background-color: #161922 !important;
+            color: #fca5a5 !important;
+            text-align: center !important;
+            border-radius: 12px !important;
+            padding: 9px 15px !important;
+            position: absolute !important;
+            z-index: 1000000 !important;
+            bottom: 125% !important;
+            right: 0% !important;
+            opacity: 0 !important;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            transform: translateX(12px) scale(0.92) !important;
+            font-size: 12.5px !important;
+            font-weight: 600 !important;
+            border: 1px solid rgba(242, 84, 91, 0.3) !important;
+            white-space: nowrap !important;
+        }
+
+        .st-key-floating_scan_explainer:hover::before {
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: translateX(0) scale(1) !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    if st.button("👁️", key="floating_scan_explainer"):
+        if hasattr(st, "dialog"):
+            render_scan_explainer_dialog()

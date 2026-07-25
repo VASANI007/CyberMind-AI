@@ -18,17 +18,25 @@ class WhoisService:
         domain: str
     ) -> dict:
         """
-        Perform WHOIS lookup.
+        Perform WHOIS lookup with strict 3-second thread execution timeout.
         """
+        import socket
+        import concurrent.futures
+
+        def _raw_whois():
+            old_timeout = socket.getdefaulttimeout()
+            try:
+                socket.setdefaulttimeout(3)
+                return whois.whois(domain)
+            finally:
+                socket.setdefaulttimeout(old_timeout)
 
         try:
-
-            result = whois.whois(domain)
-
-            return self._format(result)
-
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(_raw_whois)
+                result = future.result(timeout=3)
+                return self._format(result)
         except Exception:
-
             return {}
 
     def exists(

@@ -175,16 +175,49 @@ class URLScanner:
         report["url"] = url
 
         try:
+            analysis_data = url_service.analyze(url)
+            
+            # ── Additional Phase 1A Services ──────────────────────────────
+            domain_name = analysis_data.get("domain", {}).get("domain", "") or url.split("/")[2] if "//" in url else url
+            
+            try:
+                from services.redirect_chain_service import redirect_chain_service
+                analysis_data["redirect_chain"] = redirect_chain_service.follow(url)
+            except Exception as e:
+                logger.warning("Redirect chain failed: %s", e)
 
-            report["analysis"] = (
+            try:
+                from services.homograph_service import homograph_service
+                analysis_data["homograph"] = homograph_service.detect(domain_name)
+            except Exception as e:
+                logger.warning("Homograph check failed: %s", e)
 
-                url_service.analyze(
+            try:
+                from services.typosquat_service import typosquat_service
+                analysis_data["typosquat"] = typosquat_service.check(domain_name)
+            except Exception as e:
+                logger.warning("Typosquat check failed: %s", e)
 
-                    url
+            try:
+                from modules.brand_impersonation_module import brand_impersonation_module
+                analysis_data["brand_impersonation"] = brand_impersonation_module.check(domain_name)
+            except Exception as e:
+                logger.warning("Brand impersonation check failed: %s", e)
 
-                )
+            try:
+                from services.tech_fingerprint_service import tech_fingerprint_service
+                headers = analysis_data.get("headers", {})
+                analysis_data["tech_stack"] = tech_fingerprint_service.identify(headers=headers)
+            except Exception as e:
+                logger.warning("Tech fingerprint check failed: %s", e)
 
-            )
+            try:
+                from services.lexical_keyword_service import lexical_keyword_service
+                analysis_data["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(url)
+            except Exception as e:
+                logger.warning("Lexical keyword check failed: %s", e)
+
+            report["analysis"] = analysis_data
 
         except Exception as error:
 
@@ -237,6 +270,13 @@ class URLScanner:
         # Add result to analytics engine
         from modules.analytics_engine import analytics_engine
         analytics_engine.add(report)
+
+        # Add MITRE ATT&CK techniques
+        try:
+            from modules.mitre_mapper import mitre_mapper
+            report["mitre_attack"] = mitre_mapper.map_findings(report)
+        except Exception as exc:
+            logger.warning("MITRE mapping failed: %s", exc)
 
         logger.info(
 
@@ -294,8 +334,8 @@ class URLScanner:
             if phishing_result.get("available"):
                 label = phishing_result["label"]
                 confidence = phishing_result["confidence"]
-                # Map confidence to a 0-100 probability for the UI
-                prob = round(confidence * 100, 1) if label == "Phishing" else round((1 - confidence) * 100, 1)
+                # Display model confidence in the predicted label directly (0-100%)
+                prob = round(confidence * 100, 1)
 
                 result = {
                     "prediction":    label,
@@ -305,7 +345,7 @@ class URLScanner:
                     "ml_available":  True,
                 }
 
-                if brand_result.get("available"):
+                if brand_result.get("available") and brand_result.get("confidence", 0) >= 0.50:
                     result["brand_impersonation"] = brand_result["brand"]
                     result["brand_confidence"]    = round(brand_result["confidence"], 4)
                     result["brand_probabilities"] = brand_result.get("probabilities", {})

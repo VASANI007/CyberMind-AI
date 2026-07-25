@@ -16,9 +16,11 @@ class IPInfoService:
 
     def available(self) -> bool:
         """
-        Check API key.
+        Check API key and offline mode.
         """
-
+        from core.offline_mode import offline_mode
+        if offline_mode.is_enabled:
+            return False
         return bool(IPINFO_API_KEY)
 
     def analyze(self, ip: str) -> dict:

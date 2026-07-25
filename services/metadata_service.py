@@ -10,6 +10,7 @@ import mimetypes
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
+from services.ssl_service import verify_https
 
 
 class MetadataService:
@@ -133,7 +134,7 @@ class MetadataService:
 
             "tld": labels[-1] if labels else "",
 
-            "is_https": True
+            "is_https": verify_https(parsed.hostname or domain).get("valid", False)
 
         }
 

@@ -127,15 +127,17 @@ class WebsiteScanner:
         )
 
         analysis = website_service.analyze(
-
             website
-
         )
 
+        try:
+            from services.lexical_keyword_service import lexical_keyword_service
+            analysis["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(website)
+        except Exception as e:
+            logger.warning("Lexical keyword check failed: %s", e)
+
         risk = risk_engine.calculate(
-
             analysis
-
         )
 
         analysis["risk"] = risk

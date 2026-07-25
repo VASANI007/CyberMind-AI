@@ -47,6 +47,32 @@ class BreachIntelligenceService:
             return parts[-2]
         return parts[0]
 
+    def get_cache_info(self) -> dict[str, Any]:
+        auto_enabled = True
+        try:
+            import streamlit as st
+            auto_enabled = st.session_state.get("settings_auto_updates", True)
+        except Exception:
+            pass
+
+        from pathlib import Path
+        from datetime import datetime
+
+        p = Path(self.dataset_path)
+        if p.exists():
+            mtime = p.stat().st_mtime
+            dt_str = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M:%S")
+            note = f"Using cached breach dataset from {dt_str}" if auto_enabled else f"Auto-updates disabled — using data cached on {dt_str}."
+        else:
+            dt_str = None
+            note = "Using bundled static breach intelligence snapshot"
+
+        return {
+            "auto_updates": auto_enabled,
+            "cache_note": note,
+            "cached_at": dt_str
+        }
+
     def get_breach_report(self, domain_or_url: str) -> dict[str, Any] | None:
         df = self.load_dataset()
         if df.empty:
@@ -57,10 +83,13 @@ class BreachIntelligenceService:
             return None
 
         # Filter the dataframe for matched organisation or alternative name
-        # We do case-insensitive substring search for high compatibility
+        # Word-boundary regex match for precision — avoids "firebase" matching
+        # "google" inside its alternative-name description field.
+        import re as _re
+        _pat = _re.compile(r'\b' + _re.escape(org_name) + r'\b', _re.IGNORECASE)
         matches = df[
-            (df["organisation"].astype(str).str.lower().str.contains(org_name, na=False)) |
-            (df["alternative name"].astype(str).str.lower().str.contains(org_name, na=False))
+            df["organisation"].astype(str).apply(lambda x: bool(_pat.search(x))) |
+            df["alternative name"].astype(str).apply(lambda x: bool(_pat.search(x)))
         ]
 
         if matches.empty:
@@ -72,10 +101,23 @@ class BreachIntelligenceService:
         # Sort matches by year to construct the timeline
         matches_sorted = matches.sort_values(by="year")
         
+        # All distinct matched organisations (for transparent multi-org labeling)
+        matched_orgs = matches["organisation"].astype(str).dropna().unique().tolist()
+        
         # Aggregate metrics
         first_row = matches.iloc[0]
         company_name = str(first_row.get("organisation", org_name.capitalize()))
         sector = str(first_row.get("sector", "Technology")).capitalize()
+        
+        # Build transparency note for multi-org matches
+        if len(matched_orgs) > 1:
+            match_note = (
+                f"Includes breach records from: {', '.join(matched_orgs)}. "
+                f"Matched via organisation-name search; may include closely related sub-brands or services."
+            )
+        else:
+            match_note = "Matched via organisation-name search; may include closely related sub-brands or services."
+
         
         try:
             total_records = int(matches["records lost"].sum())
@@ -207,6 +249,7 @@ class BreachIntelligenceService:
             logger.warning("Breach ML sector prediction failed: %s", exc)
         # ─────────────────────────────────────────────────────────────────
 
+        cache_info = self.get_cache_info()
         return {
             "company_name": company_name,
             "sector": sector,
@@ -225,6 +268,10 @@ class BreachIntelligenceService:
             "history": history,
             "raw_df": matches_sorted,
             "ml_sector_prediction": ml_sector,
+            "matched_orgs": matched_orgs,
+            "match_note": match_note,
+            "cache_note": cache_info["cache_note"],
+            "auto_updates": cache_info["auto_updates"]
         }
 
 breach_intelligence_service = BreachIntelligenceService()

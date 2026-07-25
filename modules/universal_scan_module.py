@@ -164,6 +164,11 @@ class UniversalScanModule:
                            url_res.get("virustotal", {}).get("malicious", 0) > 0
                            
             # Risk logic (using risk engine check on url results)
+            try:
+                from services.lexical_keyword_service import lexical_keyword_service
+                url_res["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(value)
+            except Exception:
+                pass
             calc_risk = risk_engine.calculate(url_res)
             risk_score = calc_risk.get("score", 15)
             risk_level = calc_risk.get("level", "Safe")
@@ -230,6 +235,11 @@ class UniversalScanModule:
                 pass
                 
             # Compute Risk
+            try:
+                from services.lexical_keyword_service import lexical_keyword_service
+                dom_res["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(value)
+            except Exception:
+                pass
             calc_risk = risk_engine.calculate(dom_res)
             risk_score = calc_risk.get("score", 10)
             risk_level = calc_risk.get("level", "Safe")

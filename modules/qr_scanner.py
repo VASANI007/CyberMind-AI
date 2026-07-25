@@ -117,56 +117,64 @@ class QRScanner:
         )
 
         analysis = qr_service.analyze(
-
             image_path
-
         )
 
+        decoded_text = analysis.get("decoded_text", "") or analysis.get("payload", "")
+
+        if decoded_text:
+            try:
+                from services.qr_redirect_service import qr_redirect_service
+                if "http://" in decoded_text or "https://" in decoded_text:
+                    analysis["qr_redirect"] = qr_redirect_service.analyze_url(decoded_text)
+            except Exception as exc:
+                logger.warning("QR redirect analysis failed: %s", exc)
+
+            try:
+                from services.fake_payment_qr_service import fake_payment_qr_service
+                analysis["payment_qr"] = fake_payment_qr_service.analyze_payload(decoded_text)
+            except Exception as exc:
+                logger.warning("Fake payment QR analysis failed: %s", exc)
+
+        try:
+            from services.lexical_keyword_service import lexical_keyword_service
+            analysis["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(decoded_text or image_path)
+        except Exception as e:
+            logger.warning("Lexical keyword check failed: %s", e)
+
         risk = risk_engine.calculate(
-
             analysis
-
         )
 
         analysis["risk"] = risk
 
         recommendation = (
-
             recommendation_engine.generate(
-
                 analysis
-
             )
-
         )
 
         explanation = (
-
             explain_ai.explain(
-
                 analysis
-
             )
-
         )
 
         result = {
-
             "success": True,
-
             "scanner": "qr",
-
             "image": image_path,
-
             "analysis": analysis,
-
             "risk": risk,
-
             "recommendation": recommendation,
-
             "explain_ai": explanation
-
         }
+
+        try:
+            from modules.mitre_mapper import mitre_mapper
+            result["mitre_attack"] = mitre_mapper.map_findings(result)
+        except Exception as exc:
+            logger.warning("MITRE mapping failed for QR scanner: %s", exc)
 
         analytics_engine.add(
 

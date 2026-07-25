@@ -101,6 +101,12 @@ class ServicesRoot:
                     logger.error(f"Error initializing service {name}: {e}")
             logger.info(f"Service {name} loaded.")
 
+        try:
+            from core.plugin_manager import plugin_manager
+            plugin_manager.discover_plugins(os.path.dirname(__file__), "services")
+        except Exception as exc:
+            logger.warning("Plugin discovery in services_root skipped: %s", exc)
+
     def health_check(self) -> dict[str, Any]:
         """
         Services health check.

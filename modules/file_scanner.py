@@ -117,15 +117,19 @@ class FileScanner:
         )
 
         analysis = file_service.analyze(
-
             file_path
-
         )
 
+        try:
+            from services.lexical_keyword_service import lexical_keyword_service
+            from pathlib import Path
+            filename = Path(file_path).name
+            analysis["lexical_keywords"] = lexical_keyword_service.check_suspicious_keywords(filename)
+        except Exception as e:
+            logger.warning("Lexical keyword check failed: %s", e)
+
         risk = risk_engine.calculate(
-
             analysis
-
         )
 
         analysis["risk"] = risk
