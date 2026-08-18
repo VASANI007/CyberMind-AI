@@ -839,6 +839,28 @@ class EmailService:
 
         )
 
+        try:
+            from services.ipqs_service import ipqs_service
+            ipqs_email_data = ipqs_service.verify_email_darkweb(email)
+            report["ipqs_intelligence"] = ipqs_email_data
+            if ipqs_email_data.get("leaked"):
+                report["darkweb_leak_detected"] = True
+                report["darkweb_exposure"] = {
+                    "status": "BREACH DETECTED ⚠️",
+                    "details": "Email address associated with known third-party breach records.",
+                    "recent_abuse": ipqs_email_data.get("recent_abuse", False),
+                    "fraud_score": ipqs_email_data.get("fraud_score", 0)
+                }
+            else:
+                report["darkweb_leak_detected"] = False
+                report["darkweb_exposure"] = {
+                    "status": "NO BREACH DETECTED ✅",
+                    "details": "No recent breach exposure records flagged for this address."
+                }
+        except Exception as exc:
+            logger.warning("IPQS Darkweb email check failed: %s", exc)
+            report["darkweb_exposure"] = {"status": "UNCHECKED", "details": "Dark web exposure check unavailable."}
+
         logger.info(
 
             "Email analysis completed."
@@ -846,6 +868,7 @@ class EmailService:
         )
 
         return report
+
 
     def analyze_batch(
         self,

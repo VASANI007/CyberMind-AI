@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net" agent="CyberMind-AI Black-White Diagram Generator">
+  <diagram id="dfd_0_bw" name="DFD Level 0 Context Diagram (B&amp;W)">
+    <mxGraphModel dx="1703" dy="963" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;" value="USER" vertex="1">
+          <mxGeometry height="90" width="150" x="270" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="0 CyberMind AI  Cyber Risk Assessment with AI/ML Analysis" vertex="1">
+          <mxGeometry height="170" width="260" x="700" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;" value="EXTERNAL THREAT INTELLIGENCE APIs" vertex="1">
+          <mxGeometry height="80" width="230" x="1100" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-5" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;boundedLbl=1;" value="DATA STORE (SQLite Database)  scan_history" vertex="1">
+          <mxGeometry height="130" width="250" x="1130" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-6" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;boundedLbl=1;" value="LOCAL DATASETS (GeoLite2, Phishing URLs, Blacklists, TLDs)" vertex="1">
+          <mxGeometry height="90" width="250" x="705" y="1100" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-7" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-3" value="Target (URL / IP / Domain / Email / File / QR)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-8" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0;exitDx=0;exitDy=0;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-2" value="Risk Score / Report">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="834.88" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-9" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;exitX=1;exitY=0;exitDx=0;exitDy=0;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-4" value="Lookup Request">
+          <mxGeometry relative="1" x="-0.2205" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="1120.02" y="835" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-10" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-3" value="Threat Data">
+          <mxGeometry relative="1" x="-0.1795" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-11" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-5" value="Store / Retrieve Scan">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-12" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=1;entryY=1;entryDx=0;entryDy=0;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-3" value="Scan History">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1255" y="990.02" />
+              <mxPoint x="922.02" y="990.02" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-13" edge="1" parent="1" source="F8RAuBjbyO2dX8RKtdcR-3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="F8RAuBjbyO2dX8RKtdcR-6" value="Read Local Intel Data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;fontSize=12;verticalAlign=top;spacingTop=8;align=center;" value="LEGEND" vertex="1">
+          <mxGeometry height="190" width="260" x="310" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;fontSize=12;" value="" vertex="1">
+          <mxGeometry height="30" width="40" x="330" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-16" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;align=left;fontStyle=1;" value="External Entity" vertex="1">
+          <mxGeometry height="30" width="170" x="380" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-17" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;fontSize=12;" value="" vertex="1">
+          <mxGeometry height="30" width="40" x="330" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-18" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;align=left;fontStyle=1;" value="Process" vertex="1">
+          <mxGeometry height="30" width="170" x="380" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-19" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;fontSize=12;" value="" vertex="1">
+          <mxGeometry height="30" width="40" x="330" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-20" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;align=left;fontStyle=1;" value="Data Store" vertex="1">
+          <mxGeometry height="30" width="170" x="380" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-21" edge="1" parent="1" style="html=1;endArrow=block;strokeColor=#000000;fontStyle=1;fontSize=12;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="775" as="sourcePoint" />
+            <mxPoint x="370" y="775" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F8RAuBjbyO2dX8RKtdcR-22" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=12;align=left;fontStyle=1;" value="Data Flow" vertex="1">
+          <mxGeometry height="30" width="170" x="380" y="755" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

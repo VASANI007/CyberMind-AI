@@ -33,6 +33,7 @@ from modules.email_scanner import email_scanner
 from modules.ip_scanner import ip_scanner
 from modules.file_scanner import file_scanner
 from modules.qr_scanner import qr_scanner
+from modules.phone_scanner import phone_scanner
 
 
 class ModulesRoot:
@@ -74,9 +75,12 @@ class ModulesRoot:
 
             "File": file_scanner,
 
-            "QR": qr_scanner
+            "QR": qr_scanner,
+
+            "Phone Threat Intelligence": phone_scanner
 
         }
+
 
         logger.info(
             "Modules Root Initialized."

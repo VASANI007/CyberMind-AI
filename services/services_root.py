@@ -50,6 +50,8 @@ from services.virustotal_service import virustotal_service
 from services.website_service import website_service
 from services.whois_service import whois_service
 from services.breach_intelligence_service import breach_intelligence_service
+from services.ipqs_service import ipqs_service
+from services.phone_service import phone_service
 
 
 class ServicesRoot:
@@ -85,8 +87,11 @@ class ServicesRoot:
             "virustotal_service": virustotal_service,
             "website_service": website_service,
             "whois_service": whois_service,
-            "breach_intelligence_service": breach_intelligence_service
+            "breach_intelligence_service": breach_intelligence_service,
+            "ipqs_service": ipqs_service,
+            "phone_service": phone_service
         }
+
 
     def initialize(self) -> None:
         """

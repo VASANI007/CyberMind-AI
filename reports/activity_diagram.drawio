@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" agent="CyberMind-AI Black-White Diagram Generator">
+  <diagram id="act_bw" name="Activity Diagram (B&amp;W)">
+    <mxGraphModel dx="1572" dy="942" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="act_step1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;strokeWidth=1.5;" value="User Selects Scanner &amp; Enters Target" vertex="1">
+          <mxGeometry height="50" width="230" x="250" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="act_dec1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;strokeWidth=1.5;" value="Is Input&#xa;Valid?" vertex="1">
+          <mxGeometry height="80" width="100" x="315" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="act_err" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#000000;fontColor=#000000;fontSize=11;strokeWidth=1.2;" value="Show Validation Warning / Error Alert" vertex="1">
+          <mxGeometry height="50" width="220" x="550" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="act_dispatch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;strokeWidth=1.5;" value="Dispatch Target to Scanner Module (modules/)" vertex="1">
+          <mxGeometry height="50" width="290" x="220" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="fork" parent="1" style="line;strokeWidth=4;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="10" width="530" x="100" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="act_api" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" value="Execute External API Queries&#xa;(VirusTotal, Veriphone, AbuseIPDB)" vertex="1">
+          <mxGeometry height="60" width="260" x="70" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="act_heur" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" value="Run Local Heuristics &amp;&#xa;Feature Extraction Engine" vertex="1">
+          <mxGeometry height="60" width="260" x="390" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="join" parent="1" style="line;strokeWidth=4;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="10" width="530" x="100" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="act_ml" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;strokeWidth=1.5;" value="Predict Threat via ML Model (scikit-learn .pkl)" vertex="1">
+          <mxGeometry height="50" width="290" x="220" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="act_risk" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;strokeWidth=1.5;" value="Calculate Unified Risk Score &amp; Category (RiskEngine)" vertex="1">
+          <mxGeometry height="50" width="330" x="200" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="act_db" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" value="Persist Record in SQLite (scan_history)" vertex="1">
+          <mxGeometry height="50" width="290" x="220" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="act_ui" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;strokeWidth=1.5;" value="Render Gauge Score, Donut Chart &amp; Export PDF Report" vertex="1">
+          <mxGeometry height="50" width="350" x="190" y="1210" as="geometry" />
+        </mxCell>
+        <mxCell id="act_end" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#000000;strokeColor=#000000;strokeWidth=2;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="350" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="ae1" edge="1" parent="1" source="BLITi7xitMsQgYPyxaBx-6" style="strokeWidth=1.5;strokeColor=#000000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="act_step1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="365" y="400" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ae2" edge="1" parent="1" source="act_step1" style="strokeWidth=1.5;strokeColor=#000000;" target="act_dec1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_no" edge="1" parent="1" source="act_dec1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1.5;strokeColor=#000000;fontColor=#000000;" target="act_err" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_re" edge="1" parent="1" source="act_err" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1.2;strokeColor=#000000;fontColor=#000000;" target="act_step1" value="Re-enter">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="465" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ae_yes" edge="1" parent="1" source="act_dec1" style="edgeStyle=orthogonalEdgeStyle;strokeWidth=1.5;strokeColor=#000000;fontColor=#000000;" target="act_dispatch" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_fork" edge="1" parent="1" source="act_dispatch" style="strokeWidth=1.5;strokeColor=#000000;" target="fork">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_f1" edge="1" parent="1" source="fork" style="strokeWidth=1.2;strokeColor=#000000;" target="act_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_f2" edge="1" parent="1" source="fork" style="strokeWidth=1.2;strokeColor=#000000;" target="act_heur">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_j1" edge="1" parent="1" source="act_api" style="strokeWidth=1.2;strokeColor=#000000;" target="join">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_j2" edge="1" parent="1" source="act_heur" style="strokeWidth=1.2;strokeColor=#000000;" target="join">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_join" edge="1" parent="1" source="join" style="strokeWidth=1.5;strokeColor=#000000;" target="act_ml">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_ml" edge="1" parent="1" source="act_ml" style="strokeWidth=1.5;strokeColor=#000000;" target="act_risk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_risk" edge="1" parent="1" source="act_risk" style="strokeWidth=1.5;strokeColor=#000000;" target="act_db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_db" edge="1" parent="1" source="act_db" style="strokeWidth=1.5;strokeColor=#000000;" target="act_ui">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae_end" edge="1" parent="1" source="act_ui" style="strokeWidth=1.5;strokeColor=#000000;" target="act_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="BLITi7xitMsQgYPyxaBx-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="350" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="BLITi7xitMsQgYPyxaBx-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontColor=#000000;" value="Open CyberMind AI Dashboard" vertex="1">
+          <mxGeometry height="50" width="270" x="230" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="BLITi7xitMsQgYPyxaBx-7" edge="1" parent="1" source="BLITi7xitMsQgYPyxaBx-5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=10;strokeColor=#000000;fontColor=#000000;strokeWidth=2;" target="BLITi7xitMsQgYPyxaBx-6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

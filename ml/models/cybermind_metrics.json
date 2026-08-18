@@ -1,9 +1,9 @@
 {
-  "accuracy": 0.9403,
-  "precision": 0.941,
-  "recall": 0.9403,
-  "f1_score": 0.9389,
-  "roc_auc": 0.9845,
+  "accuracy": 0.9232,
+  "precision": 0.921,
+  "recall": 0.9232,
+  "f1_score": 0.9207,
+  "roc_auc": 0.9742,
   "model_type": "RandomForestClassifier",
   "evaluation": "5-fold Stratified Cross-Validation",
   "dataset": "Multi-Dataset (4 CSV sources)",
@@ -49,43 +49,43 @@
       "model_file": "online_valid_model.pkl",
       "model_type": "RandomForestClassifier",
       "task": "Multi-Class Classification",
-      "accuracy": 0.7933,
-      "precision": 0.7947,
-      "recall": 0.7933,
-      "f1_score": 0.788,
-      "roc_auc": 0.9394,
+      "accuracy": 0.7287,
+      "precision": 0.7185,
+      "recall": 0.7287,
+      "f1_score": 0.7197,
+      "roc_auc": 0.8982,
       "samples": 5761,
-      "feature_count": 683,
+      "feature_count": 18,
       "class_count": 5,
       "per_class": {
         "AOL": {
-          "precision": 0.6964,
-          "recall": 0.4179,
-          "f1_score": 0.5223,
+          "precision": 0.4189,
+          "recall": 0.2214,
+          "f1_score": 0.2897,
           "support": 280
         },
         "Blizzard": {
-          "precision": 0.8005,
-          "recall": 0.7134,
-          "f1_score": 0.7544,
+          "precision": 0.7618,
+          "recall": 0.7762,
+          "f1_score": 0.7689,
           "support": 478
         },
         "Other": {
-          "precision": 0.7579,
-          "recall": 0.8658,
-          "f1_score": 0.8082,
+          "precision": 0.7176,
+          "recall": 0.7878,
+          "f1_score": 0.7511,
           "support": 2809
         },
         "PayPal": {
-          "precision": 0.8089,
-          "recall": 0.6385,
-          "f1_score": 0.7137,
+          "precision": 0.6515,
+          "recall": 0.5354,
+          "f1_score": 0.5877,
           "support": 1173
         },
         "Sulake Corporation": {
-          "precision": 0.9021,
-          "recall": 0.9119,
-          "f1_score": 0.907,
+          "precision": 0.8571,
+          "recall": 0.905,
+          "f1_score": 0.8804,
           "support": 1021
         }
       }
@@ -95,31 +95,31 @@
       "model_file": "breaches_model.pkl",
       "model_type": "RandomForestClassifier",
       "task": "Multi-Class Classification",
-      "accuracy": 0.9923,
-      "precision": 0.9926,
-      "recall": 0.9923,
-      "f1_score": 0.9921,
+      "accuracy": 0.9885,
+      "precision": 0.9888,
+      "recall": 0.9885,
+      "f1_score": 0.9875,
       "roc_auc": 1.0,
       "samples": 520,
-      "feature_count": 253,
+      "feature_count": 6,
       "class_count": 5,
       "per_class": {
         "hacked": {
-          "precision": 0.9918,
-          "recall": 0.9973,
-          "f1_score": 0.9946,
+          "precision": 0.9865,
+          "recall": 1.0,
+          "f1_score": 0.9932,
           "support": 366
         },
         "inside job": {
           "precision": 1.0,
-          "recall": 1.0,
-          "f1_score": 1.0,
+          "recall": 0.7619,
+          "f1_score": 0.8649,
           "support": 21
         },
         "lost device": {
-          "precision": 1.0,
+          "precision": 0.9796,
           "recall": 1.0,
-          "f1_score": 1.0,
+          "f1_score": 0.9897,
           "support": 48
         },
         "oops!": {
@@ -129,9 +129,9 @@
           "support": 25
         },
         "poor security": {
-          "precision": 0.9831,
-          "recall": 0.9667,
-          "f1_score": 0.9748,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
           "support": 60
         }
       }

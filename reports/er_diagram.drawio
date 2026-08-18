@@ -1,0 +1,148 @@
+<mxfile host="app.diagrams.net" agent="CyberMind-AI Diamond ER Generator">
+  <diagram id="er_diamond" name="ER Diagram (Diamond Relationships)">
+    <mxGraphModel dx="1363" dy="816" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_main" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#F8FAFC;strokeColor=#000000;fontColor=#000000;fontSize=13;strokeWidth=2;" value="scan_history&#xa;-----------------------------------------------&#xa;+ scan_id (PK: INT)&#xa;+ scan_type (VARCHAR)&#xa;+ target (TEXT)&#xa;+ risk_level (VARCHAR)&#xa;+ risk_score (FLOAT)&#xa;+ status (VARCHAR)&#xa;+ scan_time (DATETIME)&#xa;+ country (VARCHAR)&#xa;+ country_code (VARCHAR)&#xa;+ latitude (FLOAT)&#xa;+ longitude (FLOAT)" vertex="1">
+          <mxGeometry height="230" width="280" x="720" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="t_url" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="url_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ url (TEXT)&#xa;+ domain (VARCHAR)&#xa;+ status_code (INT)&#xa;+ virustotal (TEXT)&#xa;+ risk_score (FLOAT)" vertex="1">
+          <mxGeometry height="150" width="220" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t_web" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="website_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ url (TEXT)&#xa;+ title (VARCHAR)&#xa;+ ssl_version (VARCHAR)&#xa;+ security_headers (TEXT)&#xa;+ risk_score (FLOAT)" vertex="1">
+          <mxGeometry height="150" width="230" x="310" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t_dom" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="domain_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ domain (VARCHAR)&#xa;+ registrar (VARCHAR)&#xa;+ creation_date (VARCHAR)&#xa;+ whois_status (TEXT)" vertex="1">
+          <mxGeometry height="150" width="220" x="580" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t_email" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="email_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ email (VARCHAR)&#xa;+ provider (VARCHAR)&#xa;+ valid (BOOLEAN)&#xa;+ disposable (BOOLEAN)" vertex="1">
+          <mxGeometry height="150" width="220" x="850" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t_ip" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="ip_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ ip (VARCHAR)&#xa;+ country (VARCHAR)&#xa;+ isp (VARCHAR)&#xa;+ abuse_score (FLOAT)" vertex="1">
+          <mxGeometry height="150" width="220" x="1120" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t_file" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="file_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ filename (VARCHAR)&#xa;+ mime_type (VARCHAR)&#xa;+ sha256 (VARCHAR)&#xa;+ signature (TEXT)" vertex="1">
+          <mxGeometry height="150" width="220" x="40" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="t_qr" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="qr_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ payload (TEXT)&#xa;+ decoded_text (TEXT)&#xa;+ is_short_url (BOOLEAN)" vertex="1">
+          <mxGeometry height="150" width="220" x="310" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="t_phone" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="phone_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ phone_number (VARCHAR)&#xa;+ carrier (VARCHAR)&#xa;+ line_type (VARCHAR)&#xa;+ veriphone_status (TEXT)" vertex="1">
+          <mxGeometry height="150" width="230" x="580" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="t_device" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="device_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ device_name (VARCHAR)&#xa;+ os_version (VARCHAR)&#xa;+ firewall_status (BOOLEAN)&#xa;+ antivirus_active (BOOLEAN)" vertex="1">
+          <mxGeometry height="150" width="240" x="850" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="t_universal" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;" value="universal_scans&#xa;---------------------------------------&#xa;+ id (PK: INT)&#xa;+ scan_id (FK: INT)&#xa;+ input_target (TEXT)&#xa;+ detected_type (VARCHAR)&#xa;+ routed_module (VARCHAR)" vertex="1">
+          <mxGeometry height="150" width="230" x="1120" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="d_url" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="110" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="d_web" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="385" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="d_dom" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="650" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="d_email" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="920" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="d_ip" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="1190" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="d_file" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="110" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="d_qr" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="385" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="d_phone" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="655" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="d_device" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="930" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="d_universal" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;" value="Has Detail" vertex="1">
+          <mxGeometry height="50" width="80" x="1195" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="c_url_1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;" target="d_url" value="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="440" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_url_2" edge="1" parent="1" source="d_url" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_url" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_web_1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;" target="d_web" value="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="400" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_web_2" edge="1" parent="1" source="d_web" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_web" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_dom_1" edge="1" parent="1" source="t_main" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" target="d_dom" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_dom_2" edge="1" parent="1" source="d_dom" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_dom" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_email_1" edge="1" parent="1" source="t_main" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" target="d_email" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_email_2" edge="1" parent="1" source="d_email" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_email" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ip_1" edge="1" parent="1" source="t_main" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" target="d_ip" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_ip_2" edge="1" parent="1" source="d_ip" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_ip" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_file_1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;" target="d_file" value="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="480" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_file_2" edge="1" parent="1" source="d_file" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_file" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_qr_1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;" target="d_qr" value="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="520" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_qr_2" edge="1" parent="1" source="d_qr" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" value="N">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="425.06" y="680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_phone_1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;" target="d_phone" value="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="695" y="560" />
+            </Array>
+            <mxPoint x="720" y="560" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c_phone_2" edge="1" parent="1" source="d_phone" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_phone" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_device_1" edge="1" parent="1" source="t_main" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;" target="d_device" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_device_2" edge="1" parent="1" source="d_device" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_device" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_universal_1" edge="1" parent="1" source="t_main" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;strokeColor=#000000;fontSize=13;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" target="d_universal" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_universal_2" edge="1" parent="1" source="d_universal" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeColor=#000000;fontSize=13;" target="t_universal" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

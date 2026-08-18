@@ -1,0 +1,104 @@
+<mxfile host="app.diagrams.net" agent="CyberMindAI-ReportGen">
+  <diagram name="DFD Level 1" id="DFD_Level_1">
+    <mxGraphModel dx="3094" dy="1156" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1050" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" value="USER" vertex="1">
+          <mxGeometry height="90" width="140" x="30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;align=center;verticalAlign=middle;fontStyle=1" value="1.0 Input Validation &amp;amp; Scan Initiation  • Validate Target Input • Detect Scan Type • Create Scan Record" vertex="1">
+          <mxGeometry height="160" width="190" x="300" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;align=center;verticalAlign=middle;fontStyle=1" value="2.0 Scanner Engine  • Dispatch to Scanner Module • Run Type-specific Checks • Aggregate Findings" vertex="1">
+          <mxGeometry height="160" width="190" x="300" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;align=center;verticalAlign=middle;fontStyle=1" value="3.0 Threat Intelligence Analysis  • WHOIS / DNS / SSL Lookup • Reputation Check • Homograph / Typosquat Check" vertex="1">
+          <mxGeometry height="160" width="190" x="300" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;align=center;verticalAlign=middle;fontStyle=1" value="4.0 ML Risk Prediction  • Extract Features • Run Trained Model • Generate Confidence Score" vertex="1">
+          <mxGeometry height="160" width="190" x="300" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;align=center;verticalAlign=middle;fontStyle=1" value="5.0 Risk Scoring &amp;amp; Report Generation  • Aggregate Risk Score • Classify Risk Level • Generate Report / Explanation" vertex="1">
+          <mxGeometry height="160" width="190" x="300" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;boundedLbl=1;align=center;verticalAlign=middle;" value="D1 SCAN DATABASE  scan_history url_scans, ip_scans file_scans, email_scans domain / website / qr scans" vertex="1">
+          <mxGeometry height="130" width="280" x="680" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;boundedLbl=1;align=center;verticalAlign=middle;" value="D2 LOCAL INTELLIGENCE  GeoLite2 Database Phishing URL Blacklist Suspicious TLD List" vertex="1">
+          <mxGeometry height="130" width="280" x="680" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;align=center;verticalAlign=middle;" value="EXTERNAL THREAT INTEL APIs  VirusTotal, AbuseIPDB, Google Safe Browsing, IPinfo" vertex="1">
+          <mxGeometry height="130" width="280" x="680" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;boundedLbl=1;align=center;verticalAlign=middle;" value="D3 ML MODEL REPOSITORY  Phishing / URL / Domain / IP / File Risk Models" vertex="1">
+          <mxGeometry height="130" width="280" x="680" y="675" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="n3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="n4" value="Validated Data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="n5" value="Scan Data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="n5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="n6" value="Threat Signals">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="n6" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="n7" value="Prediction + Confidence">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="n3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=0;entryY=0;entryDx=0;entryDy=40;entryPerimeter=0;exitX=0.945;exitY=0.29;exitDx=0;exitDy=0;exitPerimeter=0;fontStyle=1" target="n8" value="Store Scan Record">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="479.9999922769248" y="90.00225806451616" as="sourcePoint" />
+            <mxPoint x="670.0000000000002" y="80.00225806451616" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="n8" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;fontStyle=1" target="n3" value="Retrieve Scan History">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="120" />
+              <mxPoint x="640" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="n4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=-0.002;entryY=0.577;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1" target="n9" value="Read Local Intel Data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="n5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=0.923;exitY=0.239;exitDx=0;exitDy=0;exitPerimeter=0;fontStyle=1" target="n10" value="Lookup Request">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="n10" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;exitX=-0.004;exitY=0.569;exitDx=0;exitDy=0;exitPerimeter=0;fontStyle=1" target="n5" value="Threat Data">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=1.005;entryY=0.449;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;fontStyle=1" target="n6" value="Load Trained Model">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="n7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1" target="n8" value="Store Final Result">
+          <mxGeometry relative="1" x="-0.5352" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="1010" y="960" />
+              <mxPoint x="1010" y="110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="n2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;fontColor=#000000;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontStyle=1" target="n3" value="Target (URL / IP / Domain /&amp;nbsp;&lt;div&gt;Email / File / QR / Device)&lt;/div&gt;">
+          <mxGeometry relative="1" x="-0.5262" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fb25" edge="1" parent="1" source="n7" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;strokeColor=#000000;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontStyle=1" target="n2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="100.05" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qrGWg5G1xYuoSRtsENFp-1" connectable="0" parent="fb25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fontStyle=1" value="&lt;span style=&quot;text-align: left;&quot;&gt;Risk Score Risk Level Recommendations Report&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;text-align: left;&quot;&gt;(PDF / Excel / Word) AI-generated Explanation&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.4064" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

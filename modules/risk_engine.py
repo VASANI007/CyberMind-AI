@@ -80,7 +80,12 @@ class RiskEngine:
                 v = report["domain_data"].get(key)
             if not v and "url_data" in report:
                 v = report["url_data"].get(key)
-            return v or {}
+            if isinstance(v, dict):
+                return v
+            elif isinstance(v, str):
+                return {"value": v, "score": 100 if v in ("Good", "Excellent") else (50 if v == "Suspicious" else 20)}
+            return {}
+
 
         reputation = _extract("reputation")
         if reputation:
@@ -205,7 +210,18 @@ class RiskEngine:
             matched_kws = keyword_check.get("matched_keywords", [])
             reasons.append(f"Suspicious keyword(s) found in target: {', '.join(matched_kws)}")
 
+        # Phone Threat Intelligence rules
+        if report.get("line_type") and report.get("scam_risk"):
+            phone_fraud = report.get("fraud_score", 0)
+            if phone_fraud > 0:
+                score = max(score, phone_fraud)
+            if report.get("recent_abuse") == "Yes":
+                reasons.append("Phone number associated with recent abuse/scam reports")
+            if report.get("voip") == "Yes":
+                reasons.append("VoIP / Virtual Phone Line (High Risk)")
+
         score = min(score, 100)
+
 
         breakdown = {
             "reputation_weight": 20 if reputation_score < 80 else 0,

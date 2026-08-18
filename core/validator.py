@@ -11,7 +11,7 @@ import ipaddress
 import re
 from pathlib import Path
 from urllib.parse import urlparse
-
+import json
 from core.constants import (
     MAX_DOMAIN_LENGTH,
     MAX_EMAIL_LENGTH,
@@ -37,6 +37,9 @@ MD5_REGEX = re.compile(r"^[a-fA-F0-9]{32}$")
 SHA1_REGEX = re.compile(r"^[a-fA-F0-9]{40}$")
 
 SHA256_REGEX = re.compile(r"^[a-fA-F0-9]{64}$")
+
+PHONE_REGEX = re.compile(r"^\+?[0-9\s\-\(\)\.]{7,22}$")
+
 
 
 
@@ -220,7 +223,70 @@ def is_valid_sha256(value: str) -> bool:
 
 
 
+# Phone Number
+
+
+def get_country_codes() -> list[dict]:
+    """
+    Load country dataset with Country Name, ISO Code, Dial Code, Min Length, Max Length.
+    Defaults to India (+91) as first choice.
+    """
+    json_path = Path(__file__).parent.parent / "data" / "datasets" / "country_codes.json"
+    if json_path.exists():
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return [
+        {"country": "India 🇮🇳", "code": "IN", "dial_code": "+91", "min_len": 10, "max_len": 10},
+        {"country": "United States 🇺🇸", "code": "US", "dial_code": "+1", "min_len": 10, "max_len": 10},
+        {"country": "United Kingdom 🇬🇧", "code": "GB", "dial_code": "+44", "min_len": 10, "max_len": 10}
+    ]
+
+
+def validate_phone_with_country(national_number: str, country_info: dict) -> tuple[bool, str]:
+    """
+    Validate phone number according to country min/max length rules.
+    Returns (is_valid: bool, error_message: str).
+    """
+    if not national_number or not isinstance(national_number, str):
+        return False, "⚠️ Please enter a phone number to scan."
+    
+    digits = re.sub(r"[^\d]", "", national_number.strip())
+    if not digits:
+        return False, "⚠️ Invalid phone input. Please enter numerical digits."
+
+    c_name = country_info.get("country", "Selected Country")
+    dial_code = country_info.get("dial_code", "+91")
+    min_len = country_info.get("min_len", 10)
+    max_len = country_info.get("max_len", 10)
+
+    if len(digits) < min_len or len(digits) > max_len:
+        if min_len == max_len:
+            return False, f"⚠️ Validation Error: Phone number for {c_name} ({dial_code}) must be exactly {min_len} digits long (you entered {len(digits)} digits)."
+        else:
+            return False, f"⚠️ Validation Error: Phone number for {c_name} ({dial_code}) must be between {min_len} and {max_len} digits long (you entered {len(digits)} digits)."
+
+    return True, ""
+
+
+def is_valid_phone(phone: str) -> bool:
+    """
+    Validate international/national phone number string.
+    """
+    if not isinstance(phone, str):
+        return False
+    val = phone.strip()
+    digits = re.sub(r"[^\d]", "", val)
+    if not (7 <= len(digits) <= 15):
+        return False
+    return bool(PHONE_REGEX.fullmatch(val))
+
+
+
 # Port
+
 
 
 def is_valid_port(port: int) -> bool:
@@ -371,7 +437,14 @@ def validate_scanner_input(scanner_key: str, value: str) -> tuple[bool, str]:
             return True, ""
         return False, "⚠️ Invalid File target or hash. Please enter a valid MD5 (32 hex), SHA1 (40 hex), or SHA256 (64 hex) hash, or upload a supported file."
 
+    elif scanner_key in ("Phone Scanner", "Phone Threat Intelligence", "Phone"):
+        if not is_valid_phone(val):
+            return False, "⚠️ Invalid Phone format. Please enter a valid phone number with country code (e.g., +91 9876543210 or +1-800-555-0199)."
+        return True, ""
+
     elif scanner_key == "Universal Scan":
+        if is_valid_phone(val):
+            return True, ""
         if is_valid_email(val):
             return True, ""
         if is_valid_ip(val):
@@ -387,7 +460,8 @@ def validate_scanner_input(scanner_key: str, value: str) -> tuple[bool, str]:
             if is_valid_domain(host_part) or is_valid_ip(host_part):
                 return True, ""
 
-        return False, "⚠️ Unrecognized scan target. Please enter a valid URL, Domain, IP address, Email, or File Hash."
+        return False, "⚠️ Unrecognized scan target. Please enter a valid Phone number, URL, Domain, IP address, Email, or File Hash."
+
 
 
     return True, ""

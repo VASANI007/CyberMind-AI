@@ -57,6 +57,9 @@ class RecommendationEngine:
             {}
 
         )
+        if isinstance(reputation, str):
+            reputation = {"score": 100 if reputation in ("Good", "Excellent") else 50}
+
 
         blacklist = report.get(
 

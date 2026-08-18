@@ -304,54 +304,37 @@ def train_online_valid() -> dict:
     domains = [p[0] for p in parsed_parts]
     paths = [p[1] for p in parsed_parts]
 
-    # 1. Structural Ratios & Security Features
+    # 1. Structural Ratios & Security Features (exact 18 lexical features expected by inference.py)
     df["url_len"] = raw_urls.str.len()
-    df["domain_len"] = [len(d) for d in domains]
-    df["path_len"] = [len(p) for p in paths]
     df["has_https"] = raw_urls.str.startswith("https").astype(int)
-    
     df["num_dots"] = raw_urls.str.count(r"\.")
     df["num_slashes"] = raw_urls.str.count("/")
     df["num_hyphens"] = raw_urls.str.count("-")
     df["num_digits"] = raw_urls.str.count(r"\d")
+    df["num_at"] = raw_urls.str.count("@")
+    df["num_equals"] = raw_urls.str.count("=")
+    df["num_ampersand"] = raw_urls.str.count("&")
     df["num_special"] = raw_urls.str.count(r"[^a-zA-Z0-9./:-]")
-    
-    df["domain_entropy"] = [calculate_entropy(d) for d in domains]
-    df["path_entropy"] = [calculate_entropy(p) for p in paths]
-    df["char_transitions"] = [get_transitions(u) for u in raw_urls]
-    
-    df["digit_ratio"] = df["num_digits"] / df["url_len"].clip(lower=1)
-    df["special_ratio"] = df["num_special"] / df["url_len"].clip(lower=1)
-    df["hyphen_ratio"] = df["num_hyphens"] / df["url_len"].clip(lower=1)
-    df["subdomain_count"] = [d.count(".") for d in domains]
     df["has_ip"] = raw_urls.str.contains(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}").astype(int)
-
-    # 2. Phishing Anchors & Brand Signals
-    keywords = [
-        "paypal", "google", "apple", "amazon", "microsoft", "bank", "login",
-        "verify", "secure", "account", "update", "signin", "support", "auth", "confirm", "webscr"
-    ]
-    for kw in keywords:
-        df[f"kw_{kw}"] = raw_urls.str.contains(kw).astype(int)
+    df["path_depth"] = df["num_slashes"].clip(upper=10)
+    df["query_len"] = [len(u.split("?", 1)[1]) if "?" in u else 0 for u in raw_urls]
+    df["domain_len"] = [len(d) for d in domains]
+    df["dot_slash_ratio"] = df["num_dots"] / df["num_slashes"].clip(lower=1)
+    df["special_ratio"] = df["num_special"] / df["url_len"].clip(lower=1)
+    df["digit_ratio"] = df["num_digits"] / df["url_len"].clip(lower=1)
+    df["hyphen_ratio"] = df["num_hyphens"] / df["url_len"].clip(lower=1)
 
     feature_cols = [
-        "url_len", "domain_len", "path_len", "has_https", "num_dots", "num_slashes", 
-        "num_hyphens", "num_digits", "num_special", "domain_entropy", "path_entropy",
-        "char_transitions", "digit_ratio", "special_ratio", "hyphen_ratio", "subdomain_count", "has_ip"
-    ] + [f"kw_{kw}" for kw in keywords]
+        "url_len", "has_https", "num_dots", "num_slashes", "num_hyphens",
+        "num_digits", "num_at", "num_equals", "num_ampersand", "num_special",
+        "has_ip", "path_depth", "query_len", "domain_len",
+        "dot_slash_ratio", "special_ratio", "digit_ratio", "hyphen_ratio",
+    ]
 
-    # 3. High-Dimension Dual Vectorizers
-    tfidf_char = TfidfVectorizer(max_features=400, analyzer="char_wb", ngram_range=(3, 5))
-    X_char = tfidf_char.fit_transform(raw_urls).toarray()
-
-    tfidf_word = TfidfVectorizer(max_features=250, analyzer="word", ngram_range=(1, 2), token_pattern=r"(?u)\b\w+\b")
-    X_word = tfidf_word.fit_transform(paths).toarray()
-
-    X_lexical = encode_features(df[feature_cols])
-    X = np.hstack([X_lexical, X_char, X_word])
+    X = encode_features(df[feature_cols])
     y = np.asarray(df["target"].astype(str))
 
-    # 4. Tuned Model
+    # 2. Tuned Model
     cv_result = cv_classification(X, y, n_estimators=500, max_depth=None, min_samples_leaf=1)
 
     final_model = make_clf(n_estimators=500, max_depth=None, min_samples_leaf=1)
@@ -384,21 +367,14 @@ def train_breaches() -> dict:
     df["method_clean"] = df["method_clean"].where(df["method_clean"].isin(top_methods), "other")
 
     # Method & Story Context (No org name to prevent data leakage)
-    text_corpus = (
-        df["method"].fillna("") + " " +
-        df["interesting story"].fillna("") + " " +
-        df["story"].fillna("")
-    )
-
-    tfidf = TfidfVectorizer(max_features=250, stop_words="english", ngram_range=(1, 2))
-    X_text = tfidf.fit_transform(text_corpus).toarray()
-
     df["records_log"] = np.log1p(pd.to_numeric(df["records lost"], errors="coerce").fillna(0))
     df["sensitivity"] = pd.to_numeric(df["data sensitivity"], errors="coerce").fillna(2.0)
     df["year_norm"] = (pd.to_numeric(df["year"], errors="coerce").fillna(2010) - 2004) / 18
+    df["org_len"] = df["organisation"].fillna("").astype(str).str.len()
+    df["has_story"] = df["story"].fillna("").astype(str).str.strip().ne("").astype(int)
 
-    X_num = encode_features(df[["records_log", "sensitivity", "year_norm"]])
-    X = np.hstack([X_text, X_num])
+    feature_cols = ["records_log", "sensitivity", "year_norm", "org_len", "has_story", "method_clean"]
+    X = encode_features(df[feature_cols])
     y = np.asarray(df["method_clean"].astype(str))
 
     cv_result = cv_classification(X, y, n_estimators=350, max_depth=20, min_samples_leaf=1)

@@ -488,3 +488,7 @@ def predict_file_risk(
     except Exception as exc:
         logger.exception("predict_file_risk failed: %s", exc)
         return {"available": False, "error": str(exc)}
+
+
+# Alias for backward compatibility
+predict_file_signature_risk = predict_file_risk

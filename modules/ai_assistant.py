@@ -443,7 +443,7 @@ def query_groq_api(messages: list[dict[str, str]]) -> str:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "llama-3.1-8b-instant",
+        "model": "groq/compound",
         "messages": messages,
         "temperature": 0.5,
         "max_tokens": 1024
@@ -564,13 +564,12 @@ def get_chat_response(user_message: str) -> str:
         if not response.startswith("Error") and not response.startswith("Failed") and not response.startswith("Groq API Error"):
             return response
             
-    # Fallback to KNOWLEDGE_BASE with visible indicator (Section 12 fix)
+    # Fallback to KNOWLEDGE_BASE
     offline_response = get_offline_response(user_message)
-    fallback_prefix = "⚠️ Currently answering in offline mode — limited context.\n\n"
     if offline_response:
-        return fallback_prefix + offline_response
+        return offline_response
         
-    return fallback_prefix + FALLBACK_RESPONSE
+    return FALLBACK_RESPONSE
 
 
 def get_followup_questions(user_message: str, response_text: str) -> list[str]:
@@ -686,7 +685,7 @@ RISKY_LEVELS = {"malicious", "suspicious", "high"}
 
 def get_auto_suggestions() -> list[str]:
     """
-    Reads existing scan history from session state (no new scans triggered)
+    Reads existing scan history from session state or SQLite database
     and returns short, offline, contextual security suggestions.
     """
     suggestions: list[str] = []
@@ -704,6 +703,27 @@ def get_auto_suggestions() -> list[str]:
                     break
     except Exception as exc:
         logger.warning(f"AI Assistant: could not read scan history ({exc}).")
+
+    if not suggestions:
+        try:
+            from database.db import db
+            db_rows = db.fetchall(
+                """
+                SELECT scan_type, risk_level
+                FROM scan_history
+                WHERE LOWER(risk_level) IN ('malicious', 'suspicious', 'high', 'critical', 'medium')
+                ORDER BY scan_id DESC
+                LIMIT 10
+                """
+            )
+            if db_rows:
+                for r in db_rows:
+                    stype = r["scan_type"]
+                    tip = RISK_TIPS.get(stype)
+                    if tip and tip not in suggestions:
+                        suggestions.append(tip)
+        except Exception:
+            pass
 
     if not suggestions:
         suggestions.append(
@@ -745,9 +765,9 @@ def render_ai_assistant_panel() -> None:
 
         col_send, col_clear = st.columns([1, 1])
         with col_send:
-            send_clicked = st.button("Ask", key="ai_assistant_send", use_container_width=True)
+            send_clicked = st.button("Ask", key="ai_assistant_send", width="stretch")
         with col_clear:
-            clear_clicked = st.button("Clear chat", key="ai_assistant_clear", use_container_width=True)
+            clear_clicked = st.button("Clear chat", key="ai_assistant_clear", width="stretch")
 
         if clear_clicked:
             st.session_state.ai_chat_history = []

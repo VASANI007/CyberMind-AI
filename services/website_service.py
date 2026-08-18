@@ -1105,22 +1105,15 @@ class WebsiteService:
 
         except Exception as error:
 
-            logger.exception(
-
-                error
-
+            logger.warning(
+                "Website connection failed for %s: %s", url, error
             )
 
+            err_msg = "Website unreachable or domain DNS resolution failed." if ("NameResolutionError" in str(error) or "getaddrinfo failed" in str(error)) else str(error)
+
             return self._empty_response(
-
                 url,
-
-                str(
-
-                    error
-
-                )
-
+                err_msg
             )
 
         report = self._success_response()

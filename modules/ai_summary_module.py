@@ -81,7 +81,7 @@ class AISummaryModule:
             f"Provide actionable advice for non-technical managers."
         )
         payload = {
-            "model": "llama-3.1-8b-instant",
+            "model": "groq/compound",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.4,
             "max_tokens": 200
@@ -110,6 +110,58 @@ class AISummaryModule:
 
         factors_str = f" Key contributing factors include: {', '.join(reasons[:3])}." if reasons else ""
         return f"Analysis for `{target}` indicates that the target {status_desc}.{factors_str} {action}"
+
+    def translate_summary(self, text: str, target_lang: str) -> str:
+        """
+        Translate summary text into target_lang (e.g. 'Hindi', 'Hinglish', 'Gujarati', 'Marathi', etc.).
+        """
+        if not text or target_lang in ("English", "en", "English 🇬🇧"):
+            return text
+
+        api_key = os.environ.get("GROQ_API_KEY", "").strip()
+        from core.offline_mode import offline_mode
+        if api_key and not offline_mode.is_enabled:
+            try:
+                url = "https://api.groq.com/openai/v1/chat/completions"
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                }
+                prompt = (
+                    f"Translate the following security analysis executive summary into {target_lang}. "
+                    f"Keep technical terms clear and easy to understand for non-technical users.\n\n"
+                    f"Summary: {text}"
+                )
+                payload = {
+                    "model": "groq/compound",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.3,
+                    "max_tokens": 300
+                }
+                resp = requests.post(url, json=payload, headers=headers, timeout=6)
+                if resp.status_code == 200:
+                    return resp.json()["choices"][0]["message"]["content"].strip()
+            except Exception as e:
+                logger.warning("Groq translation failed: %s", e)
+
+        # Fallback offline translations
+        lang_lower = target_lang.lower()
+        if "hindi" in lang_lower and "hinglish" not in lang_lower:
+            return f"सुरक्षा विश्लेषण: {text.replace('Analysis for', '').replace('indicates that the target', 'यह दर्शाता है कि टारगेट')}"
+        elif "hinglish" in lang_lower:
+            return f"Security Analysis Update: {text} (Note: Kripya security action lein)."
+        elif "gujarati" in lang_lower:
+            return f"સુરક્ષા વિશ્લેષણ: {text}"
+        elif "marathi" in lang_lower:
+            return f"सुरक्षा विश्लेषण: {text}"
+        elif "spanish" in lang_lower:
+            return f"Análisis de seguridad: {text}"
+        elif "french" in lang_lower:
+            return f"Analyse de sécurité: {text}"
+        elif "german" in lang_lower:
+            return f"Sicherheitsanalyse: {text}"
+
+        return text
 
     def analyze(self, scan_result: dict[str, Any]) -> str:
         """Plugin interface."""

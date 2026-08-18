@@ -42,6 +42,11 @@ from modules.qr_scanner import (
     qr_scanner
 )
 
+from modules.phone_scanner import (
+    phone_scanner
+)
+
+
 
 class ScannerEngine:
     """
@@ -173,7 +178,11 @@ class ScannerEngine:
 
             "qr":
 
-                qr_scanner
+                qr_scanner,
+
+            "phone":
+
+                phone_scanner
 
         }
 
@@ -195,7 +204,9 @@ class ScannerEngine:
 
             "file": 0,
 
-            "qr": 0
+            "qr": 0,
+
+            "phone": 0
 
         }
 
@@ -374,6 +385,16 @@ class ScannerEngine:
 
         )
 
+    def is_phone(
+        self,
+        value: str
+    ) -> bool:
+        """
+        Detect phone number.
+        """
+        from core.validator import is_valid_phone
+        return is_valid_phone(value.strip())
+
     def detect(
         self,
         value: str
@@ -384,7 +405,11 @@ class ScannerEngine:
 
         value = value.strip()
 
+        if self.is_phone(value):
+            return "phone"
+
         if self.is_email(
+
 
             value
 

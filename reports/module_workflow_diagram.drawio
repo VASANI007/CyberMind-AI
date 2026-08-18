@@ -1,0 +1,130 @@
+<mxfile host="app.diagrams.net" agent="CyberMind-AI Module Workflow Generator">
+  <diagram id="mod_wf" name="Module System Workflow Diagram">
+    <mxGraphModel dx="1858" dy="1113" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="l_input" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;startSize=28;strokeWidth=1.5;" value="1. INPUT ENTRY &amp; VALIDATION STAGE" vertex="1">
+          <mxGeometry height="110" width="1580" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_in1" parent="l_input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="User Target Input&#xa;(URL, IP, Email, Phone, File, QR, Device)" vertex="1">
+          <mxGeometry height="50" width="300" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_in2" parent="l_input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Input Sanitization &amp; Validation&#xa;(core/validator.py)" vertex="1">
+          <mxGeometry height="50" width="300" x="400" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_in3" parent="l_input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Target Type Classifier &amp; Auto Router&#xa;(modules/universal_scan_module.py)" vertex="1">
+          <mxGeometry height="50" width="320" x="760" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_in4" parent="l_input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Module Dispatch Router&#xa;(app.py run_scan)" vertex="1">
+          <mxGeometry height="50" width="300" x="1140" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_in1" edge="1" parent="l_input" source="w_in1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_in2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_in2" edge="1" parent="l_input" source="w_in2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_in3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_in3" edge="1" parent="l_input" source="w_in3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_in4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_modules" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;startSize=28;strokeWidth=1.5;" value="2. 10 PARALLEL SCANNER MODULES WORKFLOW STAGE (modules/ &amp; services/)" vertex="1">
+          <mxGeometry height="580" width="1580" x="40" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_url" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="1. URL Scanner&#xa;Lexical Analysis + VirusTotal v3 API +&#xa;Google Safe Browsing + RF Model (.pkl)" vertex="1">
+          <mxGeometry height="80" width="280" x="30" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_web" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="2. Website Scanner&#xa;Security Headers Audit + SSL/TLS Version +&#xa;Tech Stack Fingerprint + URLScan.io API" vertex="1">
+          <mxGeometry height="80" width="280" x="340" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_dom" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="3. Domain Scanner&#xa;WHOIS Registrar Lookup + Domain Age +&#xa;DNSSEC Records + AbuseIPDB API" vertex="1">
+          <mxGeometry height="80" width="280" x="650" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_email" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="4. Email Scanner&#xa;MX DNS Records + Disposable Email API +&#xa;SPF / DKIM / DMARC Deliverability Check" vertex="1">
+          <mxGeometry height="80" width="280" x="960" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_ip" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="5. IP Scanner&#xa;AbuseIPDB v2 API + IPinfo Geolocation +&#xa;IPQS VPN / Proxy / Tor Exit Node Check" vertex="1">
+          <mxGeometry height="80" width="280" x="1270" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_phone" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="6. Phone Threat Intelligence&#xa;Veriphone Carrier API + Line Type Check +&#xa;IPQS Phone Fraud Score API" vertex="1">
+          <mxGeometry height="80" width="280" x="30" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_file" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="7. File &amp; PE Malware Scanner&#xa;PE Section Inspection + SHA-256 Hashes +&#xa;VirusTotal API + PE Signature RF Model" vertex="1">
+          <mxGeometry height="80" width="280" x="340" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_qr" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="8. QR Code &amp; Payment Scanner&#xa;OpenCV / pyzbar Image Decoder + ShortURL&#xa;Redirect Tracing + Fake UPI Pattern Check" vertex="1">
+          <mxGeometry height="80" width="280" x="650" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_device" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="9. Device Security Audit&#xa;Windows WMI + Firewall/Antivirus Status +&#xa;Open Ports Scan + Groq Llama-3 AI Report" vertex="1">
+          <mxGeometry height="80" width="280" x="960" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_uni" parent="l_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=10;" value="10. Universal Auto Scanner&#xa;Multi-format Target Normalization +&#xa;Delegated Parallel Module Routing" vertex="1">
+          <mxGeometry height="80" width="280" x="1270" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_services" parent="l_modules" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="MICROSERVICES &amp; EXTERNAL APIS LAYER&#xa;(VirusTotal, Veriphone, AbuseIPDB, Google Safe Browsing, IPinfo, IPQS, URLScan.io, Groq Llama-3)" vertex="1">
+          <mxGeometry height="60" width="1280" x="150" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_ml_engine" parent="l_modules" style="shape=rect;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="MACHINE LEARNING &amp; THREAT CLASSIFIERS ENGINE&#xa;(Random Forest URL Model online_valid_model.pkl + PE Signatures Model file_signatures_model.pkl)" vertex="1">
+          <mxGeometry height="60" width="1280" x="150" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="wm_collector" parent="l_modules" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Raw Module Analysis Output Collector JSON Payload" vertex="1">
+          <mxGeometry height="70" width="500" x="540" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_collector" edge="1" parent="l_modules" source="wm_ml_engine" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="wm_collector">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_risk" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;startSize=28;strokeWidth=1.5;" value="3. THREAT AGGREGATION &amp; RISK ENGINE COMPUTATION STAGE" vertex="1">
+          <mxGeometry height="130" width="1580" x="40" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="w_r1" parent="l_risk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Unified Risk Engine&#xa;(modules/risk_engine.py)&#xa;Calculates Weighted Threat Score (0-100)" vertex="1">
+          <mxGeometry height="60" width="340" x="80" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="w_r2" parent="l_risk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Explain AI Engine&#xa;(modules/explain_ai.py)&#xa;Generates Natural Language Explanation" vertex="1">
+          <mxGeometry height="60" width="340" x="470" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="w_r3" parent="l_risk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Recommendation Engine&#xa;(modules/recommendation.py)&#xa;Generates Remediation Action Steps" vertex="1">
+          <mxGeometry height="60" width="340" x="860" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="w_r4" parent="l_risk" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="UI Display Computer&#xa;(compute_scan_display)&#xa;Formats Gauge &amp; Card Data" vertex="1">
+          <mxGeometry height="60" width="280" x="1250" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_r1" edge="1" parent="l_risk" source="w_r1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_r2" edge="1" parent="l_risk" source="w_r2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_r3" edge="1" parent="l_risk" source="w_r3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l_out" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#000000;fontColor=#000000;fontSize=13;fontStyle=1;startSize=28;strokeWidth=1.5;" value="4. PERSISTENCE, VISUALIZATION &amp; REPORTING STAGE" vertex="1">
+          <mxGeometry height="130" width="1580" x="40" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="w_o1" parent="l_out" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="SQLite Database Persistence&#xa;(database/cybermind.db)&#xa;INSERT INTO scan_history &amp; Child Tables" vertex="1">
+          <mxGeometry height="70" width="380" x="100" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_o2" parent="l_out" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="Streamlit UI Presentation&#xa;Gauge Score, Donut Chart, Geolocation Map &amp;&#xa;Interactive Security Cards" vertex="1">
+          <mxGeometry height="70" width="420" x="540" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="w_o3" parent="l_out" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;fontStyle=1;" value="PDF / JSON Audit Report Generator&#xa;(services/report_service.py)&#xa;Exports Downloadable Report" vertex="1">
+          <mxGeometry height="70" width="420" x="1020" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_o1" edge="1" parent="l_out" source="w_o1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_o2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ew_o2" edge="1" parent="l_out" source="w_o2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=1.5;endArrow=classic;" target="w_o3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_stage1_2" edge="1" parent="1" source="l_input" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=2;endArrow=classic;" target="l_modules">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_stage2_3" edge="1" parent="1" source="l_modules" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=2;endArrow=classic;" target="l_risk">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_stage3_4" edge="1" parent="1" source="l_risk" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;strokeWidth=2;endArrow=classic;" target="l_out">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

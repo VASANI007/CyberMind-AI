@@ -1,0 +1,147 @@
+<mxfile host="app.diagrams.net" agent="CyberMind-AI Black-White Diagram Generator">
+  <diagram id="sys_arch_bw" name="System Architecture (B&amp;W)">
+    <mxGraphModel dx="1460" dy="826" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="User" vertex="1">
+          <mxGeometry height="50" width="160" x="430" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-38" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="Streamlit Web Application (Unified Security Dashboard)" vertex="1">
+          <mxGeometry height="55" width="320" x="350" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-39" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=center;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="&lt;font&gt;&lt;span style=&quot;text-align: left;&quot;&gt;&lt;font&gt;Scan Input Collection - Universal Scan (auto-detect) - URL / Website - Domain / Email - IP Address - QR Code / File - Device Security Scan /&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;span style=&quot;text-align: left; white-space: nowrap;&quot;&gt;Phone Number Scan&lt;/span&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="90" width="250" x="70" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-40" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="Core Engine (Navigation, Session, Security, Validator)" vertex="1">
+          <mxGeometry height="90" width="250" x="385" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-41" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=left;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="AI Security Assistant (Chat Widget) Available on All Pages" vertex="1">
+          <mxGeometry height="90" width="250" x="700" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-42" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="Input Validation &amp;amp; Sanitization" vertex="1">
+          <mxGeometry height="50" width="390" x="315" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-43" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="Scanner Engine (Dispatches to Type-Specific Scanner Module)" vertex="1">
+          <mxGeometry height="50" width="390" x="315" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-44" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=left;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="Services Layer (30+ Threat Intelligence Services)  WHOIS / DNS / SSL   |   VirusTotal / AbuseIPDB Google Safe Browsing  |  Homograph / Typosquat / Entropy" vertex="1">
+          <mxGeometry height="100" width="395" x="315" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-45" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=left;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="Machine Learning Engine  Phishing Detection  |  URL / Domain / IP / File Risk Models Explainable AI (SHAP / LIME)" vertex="1">
+          <mxGeometry height="90" width="395" x="315" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-46" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="Risk Engine (Aggregate Score &amp;amp; Classify: Safe / Low / Medium / High / Critical)" vertex="1">
+          <mxGeometry height="55" width="500" x="260" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=left;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="Analytics &amp;amp; History Module  • Scan Trends • Risk Distribution • Geo Visualisation" vertex="1">
+          <mxGeometry height="120" width="260" x="110" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-48" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=left;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="Report Generation Module (PDF / Excel / Word / CSV / JSON)" vertex="1">
+          <mxGeometry height="60" width="260" x="410" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-49" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;align=left;spacingLeft=8;verticalAlign=middle;spacingTop=6;fontStyle=1" value="AI Assistant Response (Plain-language Explanation &amp;amp; Recommendations)" vertex="1">
+          <mxGeometry height="90" width="220" x="760" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-50" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;boundedLbl=1;verticalAlign=middle;" value="SQLite Database (cybermind.db)" vertex="1">
+          <mxGeometry height="70" width="280" x="210" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-51" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;" value="External Threat Intelligence APIs (VirusTotal, Google Safe Browsing, AbuseIPDB, IPinfo, Groq,&amp;nbsp;&lt;span style=&quot;text-align: left; white-space: nowrap;&quot;&gt;&lt;font&gt;Veriphone / IPQS&lt;/font&gt;&lt;/span&gt;)" vertex="1">
+          <mxGeometry height="90" width="210" x="810" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-52" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-37" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-38" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-53" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-38" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-39" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-54" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-38" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-40" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-55" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-38" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-41" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-56" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-39" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-42" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-57" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-40" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-42" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-58" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-42" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-43" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-59" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-43" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=-0.006;entryY=0.563;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-45" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="515" />
+              <mxPoint x="250" y="760.69" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-60" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-44" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-46" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="512.51" y="690" />
+              <mxPoint x="780" y="690" />
+              <mxPoint x="780" y="857.49" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-61" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-45" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=0.505;entryY=0.008;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-46" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-62" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-46" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-47" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-63" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-46" style="html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;exitX=0.558;exitY=0.988;exitDx=0;exitDy=0;exitPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-48" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-64" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-46" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=-0.003;entryY=0.454;entryDx=0;entryDy=0;exitX=0.833;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-49" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="676.51" y="960.04" />
+              <mxPoint x="729.31" y="960.04" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-65" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-44" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-51" value="API Call">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="915" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-66" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=0.164;entryY=0.072;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-50" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="255.92" y="1040" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-67" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-48" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-50" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-68" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-49" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-41" value="Response">
+          <mxGeometry relative="1" x="0.0509" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="1050.07" y="639" />
+              <mxPoint x="970.07" y="639" />
+              <mxPoint x="970.07" y="305" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-69" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-50" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=12;strokeColor=#000000;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-38" value="Scan Result / History">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="60.07" y="1125" />
+              <mxPoint x="60.07" y="173.77" />
+            </Array>
+            <mxPoint x="350" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="INlIS4pzrSWm3JmVGPTs-70" edge="1" parent="1" source="INlIS4pzrSWm3JmVGPTs-43" style="html=1;endArrow=block;fontSize=12;strokeColor=#000000;fontColor=#000000;rounded=0;entryX=0.493;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;fontStyle=1;verticalAlign=middle;" target="INlIS4pzrSWm3JmVGPTs-44" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
