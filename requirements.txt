@@ -1,4 +1,5 @@
-streamlit
+streamlit==1.49.1
+joblib==1.5.2
 pandas
 numpy
 scikit-learn
@@ -16,7 +17,6 @@ openpyxl
 pillow
 opencv-python
 pyzbar
-joblib
 loguru
 python-dotenv
 streamlit-option-menu
