@@ -5838,17 +5838,24 @@ def render_scanner_page(scanner_key: str):
             if not scan_val:
                 st.warning(f"Please enter a {cfg['value_label'].lower()} first.")
             else:
-                st.session_state[f"scan_result_{scanner_key}"] = None
-                with st.spinner("Running deep threat analysis..."):
-                    result = run_scan(scanner_key, cfg["mod"], cfg["attr"], scan_val)
-                    st.session_state[f"scan_result_{scanner_key}"] = result
-                    if st.session_state.get("settings_sound_alerts", False):
-                        st.markdown(
-                            """
-                            <iframe srcdoc="<script>if(window.parent && window.parent.playBeepSound) { window.parent.playBeepSound(); } else if (window.playBeepSound) { window.playBeepSound(); }</script>" style="display:none; width:0; height:0; border:none;"></iframe>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                from core.validator import validate_scanner_input
+                is_valid, err_msg = validate_scanner_input(scanner_key, scan_val)
+                if not is_valid:
+                    st.session_state[f"scan_result_{scanner_key}"] = None
+                    st.warning(err_msg)
+                else:
+                    st.session_state[f"scan_result_{scanner_key}"] = None
+                    with st.spinner("Running deep threat analysis..."):
+                        result = run_scan(scanner_key, cfg["mod"], cfg["attr"], scan_val)
+                        st.session_state[f"scan_result_{scanner_key}"] = result
+                        if st.session_state.get("settings_sound_alerts", False):
+                            st.markdown(
+                                """
+                                <iframe srcdoc="<script>if(window.parent && window.parent.playBeepSound) { window.parent.playBeepSound(); } else if (window.playBeepSound) { window.playBeepSound(); }</script>" style="display:none; width:0; height:0; border:none;"></iframe>
+                                """,
+                                unsafe_allow_html=True
+                            )
+
 
     result = st.session_state[f"scan_result_{scanner_key}"]
 

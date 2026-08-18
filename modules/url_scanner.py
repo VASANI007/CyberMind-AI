@@ -133,34 +133,16 @@ class URLScanner:
         """
         Analyze URL.
         """
+        from core.validator import validate_scanner_input
+        is_valid, err_msg = validate_scanner_input("URL Scanner", url)
+        if not is_valid:
+            logger.warning("Invalid URL input: %s", url)
+            return self._empty_response(url, err_msg or "Invalid URL.")
 
         url = self.normalize(
-
             url
-
         )
 
-        if not self.validate(
-
-            url
-
-        ):
-
-            logger.warning(
-
-                "Invalid URL : %s",
-
-                url
-
-            )
-
-            return self._empty_response(
-
-                url,
-
-                "Invalid URL."
-
-            )
 
         logger.info(
 

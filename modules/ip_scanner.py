@@ -83,22 +83,15 @@ class IPScanner:
         """
         Analyze IP address.
         """
-
-        if not self.validate(
-
-            ip
-
-        ):
-
+        from core.validator import validate_scanner_input
+        is_valid, err_msg = validate_scanner_input("IP Scanner", ip)
+        if not is_valid:
             return {
-
                 "success": False,
-
                 "scanner": "ip",
-
-                "message": "Invalid IP address."
-
+                "message": err_msg or "Invalid IP address format."
             }
+
 
         logger.info(
 

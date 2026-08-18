@@ -4,9 +4,11 @@ CyberMind AI
 Geo Service
 """
 
-from pathlib import Path
-
-import geoip2.database
+try:
+    import geoip2.database
+    HAS_GEOIP2 = True
+except ImportError:
+    HAS_GEOIP2 = False
 
 from config.settings import DATASET_PATH
 from core.logger import logger
@@ -26,14 +28,19 @@ class GeoService:
 
         self.reader = None
 
-        if self.database.exists():
+        if HAS_GEOIP2 and self.database.exists():
+            try:
+                self.reader = geoip2.database.Reader(
+                    str(self.database)
+                )
+            except Exception as e:
+                logger.warning(f"Could not open GeoLite2 database: {e}")
+                self.reader = None
+        elif not HAS_GEOIP2:
+            logger.info("geoip2 module not installed; running GeoService in lightweight fallback mode.")
+        elif not self.database.exists():
+            logger.info(f"GeoLite2-City.mmdb dataset not found at path: {self.database}")
 
-            self.reader = geoip2.database.Reader(
-                str(self.database)
-            )
-        
-        if self.reader is None:
-            logger.error(f"GeoLite2-City.mmdb is missing or reader is None at path: {self.database}")
 
     def analyze(self, ip: str) -> dict:
         """

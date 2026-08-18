@@ -33,15 +33,34 @@ class UniversalScanModule:
 
     def classify_input(self, val: str) -> str:
         """
-        Classifies input string into 'email', 'url', or 'domain'.
+        Classifies input string into 'email', 'ip', 'url', 'domain', 'hash', or 'invalid'.
         """
+        from core.validator import (
+            is_valid_email,
+            is_valid_ip,
+            is_valid_domain,
+            is_valid_url,
+            is_valid_md5,
+            is_valid_sha1,
+            is_valid_sha256,
+        )
+
         val_clean = val.strip().lower()
-        if "@" in val_clean:
+        if not val_clean:
+            return "invalid"
+
+        if is_valid_email(val_clean):
             return "email"
-        elif val_clean.startswith("http://") or val_clean.startswith("https://") or "/" in val_clean:
+        elif is_valid_ip(val_clean):
+            return "ip"
+        elif val_clean.startswith(("http://", "https://")) or "/" in val_clean or is_valid_url(val_clean):
             return "url"
-        else:
+        elif is_valid_domain(val_clean):
             return "domain"
+        elif is_valid_md5(val_clean) or is_valid_sha1(val_clean) or is_valid_sha256(val_clean):
+            return "hash"
+
+        return "invalid"
 
     def analyze(self, value: str) -> dict[str, Any]:
         """
@@ -49,8 +68,15 @@ class UniversalScanModule:
         """
         logger.info(f"Universal Scan triggered for: {value}")
         start_time = time.time()
-        
+
         input_type = self.classify_input(value)
+        if input_type == "invalid":
+            return {
+                "success": False,
+                "scanner": "universal",
+                "message": "⚠️ Unrecognized scan target. Please enter a valid URL, Domain, IP address, Email, or File Hash."
+            }
+
         
         risk_score = 0
         risk_level = "Safe"

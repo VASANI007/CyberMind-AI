@@ -53,22 +53,16 @@ class Database:
         if self.connection is None:
             self.connect()
 
+        cursor = self.connection.cursor()
+
         if params:
-
-            self.cursor.execute(
-                query,
-                params
-            )
-
+            cursor.execute(query, params)
         else:
-
-            self.cursor.execute(
-                query
-            )
+            cursor.execute(query)
 
         self.connection.commit()
 
-        return self.cursor
+        return cursor
 
     def executemany(
         self,
@@ -82,12 +76,11 @@ class Database:
         if self.connection is None:
             self.connect()
 
-        self.cursor.executemany(
-            query,
-            data
-        )
-
+        cursor = self.connection.cursor()
+        cursor.executemany(query, data)
         self.connection.commit()
+        return cursor
+
 
     def fetchone(
         self,

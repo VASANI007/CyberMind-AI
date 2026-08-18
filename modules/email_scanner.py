@@ -97,28 +97,19 @@ class EmailScanner:
         """
         Analyze email.
         """
+        from core.validator import validate_scanner_input
+        is_valid, err_msg = validate_scanner_input("Email Scanner", email)
+        if not is_valid:
+            return {
+                "success": False,
+                "scanner": "email",
+                "message": err_msg or "Invalid email format."
+            }
 
         email = self.normalize(
-
             email
-
         )
 
-        if not self.validate(
-
-            email
-
-        ):
-
-            return {
-
-                "success": False,
-
-                "scanner": "email",
-
-                "message": "Invalid email."
-
-            }
 
         logger.info(
 

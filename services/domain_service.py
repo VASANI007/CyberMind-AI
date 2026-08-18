@@ -129,30 +129,19 @@ class DomainService:
         """
         Validate domain.
         """
+        if not isinstance(domain, str):
+            return False
 
-        domain = self._normalize_domain(
+        raw = domain.strip().lower()
+        if raw.startswith(("http://", "https://")) or "/" in raw or "@" in raw:
+            return False
 
-            domain
+        from core.validator import is_valid_domain, is_valid_ip
+        if is_valid_ip(raw):
+            return False
 
-        )
+        return is_valid_domain(raw)
 
-        return (
-
-            "." in domain
-
-            and
-
-            " " not in domain
-
-            and
-
-            len(
-
-                domain
-
-            ) > 3
-
-        )
 
     def _empty_response(
         self,

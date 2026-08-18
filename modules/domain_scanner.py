@@ -97,28 +97,19 @@ class DomainScanner:
         """
         Analyze domain.
         """
+        from core.validator import validate_scanner_input
+        is_valid, err_msg = validate_scanner_input("Domain Scanner", domain)
+        if not is_valid:
+            return {
+                "success": False,
+                "scanner": "domain",
+                "message": err_msg or "Invalid domain format."
+            }
 
         domain = self.normalize(
-
             domain
-
         )
 
-        if not self.validate(
-
-            domain
-
-        ):
-
-            return {
-
-                "success": False,
-
-                "scanner": "domain",
-
-                "message": "Invalid domain."
-
-            }
 
         logger.info(
 

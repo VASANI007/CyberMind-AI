@@ -95,28 +95,19 @@ class WebsiteScanner:
         """
         Analyze website.
         """
+        from core.validator import validate_scanner_input
+        is_valid, err_msg = validate_scanner_input("Website Scanner", website)
+        if not is_valid:
+            return {
+                "success": False,
+                "scanner": "website",
+                "message": err_msg or "Invalid website address."
+            }
 
         website = self.normalize(
-
             website
-
         )
 
-        if not self.validate(
-
-            website
-
-        ):
-
-            return {
-
-                "success": False,
-
-                "scanner": "website",
-
-                "message": "Invalid website."
-
-            }
 
         logger.info(
 
