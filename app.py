@@ -24,6 +24,12 @@ if str(BASE_DIR) not in sys.path:
 
 import config.env
 from modules.ai_assistant import render_ai_assistant_panel
+from modules.autonomous_crs_ui import (
+    render_autonomous_security_lab,
+    render_code_sast_page,
+    render_fuzz_sandbox_page
+)
+from core.logger import logger
 
 
 
@@ -965,43 +971,57 @@ style_template = """
         border:1px solid var(--border) !important; font-weight:600 !important;border-radius:9px !important;
     }
     .cta-scan button{
-        background:linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important; color:#fff !important;
-        border:none !important; font-weight:600 !important;border-radius:9px !important; height:2.9rem;
+        background:linear-gradient(90deg, #22D3EE, #3B82F6) !important; color:#ffffff !important;
+        border:none !important; font-weight:700 !important;border-radius:9px !important; height:2.9rem;
         white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important;
-        box-shadow:0 6px 18px rgba(34,184,240,0.25) !important;
+        box-shadow:0 6px 20px rgba(34,211,238,0.35) !important;
+        transition: all 0.25s ease-in-out !important;
     }
     .cta-scan button p, .cta-scan button span {
         color: #ffffff !important;
+        font-weight: 700 !important;
     }
     .cta-scan button:hover{
-        opacity: 0.9 !important;
+        opacity: 0.95 !important;
+        box-shadow:0 8px 25px rgba(34,211,238,0.55) !important;
     }
     .cta-scan{ width:100%; }
 
-    /* All Scan Buttons targeted via Streamlit key-class wrappers */
+    /* All Scan & Action Buttons targeted via Streamlit key-class wrappers */
     div[class*="st-key-scanbtn"] button, 
     div[class*="st-key-home_scan"] button, 
-    div[class*="st-key-dash_scan_link"] button {
-        background: linear-gradient(90deg, var(--grad-a), var(--grad-b)) !important; 
+    div[class*="st-key-dash_scan_link"] button,
+    div[class*="st-key-run_universal_scan_btn"] button,
+    div[class*="st-key-dl_pdf_"] button {
+        background: linear-gradient(90deg, #22D3EE, #3B82F6) !important; 
         color: #ffffff !important;
         border: none !important; 
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         border-radius: 9px !important; 
         height: 2.9rem !important;
-        box-shadow: 0 6px 18px rgba(34,184,240,0.25) !important;
+        box-shadow: 0 6px 20px rgba(34,211,238,0.35) !important;
+        transition: all 0.25s ease-in-out !important;
     }
     div[class*="st-key-scanbtn"] button p, 
     div[class*="st-key-scanbtn"] button span,
     div[class*="st-key-home_scan"] button p,
     div[class*="st-key-home_scan"] button span,
     div[class*="st-key-dash_scan_link"] button p,
-    div[class*="st-key-dash_scan_link"] button span {
+    div[class*="st-key-dash_scan_link"] button span,
+    div[class*="st-key-run_universal_scan_btn"] button p,
+    div[class*="st-key-run_universal_scan_btn"] button span,
+    div[class*="st-key-dl_pdf_"] button p,
+    div[class*="st-key-dl_pdf_"] button span {
         color: #ffffff !important;
+        font-weight: 700 !important;
     }
     div[class*="st-key-scanbtn"] button:hover, 
     div[class*="st-key-home_scan"] button:hover, 
-    div[class*="st-key-dash_scan_link"] button:hover {
-        opacity: 0.9 !important;
+    div[class*="st-key-dash_scan_link"] button:hover,
+    div[class*="st-key-run_universal_scan_btn"] button:hover,
+    div[class*="st-key-dl_pdf_"] button:hover {
+        opacity: 0.95 !important;
+        box-shadow: 0 8px 25px rgba(34,211,238,0.55) !important;
     }
 
     /* Example buttons style */
@@ -2449,6 +2469,13 @@ sync_histories_from_db()
 MAIN_MENU = [
     ("Dashboard", "📊"), ("Scan History", "🕐"), ("Analytics", "📈"),
 ]
+
+AUTONOMOUS_CRS_MENU = [
+    ("Autonomous Security Lab", "🔬"),
+    ("Code SAST & AST", "🔍"),
+    ("Fuzz & Sandbox Hub", "🧪"),
+]
+
 SCANNERS_DISPLAY = {
     "Universal Scan": ("🌐", "Universal Scan"),    
     "URL Scanner": ("🔗", "URL Scanner"),
@@ -2497,7 +2524,24 @@ def render_sidebar():
                 on_click=go_to, args=(label,),
             )
 
-        # Section Divider between MAIN and ANALYSIS
+        # Section Divider between MAIN and AUTONOMOUS CRS
+        st.markdown('<div class="sb-divider"></div>', unsafe_allow_html=True)
+
+        # AUTONOMOUS CRS (AI KAVACH) section
+        if not collapsed:
+            st.markdown('<div class="sb-section" style="color:#22D3EE; font-weight:800;">🛡️ REASONING & REPAIR</div>', unsafe_allow_html=True)
+        for label, icon in AUTONOMOUS_CRS_MENU:
+            active = st.session_state.active_page == label
+            btn_label = icon if collapsed else f"{icon}  {label}"
+            st.button(
+                btn_label,
+                key=f"nav_crs_{label}", width="stretch",
+                type="primary" if active else "secondary",
+                help=label if collapsed else None,
+                on_click=go_to, args=(label,),
+            )
+
+        # Section Divider between AUTONOMOUS CRS and ANALYSIS
         st.markdown('<div class="sb-divider"></div>', unsafe_allow_html=True)
 
         # ANALYSIS section
@@ -6049,13 +6093,115 @@ def render_file_upload_preview(result: dict, d: dict):
     elif ext in ("png", "jpg", "jpeg", "webp", "gif", "bmp") and file_path and os.path.exists(file_path):
         st.image(file_path, caption=f"Preview: {fname} ({size_str})", use_container_width=True)
         _render_file_meta_footer(fname, mime_type, size_str)
+    # PDF Document (.pdf)
+    elif ext == "pdf" and file_path and os.path.exists(file_path):
+        pages_dict = {}
+        total_pages = 0
+        try:
+            from pypdf import PdfReader
+            reader = PdfReader(file_path)
+            total_pages = len(reader.pages)
+            for idx, page in enumerate(reader.pages[:20]):
+                t = page.extract_text() or ""
+                if t.strip():
+                    pages_dict[idx + 1] = t.strip()
+        except Exception:
+            try:
+                import pdfplumber
+                with pdfplumber.open(file_path) as pdf:
+                    total_pages = len(pdf.pages)
+                    for i, p in enumerate(pdf.pages[:20]):
+                        t = (p.extract_text() or "").strip()
+                        if t:
+                            pages_dict[i + 1] = t
+            except Exception:
+                pass
+
+        pdf_bytes = b""
+        try:
+            with open(file_path, "rb") as f_pdf:
+                pdf_bytes = f_pdf.read()
+        except Exception:
+            pass
+
+        st.markdown(f"**📑 PDF Document Content Reader ({fname})**")
+
+        col_pdf1, col_pdf2 = st.columns([3, 1], vertical_alignment="center")
+        with col_pdf1:
+            st.markdown(f"<span style='font-size:12.5px; color:var(--text-muted);'>Total Pages: <b>{total_pages}</b> | Extracted Pages: <b>{len(pages_dict)}</b></span>", unsafe_allow_html=True)
+        with col_pdf2:
+            if pdf_bytes:
+                st.markdown('<div class="cta-scan">', unsafe_allow_html=True)
+                st.download_button("📥 Download PDF", data=pdf_bytes, file_name=fname, mime="application/pdf", key=f"dl_pdf_{fname}")
+                st.markdown('</div>', unsafe_allow_html=True)
+
+        if pages_dict:
+            if len(pages_dict) > 1:
+                sel_page = st.select_slider(
+                    "📄 Select Page to View",
+                    options=list(pages_dict.keys()),
+                    value=1,
+                    key=f"pdf_page_slider_{fname}"
+                )
+            else:
+                sel_page = 1
+
+            page_text = pages_dict.get(sel_page, "No text content found on this page.")
+            st.markdown(
+                f"""
+                <div style="background:rgba(15, 23, 42, 0.85); border:1px solid rgba(34, 211, 238, 0.25); border-radius:10px; padding:16px; margin-top:8px; margin-bottom:12px;">
+                    <div style="font-size:12px; font-weight:700; color:#22D3EE; margin-bottom:8px; display:flex; justify-content:space-between;">
+                        <span>📄 PAGE {sel_page} OF {total_pages}</span>
+                        <span style="color:var(--text-muted);">{len(page_text)} Characters</span>
+                    </div>
+                    <div style="font-size:13px; line-height:1.6; color:var(--text); white-space:pre-wrap; max-height:350px; overflow-y:auto; font-family:monospace; background:rgba(0,0,0,0.3); padding:12px; border-radius:6px;">{html.escape(page_text)}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        else:
+            st.info("PDF file loaded. Scanned / image-only PDF pages detected (no selectable text).")
+
+        _render_file_meta_footer(fname, mime_type, size_str)
+    # Word Document (.docx, .doc)
+    elif ext in ("docx", "doc") and file_path and os.path.exists(file_path):
+        doc_text = ""
+        try:
+            import docx
+            doc = docx.Document(file_path)
+            paragraphs = [p.text.strip() for p in doc.paragraphs if p.text.strip()]
+            doc_text = "\n\n".join(paragraphs[:40])
+        except Exception:
+            doc_text = ""
+
+        st.markdown(f"**📝 Word Document Text Preview ({fname})**")
+        if doc_text.strip():
+            st.text_area("DOCX Content", value=doc_text, height=220, disabled=True, label_visibility="collapsed")
+        else:
+            st.info("Document uploaded. Previewing metadata.")
+        _render_file_meta_footer(fname, mime_type, size_str)
+    # Excel Spreadsheet (.xlsx, .xls)
+    elif ext in ("xlsx", "xls") and file_path and os.path.exists(file_path):
+        st.markdown(f"**📊 Excel Spreadsheet Preview ({fname})**")
+        try:
+            import pandas as pd
+            excel_file = pd.ExcelFile(file_path)
+            sheet_names = excel_file.sheet_names
+            sel_sheet = sheet_names[0]
+            if len(sheet_names) > 1:
+                sel_sheet = st.selectbox("Select Sheet", options=sheet_names, key=f"preview_sheet_{fname}")
+            df = pd.read_excel(file_path, sheet_name=sel_sheet, nrows=50)
+            st.dataframe(df, width="stretch")
+        except Exception as err:
+            st.warning(f"Could not parse spreadsheet columns: {err}")
+        _render_file_meta_footer(fname, mime_type, size_str)
     # Text / Code (.txt, .py, .json, .csv, etc.)
-    elif ext in ("txt", "py", "json", "csv", "md", "js", "html", "css", "c", "cpp", "java", "xml", "log", "yaml") and file_path and os.path.exists(file_path):
+    elif ext in ("txt", "py", "json", "csv", "md", "js", "html", "css", "c", "cpp", "java", "xml", "log", "yaml", "yml", "ini", "env", "sh", "sql") and file_path and os.path.exists(file_path):
         try:
             with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                snippet = f.read(2500)
+                snippet = f.read(3500)
             st.markdown(f"**📄 File Content Preview ({fname} - {size_str})**")
-            st.code(snippet, language=ext if ext in ("py", "json", "js", "html", "css", "c", "cpp", "java", "xml") else "text")
+            st.code(snippet, language=ext if ext in ("py", "json", "js", "html", "css", "c", "cpp", "java", "xml", "sql") else "text")
             _render_file_meta_footer(fname, mime_type, size_str)
         except Exception:
             _render_file_meta_footer(fname, mime_type, size_str)
@@ -6367,107 +6513,83 @@ def render_scan_results(scanner_key: str):
         # ── TAB 1: OVERVIEW ───────────────────────────────────────────
         with tab_overview:
             # 8.3 AI Executive Summary Card (with Multilingual & TTS Voice Synthesizer)
-            col_sum_header, col_sum_lang = st.columns([3, 1.2])
-            with col_sum_lang:
-                selected_lang = st.selectbox(
-                    "🌐 Language / भाषा",
-                    options=["English 🇬🇧", "Hindi 🇮🇳", "Hinglish 🇮🇳", "Gujarati 🇮🇳", "Marathi 🇮🇳", "Spanish 🇪🇸", "French 🇫🇷", "German 🇩🇪"],
-                    key=f"lang_sel_{scanner_key}",
-                    label_visibility="collapsed"
-                )
-
             try:
                 from modules.ai_summary_module import ai_summary_module
-                raw_summary = ai_summary_module.generate_summary(result)
-                exec_summary = ai_summary_module.translate_summary(raw_summary, selected_lang)
+                exec_summary = ai_summary_module.generate_summary(result)
             except Exception:
                 exec_summary = "Scan analysis completed."
 
-            safe_exec_summary = html.escape(exec_summary).replace("'", "\\'").replace("\n", " ")
             fb_key = f"fb_given_{scanner_key}"
             is_fb_submitted = st.session_state.get(fb_key, False)
 
             st.markdown(
-                f"""
-                <div style="background:rgba(34, 184, 240, 0.05); border:1px solid rgba(34, 184, 240, 0.25); border-radius:12px; padding:14px 18px 10px 18px; margin-bottom:14px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-                        <div style="font-size:12px; font-weight:700; color:#22D3EE; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px;">
-                            <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle;">
-                            <span>AI Executive Summary ({selected_lang})</span>
-                        </div>
-                        <button id="tts_btn_{scanner_key}" onclick="toggleTTS_{scanner_key}()" style="background:rgba(34,211,238,0.15); border:1px solid #22D3EE; color:#22D3EE; border-radius:6px; padding:5px 12px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
-                            🔊 Listen AI Explanation
-                        </button>
-                    </div>
-                    <div id="summary_text_{scanner_key}" style="font-size:13.5px; line-height:1.5; color:var(--text); margin-bottom:6px;">{exec_summary}</div>
-                </div>
-                <script>
-                    function toggleTTS_{scanner_key}() {{
-                        const btn = document.getElementById("tts_btn_{scanner_key}");
-                        if (window.speechSynthesis.speaking) {{
-                            window.speechSynthesis.cancel();
-                            if (btn) btn.innerHTML = "🔊 Listen AI Explanation";
-                        }} else {{
-                            window.speechSynthesis.cancel();
-                            const txt = "{safe_exec_summary}";
-                            const msg = new SpeechSynthesisUtterance(txt);
-                            msg.rate = 0.95;
-                            msg.onend = function() {{
-                                if (btn) btn.innerHTML = "🔊 Listen AI Explanation";
-                            }};
-                            window.speechSynthesis.speak(msg);
-                            if (btn) btn.innerHTML = "⏹️ Stop Speech";
-                        }}
-                    }}
-                </script>
+                """
+                <style>
+                div[class*="st-key-ai_exec_card_"] {
+                    background: rgba(34, 184, 240, 0.04) !important;
+                    border: 1px solid rgba(34, 184, 240, 0.25) !important;
+                    border-radius: 12px !important;
+                    padding: 18px 20px 16px 20px !important;
+                    margin-bottom: 18px !important;
+                }
+                </style>
                 """,
                 unsafe_allow_html=True
             )
 
-            # Action buttons embedded inside card footer area
-            st.markdown("<div style='margin-top:-22px; padding:0 12px 10px 12px;'>", unsafe_allow_html=True)
-            if not is_fb_submitted:
-                col_fb1, col_fb2, col_fb3 = st.columns([1, 1, 4])
-                with col_fb1:
-                    if st.button("👍 Yes", key=f"fb_yes_{scanner_key}"):
-                        st.session_state[fb_key] = True
-                        try:
-                            from database.db import db
-                            db.execute(
-                                "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 1)",
-                                (scanner_key, str(result.get("value", "")), float(score))
-                            )
-                            st.toast("Thank you for your feedback!", icon="✅")
-                        except Exception:
-                            pass
-                        st.rerun()
-                with col_fb2:
-                    if st.button("👎 No", key=f"fb_no_{scanner_key}"):
-                        st.session_state[fb_key] = True
-                        try:
-                            from database.db import db
-                            db.execute(
-                                "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 0)",
-                                (scanner_key, str(result.get("value", "")), float(score))
-                            )
-                            st.toast("Feedback recorded. Models will adapt.", icon="📝")
-                        except Exception:
-                            pass
-                        st.rerun()
-                with col_fb3:
-                    if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
-                        if hasattr(st, "dialog"):
-                            render_scan_explainer_dialog()
-            else:
-                col_fb3, col_fb_msg = st.columns([2.5, 3.5])
-                with col_fb3:
-                    if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
-                        if hasattr(st, "dialog"):
-                            render_scan_explainer_dialog()
-                with col_fb_msg:
-                    st.markdown("<div style='font-size:12.5px; color:var(--success); font-weight:600; padding-top:6px;'>✅ Feedback Recorded</div>", unsafe_allow_html=True)
+            with st.container(key=f"ai_exec_card_{scanner_key}"):
+                st.markdown(
+                    """
+                    <div style="font-size:12px; font-weight:700; color:#22D3EE; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle;">
+                        <span>AI Executive Summary</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+                st.markdown(exec_summary)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown("<div style='height:6px;'></div>", unsafe_allow_html=True)
+                if not is_fb_submitted:
+                    col_fb1, col_fb2, col_fb3, col_fb_fill = st.columns([1, 1, 3.2, 2.8])
+                    with col_fb1:
+                        if st.button("👍 Yes", key=f"fb_yes_{scanner_key}"):
+                            st.session_state[fb_key] = True
+                            try:
+                                from database.db import db
+                                db.execute(
+                                    "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 1)",
+                                    (scanner_key, str(result.get("value", "")), float(score))
+                                )
+                                st.toast("Thank you for your feedback!", icon="✅")
+                            except Exception:
+                                pass
+                            st.rerun()
+                    with col_fb2:
+                        if st.button("👎 No", key=f"fb_no_{scanner_key}"):
+                            st.session_state[fb_key] = True
+                            try:
+                                from database.db import db
+                                db.execute(
+                                    "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 0)",
+                                    (scanner_key, str(result.get("value", "")), float(score))
+                                )
+                                st.toast("Feedback recorded. Models will adapt.", icon="📝")
+                            except Exception:
+                                pass
+                            st.rerun()
+                    with col_fb3:
+                        if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
+                            if hasattr(st, "dialog"):
+                                render_scan_explainer_dialog()
+                else:
+                    col_fb3, col_fb_msg = st.columns([3.2, 4.8])
+                    with col_fb3:
+                        if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
+                            if hasattr(st, "dialog"):
+                                render_scan_explainer_dialog()
+                    with col_fb_msg:
+                        st.markdown("<div style='font-size:12.5px; color:var(--success); font-weight:600; padding-top:6px;'>✅ Feedback Recorded</div>", unsafe_allow_html=True)
             st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
             col_row1_1, col_row1_2, col_row1_3 = st.columns(3, gap="large")
@@ -8422,12 +8544,14 @@ def render_connections_page():
     is_offline_mode = offline_mode.is_enabled
 
     api_keys = [
+        ("Google Gemini",        "GEMINI_API_KEY",               "🟢"),
+        ("NVIDIA NIM",           "NVIDIA_API_KEY",               "🟠"),
+        ("Groq",                 "GROQ_API_KEY",                 "🔵"),
         ("Google Safe Browsing", "GOOGLE_SAFE_BROWSING_API_KEY", "🔍"),
         ("VirusTotal",           "VIRUSTOTAL_API_KEY",           "🦠"),
         ("URLScan.io",           "URLSCAN_API_KEY",              "🔗"),
         ("AbuseIPDB",            "ABUSEIPDB_API_KEY",            "🛡️"),
         ("IPInfo",               "IPINFO_API_KEY",               "🌐"),
-        ("Groq",                 "GROQ_API_KEY",                 "🤖"),
         ("Veriphone Telecom",    "VERIPHONE_API_KEY",            "📱"),
         ("IPQS Fraud Score",     "IPQS_API_KEY",                 "📞"),
     ]
@@ -9693,6 +9817,12 @@ render_offline_toast()
 page = st.session_state.active_page
 if page == "Home" or page == "Dashboard":
     render_dashboard()
+elif page == "Autonomous Security Lab":
+    render_autonomous_security_lab()
+elif page == "Code SAST & AST":
+    render_code_sast_page()
+elif page == "Fuzz & Sandbox Hub":
+    render_fuzz_sandbox_page()
 elif page == "Device Security Check":
     render_device_security_page()
 elif page == "Universal Scan":
@@ -9992,16 +10122,14 @@ if hasattr(st, "dialog"):
         level = context.get("risk_level", "Unknown")
         
         st.markdown(f"#### Target: `{target}`")
-        st.markdown(f"**Scanner Type:** {scanner}  |  **Verdict:** **{level}** ({score}/100)")
-        st.markdown("---")
-        
+
         with st.spinner("Generating plain-language explanation with CyberMind-AI..."):
             import json
             from modules.ai_assistant import query_groq_api
             prompt_messages = [
                 {
-                    "role": "system", 
-                    "content": "You are CyberMind AI, an expert security assistant. Explain the security scan results in simple plain language: 1) What was found, 2) Why it's safe or risky, and 3) 2-3 concrete steps the user should take right now. Keep your response under 200 words in Markdown."
+                    "role": "system",
+                    "content": "You are CyberMind AI, an expert security assistant. Explain the security scan results in simple plain language in English: 1) What was found, 2) Why it's safe or risky, and 3) 2-3 concrete steps the user should take right now. Keep your response under 200 words in Markdown."
                 },
                 {
                     "role": "user",
@@ -10019,7 +10147,41 @@ if hasattr(st, "dialog"):
                     f"2. Verify domain WHOIS registration age and SSL certificate authenticity.\n"
                     f"3. Re-scan or request administrative clearance if unexpected."
                 )
-        st.markdown(exp_res)
+
+        final_exp = exp_res
+
+        st.markdown(final_exp)
+
+        safe_speech_txt = html.escape(final_exp).replace("'", "\\'").replace("\n", " ").replace('"', '\\"')
+        components.html(
+            f"""
+            <button id="modal_tts_btn" onclick="toggleModalTTS()" style="background:rgba(34,211,238,0.15); border:1px solid #22D3EE; color:#22D3EE; border-radius:6px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px;">
+                🔊 Listen AI Explanation
+            </button>
+            <script>
+                function toggleModalTTS() {{
+                    const btn = document.getElementById("modal_tts_btn");
+                    const synth = (window.parent && window.parent.speechSynthesis) ? window.parent.speechSynthesis : window.speechSynthesis;
+                    if (synth) {{
+                        if (synth.speaking) {{
+                            synth.cancel();
+                            if (btn) btn.innerHTML = "🔊 Listen AI Explanation";
+                        }} else {{
+                            synth.cancel();
+                            const msg = new (window.parent.SpeechSynthesisUtterance || SpeechSynthesisUtterance)("{safe_speech_txt}");
+                            msg.rate = 0.95;
+                            msg.onend = function() {{
+                                if (btn) btn.innerHTML = "🔊 Listen AI Explanation";
+                            }};
+                            synth.speak(msg);
+                            if (btn) btn.innerHTML = "⏹️ Stop Speech";
+                        }}
+                    }}
+                }}
+            </script>
+            """,
+            height=45
+        )
 
 last_ctx = st.session_state.get("last_scan_context", {})
 active_p = st.session_state.get("active_page")

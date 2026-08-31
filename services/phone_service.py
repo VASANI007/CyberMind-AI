@@ -79,6 +79,21 @@ class PhoneService:
             carrier = ipqs_res.get("carrier") or "Telecom Provider Available"
             line_type = ipqs_res.get("line_type") or "Mobile"
 
+        # Refine Indian Telecom Operator (Jio / Airtel / Vi / BSNL) based on mobile series allocation
+        if "India" in country or digits.startswith("91"):
+            num_body = digits[2:] if digits.startswith("91") else digits
+            if len(num_body) >= 4:
+                p4 = num_body[:4]
+                jio_series = {"7016", "7041", "7043", "7046", "7069", "7096", "6350", "6351", "6352", "6353", "6354", "6355"}
+                if num_body.startswith("6") or p4 in jio_series or (p4.isdigit() and 7981 <= int(p4) <= 7999):
+                    carrier = "Reliance Jio"
+                elif p4.isdigit() and ((7500 <= int(p4) <= 7599) or (7800 <= int(p4) <= 7899) or (9800 <= int(p4) <= 9899)):
+                    carrier = "Bharti Airtel"
+                elif p4.isdigit() and (7200 <= int(p4) <= 7399):
+                    carrier = "Vodafone Idea (Vi)"
+                elif p4.isdigit() and (9400 <= int(p4) <= 9499):
+                    carrier = "BSNL Mobile"
+
         if country == "Not Available" or not country:
             country = f"{parsed_flag} {parsed_country}"
         elif parsed_flag not in country and parsed_country in country:

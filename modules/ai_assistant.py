@@ -429,13 +429,21 @@ _COMPILED_KB: list[tuple[list[re.Pattern], str]] = [
 
 
 def query_groq_api(messages: list[dict[str, str]]) -> str:
+    try:
+        from modules.autonomous_crs.llm_router import llm_router
+        res = llm_router.query(messages, task_type="assistant", temperature=0.5, max_tokens=1024)
+        if res.get("success"):
+            return res["content"].strip()
+    except Exception:
+        pass
+
     from dotenv import load_dotenv
     from pathlib import Path
     load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=True)
 
     api_key = os.environ.get("GROQ_API_KEY", "").strip()
     if not api_key:
-        return "Error: GROQ_API_KEY is not configured. Please add it to your .env file or save it in the Connections page."
+        return "Error: No active LLM API key configured (GROQ_API_KEY / GEMINI_API_KEY / NVIDIA_API_KEY). Please add keys to your .env file or Connections page."
         
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
@@ -443,7 +451,7 @@ def query_groq_api(messages: list[dict[str, str]]) -> str:
         "Content-Type": "application/json"
     }
     payload = {
-        "model": "groq/compound",
+        "model": "llama-3.3-70b-versatile",
         "messages": messages,
         "temperature": 0.5,
         "max_tokens": 1024
@@ -457,7 +465,7 @@ def query_groq_api(messages: list[dict[str, str]]) -> str:
         else:
             return f"Groq API Error (Status {response.status_code}): {response.text}"
     except Exception as e:
-        return f"Failed to connect to Groq API: {str(e)}"
+        return f"Failed to connect to LLM API: {str(e)}"
 
 
 def get_offline_response(user_message: str) -> str | None:
