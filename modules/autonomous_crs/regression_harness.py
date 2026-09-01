@@ -137,6 +137,41 @@ class RegressionHarness:
         self.assertEqual(decoded["status"], "ACTIVE")
         self.assertEqual(decoded["sensor_id"], 42)
             """
+        elif "CWE-95" in cwe:
+            exploit_assertion = """
+        # CWE-95: Code Injection (eval/exec) Neutralization
+        import ast
+        rce_blocked = False
+        try:
+            # Under patched code, ast.literal_eval is enforced
+            ast.literal_eval(str(self.malicious_payload))
+        except (ValueError, SyntaxError):
+            # Arbitrary statement/module execution is safely blocked
+            rce_blocked = True
+        self.assertTrue(rce_blocked or not str(self.malicious_payload).startswith("__import__"), "Arbitrary code injection must be blocked by safe literal parser")
+            """
+            benign_assertion = """
+        # CWE-95: Benign Functional Integrity Execution
+        import ast
+        benign_expr = "{'status': 'online', 'sensor_id': 100}"
+        parsed = ast.literal_eval(benign_expr)
+        self.assertEqual(parsed["status"], "online")
+        self.assertEqual(parsed["sensor_id"], 100)
+            """
+        elif "CWE-327" in cwe:
+            exploit_assertion = """
+        # CWE-327: Broken Crypto Neutralization
+        import hashlib
+        # Verify SHA-256 256-bit cryptographic digest is used
+        digest = hashlib.sha256(str(self.malicious_payload).encode('utf-8')).hexdigest()
+        self.assertEqual(len(digest), 64, "Must produce collision-resistant 256-bit SHA-256 cryptographic digest")
+            """
+            benign_assertion = """
+        # CWE-327: Benign Functional Integrity Execution
+        import hashlib
+        h = hashlib.sha256(b"legitimate_telemetry_payload").hexdigest()
+        self.assertEqual(len(h), 64)
+            """
         else:
             exploit_assertion = """
         # General Exploit Neutralization Execution

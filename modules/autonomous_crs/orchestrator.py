@@ -176,13 +176,34 @@ class AutonomousCRSOrchestrator:
         log_event("🔍 Discovery Agent", f"Cataloged {scan_res['total_files']} files ({scan_res['files_scanned']} Python), {scan_res['dependencies_count']} dependencies, and {len(all_findings)} candidate findings.", "COMPLETE")
 
         if not all_findings:
-            log_event("🛡️ Verification Agent", f"No high-risk vulnerabilities detected in project {p_name}.", "COMPLETE")
+            log_event("🛡️ Verification Agent", f"No high-risk vulnerabilities detected in project `{p_name}`.", "COMPLETE")
+            master_cert = {
+                "project_name": p_name,
+                "total_files": scan_res.get("total_files", 0),
+                "files_scanned_count": scan_res.get("files_scanned", 0),
+                "candidate_findings_count": 0,
+                "target_files_count": 0,
+                "verified_count": 0,
+                "pending_count": 0,
+                "failed_count": 0,
+                "all_verified": True,
+                "total_regression_passed": 0,
+                "total_refuzz_inputs": 0,
+                "total_refuzz_crashes": 0,
+                "master_badge": "PROJECT CLEAN (0 Vulnerabilities) 🟢",
+                "master_certificate_id": f"CM-PROJ-{int(time.time())}-CLEAN",
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
+                "status": "PROJECT_CLEAN"
+            }
             return {
                 "success": True,
                 "has_vulnerabilities": False,
                 "project_overview": scan_res,
+                "file_results": [],
+                "master_certificate": master_cert,
+                "patched_zip_bytes": zip_bytes,
                 "timeline": timeline,
-                "summary": "Project is clean."
+                "summary": "Project is clean. Zero security vulnerabilities identified across all scanned modules."
             }
 
         # 2. Group candidate findings by file (Top finding per unique file)
@@ -339,6 +360,7 @@ class AutonomousCRSOrchestrator:
             "file_results": file_results,
             "master_certificate": master_cert,
             "patched_project_zip_bytes": patched_project_zip_bytes,
+            "patched_zip_bytes": patched_project_zip_bytes,
             "evidence_zip_bytes": project_evidence_zip_bytes,
             "timeline": timeline,
             # Top finding alias for single view compatibility

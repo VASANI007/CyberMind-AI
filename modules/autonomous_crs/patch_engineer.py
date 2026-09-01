@@ -287,18 +287,43 @@ Instructions:
                     "subprocess.run(interp + [str(path)] + [shlex.quote(str(a)) for a in (args or []) if not any(c in str(a) for c in [';', '&&', '|', '`'])])"
                 )
 
+        elif "CWE-95" in cwe:
+            # Fix Dynamic Code Injection (eval / exec): replace with ast.literal_eval or safe namespace
+            if "import ast" not in code:
+                code = "import ast\n" + code
+            code = re.sub(r'\beval\s*\(\s*([a-zA-Z0-9_\.\[\]]+)\s*\)', r'ast.literal_eval(\1)', code)
+            code = re.sub(r'\bexec\s*\(\s*([a-zA-Z0-9_\.\[\]]+)\s*\)', r'exec(\1, {"__builtins__": {}})', code)
+
+        elif "CWE-327" in cwe:
+            # Fix Broken Cryptographic Algorithm: replace MD5/SHA1 with secure SHA256
+            if "import hashlib" not in code:
+                code = "import hashlib\n" + code
+            code = re.sub(r'hashlib\.md5\s*\(', r'hashlib.sha256(', code)
+            code = re.sub(r'hashlib\.sha1\s*\(', r'hashlib.sha256(', code)
+            code = re.sub(r'algorithms_available\s*\[["\']md5["\']\]', r'"sha256"', code)
+
         elif "CWE-22" in cwe:
             # Fix Path Traversal: sanitize with os.path.basename and os.path.abspath bounds check
             if "import os" not in code:
                 code = "import os\n" + code
             code = re.sub(
-                r'filepath\s*=\s*os\.path\.join\s*\(\s*base_dir\s*,\s*(\w+)\s*\)',
-                r'safe_name = os.path.basename(\1)\n    filepath = os.path.abspath(os.path.join(base_dir, safe_name))\n    if not filepath.startswith(os.path.abspath(base_dir)):\n        raise PermissionError("Access Denied: Path traversal detected")',
+                r'filepath\s*=\s*os\.path\.join\s*\(\s*([a-zA-Z0-9_]+)\s*,\s*([a-zA-Z0-9_]+)\s*\)',
+                r'safe_name = os.path.basename(\2)\n    filepath = os.path.abspath(os.path.join(\1, safe_name))\n    if not filepath.startswith(os.path.abspath(\1)):\n        raise PermissionError("Access Denied: Path traversal detected")',
                 code
             )
             code = re.sub(
-                r'with\s+open\s*\(\s*f["\']\{base_dir\}/\{(\w+)\}["\']\s*,\s*["\']r["\']\s*\)\s*as\s+(\w+):',
-                r'safe_name = os.path.basename(\1)\n    target_path = os.path.abspath(os.path.join(base_dir, safe_name))\n    with open(target_path, "r") as \2:',
+                r'with\s+open\s*\(\s*f["\']\{([a-zA-Z0-9_]+)\}/\{([a-zA-Z0-9_]+)\}["\']\s*,\s*["\']([rwaxb+]+)["\']\s*\)\s*as\s+([a-zA-Z0-9_]+):',
+                r'safe_name = os.path.basename(\2)\n    target_path = os.path.abspath(os.path.join(\1, safe_name))\n    with open(target_path, "\3") as \4:',
+                code
+            )
+            code = re.sub(
+                r'with\s+open\s*\(\s*os\.path\.join\s*\(\s*([a-zA-Z0-9_]+)\s*,\s*([a-zA-Z0-9_]+)\s*\)\s*,\s*["\']([rwaxb+]+)["\']\s*\)\s*as\s+([a-zA-Z0-9_]+):',
+                r'safe_name = os.path.basename(\2)\n    target_path = os.path.abspath(os.path.join(\1, safe_name))\n    with open(target_path, "\3") as \4:',
+                code
+            )
+            code = re.sub(
+                r'open\s*\(\s*f["\']\{([a-zA-Z0-9_]+)\}/\{([a-zA-Z0-9_]+)\}["\']\s*,\s*["\']([rwaxb+]+)["\']\s*\)',
+                r'open(os.path.abspath(os.path.join(\1, os.path.basename(\2))), "\3")',
                 code
             )
 
@@ -320,4 +345,8 @@ Instructions:
             return "import json\n" + code.replace("import pickle\n", "").replace("pickle.load", "json.load")
         elif "CWE-89" in cwe:
             return code.replace("cursor.execute(query)", "cursor.execute(query, ())")
+        elif "CWE-95" in cwe:
+            return "import ast\n" + code.replace("eval(", "ast.literal_eval(")
+        elif "CWE-327" in cwe:
+            return code.replace("hashlib.md5(", "hashlib.sha256(").replace("hashlib.sha1(", "hashlib.sha256(")
         return code
