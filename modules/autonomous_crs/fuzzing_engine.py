@@ -89,11 +89,11 @@ class FuzzingEngine:
         self,
         code_content: str,
         cwe_type: str,
-        iterations: int = 150,
+        iterations: int = 30,
         target_fn_name: str = "main"
     ) -> Dict[str, Any]:
         """
-        Executes a dynamic fuzzing campaign against the target Python snippet.
+        Executes a high-speed dynamic fuzzing campaign against the target Python snippet.
         """
         inputs = self.generate_fuzz_corpus(cwe_type, count=iterations)
         start_time = time.time()
@@ -103,11 +103,9 @@ class FuzzingEngine:
         unique_errors = set()
         interesting_inputs = []
 
-        # Construct fuzz harness wrapper if needed
-        # We test fuzzing inputs by running individual executions or running harness
-        for fuzz_input in inputs[:min(len(inputs), iterations)]:
+        max_tests = min(len(inputs), max(10, iterations))
+        for fuzz_input in inputs[:max_tests]:
             tested_count += 1
-            # Run in sandbox with fuzz input as stdin or argument
             res = self.sandbox.execute_code(code_content, stdin_input=fuzz_input, cli_args=[fuzz_input])
             
             if res["crashed"] or res["exception_detected"]:
@@ -121,6 +119,10 @@ class FuzzingEngine:
                         "exit_code": res["exit_code"]
                     })
                     interesting_inputs.append(fuzz_input)
+                
+                # Early stop once sufficient crash diversity is captured
+                if len(crashes) >= 3 and tested_count >= 15:
+                    break
 
         duration = time.time() - start_time
 

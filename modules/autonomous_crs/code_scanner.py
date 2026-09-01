@@ -376,12 +376,45 @@ class CodeSecurityScanner:
         }
 
     def scan_zip(self, zip_bytes: bytes) -> Dict[str, Any]:
-        """Unpacks ZIP in a temporary directory and scans."""
+        """Unpacks ZIP in a temporary directory and scans all Python files."""
+        files_dict = {}
+        all_findings = []
+        scanned_files = 0
+
         with tempfile.TemporaryDirectory() as tmpdir:
             zip_path = Path(tmpdir) / "uploaded.zip"
             with open(zip_path, "wb") as f:
                 f.write(zip_bytes)
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(tmpdir)
-            
-            return self.scan_directory(tmpdir)
+
+            for root, _, files in os.walk(tmpdir):
+                for f in files:
+                    if f.endswith(".py"):
+                        full_p = Path(root) / f
+                        rel_p = str(full_p.relative_to(tmpdir)).replace("\\", "/")
+                        try:
+                            with open(full_p, "r", encoding="utf-8", errors="ignore") as file_handle:
+                                code = file_handle.read()
+                            files_dict[rel_p] = code
+                            res = self.scan_code_string(code, filename=rel_p)
+                            all_findings.extend(res["findings"])
+                            scanned_files += 1
+                        except Exception:
+                            pass
+
+        severity_weight = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "INFO": 0}
+        all_findings.sort(key=lambda x: severity_weight.get(x["severity"], 0), reverse=True)
+
+        return {
+            "total_findings": len(all_findings),
+            "files_scanned": scanned_files,
+            "critical": sum(1 for f in all_findings if f["severity"] == "CRITICAL"),
+            "high": sum(1 for f in all_findings if f["severity"] == "HIGH"),
+            "medium": sum(1 for f in all_findings if f["severity"] == "MEDIUM"),
+            "low": sum(1 for f in all_findings if f["severity"] == "LOW"),
+            "findings": all_findings,
+            "files_dict": files_dict,
+            "target": "Uploaded Project Archive (.zip)"
+        }
+

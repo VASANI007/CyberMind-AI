@@ -69,6 +69,7 @@ Output ONLY valid JSON.
 
         if not self.use_offline_fallback:
             try:
+                import re
                 from .llm_router import llm_router
                 router_res = llm_router.query(messages, task_type="reasoning")
                 if router_res.get("success"):
@@ -79,7 +80,12 @@ Output ONLY valid JSON.
                     elif "```" in clean_res:
                         clean_res = clean_res.split("```")[1].split("```")[0].strip()
                     
-                    parsed = json.loads(clean_res)
+                    json_match = re.search(r'(\{.*\})', clean_res, re.DOTALL)
+                    if json_match:
+                        parsed = json.loads(json_match.group(1))
+                    else:
+                        parsed = json.loads(clean_res)
+                    
                     parsed["_llm_provider_used"] = router_res.get("provider_name")
                     return parsed
             except Exception:

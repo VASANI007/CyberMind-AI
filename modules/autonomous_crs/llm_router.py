@@ -24,36 +24,36 @@ class LLMRouter:
     """
 
     PROVIDER_CONFIGS = {
-        "NVIDIA_NIM": {
-            "name": "NVIDIA NIM",
-            "env_key": ["NVIDIA_API_KEY", "NIM_API_KEY"],
-            "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions",
-            "default_model": "meta/llama-3.3-70b-instruct",
-            "timeout": 15
-        },
-        "GEMINI": {
-            "name": "Google Gemini",
-            "env_key": ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
-            "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-            "default_model": "gemini-1.5-flash",
-            "timeout": 15
-        },
         "GROQ": {
             "name": "Groq LPU",
             "env_key": ["GROQ_API_KEY"],
             "endpoint": "https://api.groq.com/openai/v1/chat/completions",
-            "default_model": "llama-3.3-70b-versatile",
-            "timeout": 10
+            "default_model": "groq/compound",
+            "timeout": 3
+        },
+        "GEMINI": {
+            "name": "Google Gemini",
+            "env_key": ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
+            "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
+            "default_model": "gemini-3.6-flash",
+            "timeout": 3
+        },
+        "NVIDIA_NIM": {
+            "name": "NVIDIA NIM",
+            "env_key": ["NVIDIA_API_KEY", "NIM_API_KEY"],
+            "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions",
+            "default_model": "ai21labs/jamba-1.5-large-instruct",
+            "timeout": 2
         }
     }
 
-    # Recommended Task Specialization & Fallback Hierarchy
+    # Ultra-Fast High-Throughput Routing Policy (Groq LPU & Gemini Flash first)
     AGENT_ROUTING_POLICY = {
-        "orchestrator": ["NVIDIA_NIM", "GEMINI", "GROQ"],
-        "reasoning": ["NVIDIA_NIM", "GEMINI", "GROQ"],
-        "patch_engineer": ["NVIDIA_NIM", "GEMINI", "GROQ"],
+        "orchestrator": ["GROQ", "GEMINI", "NVIDIA_NIM"],
+        "reasoning": ["GROQ", "GEMINI", "NVIDIA_NIM"],
+        "patch_engineer": ["GROQ", "GEMINI", "NVIDIA_NIM"],
         "static_analysis": ["GEMINI", "GROQ", "NVIDIA_NIM"],
-        "regression": ["GEMINI", "GROQ", "NVIDIA_NIM"],
+        "regression": ["GROQ", "GEMINI", "NVIDIA_NIM"],
         "fuzzing": ["GROQ", "GEMINI", "NVIDIA_NIM"],
         "verification": ["GROQ", "GEMINI", "NVIDIA_NIM"],
         "assistant": ["GROQ", "GEMINI", "NVIDIA_NIM"],
@@ -172,20 +172,22 @@ class LLMRouter:
     def _call_gemini(self, api_key: str, messages: List[Dict[str, str]], temp: float, tokens: int) -> str:
         url = f"{self.PROVIDER_CONFIGS['GEMINI']['endpoint']}?key={api_key}"
         
-        # Convert OpenAI-style messages to Gemini format
-        gemini_contents = []
+        combined_text_parts = []
         for m in messages:
-            role = "user" if m.get("role") in ("user", "system") else "model"
-            gemini_contents.append({
-                "role": role,
-                "parts": [{"text": m.get("content", "")}]
-            })
+            content = m.get("content", "")
+            if m.get("role") == "system":
+                combined_text_parts.append(f"[SYSTEM INSTRUCTION]\n{content}\n")
+            else:
+                combined_text_parts.append(content)
 
         payload = {
-            "contents": gemini_contents,
+            "contents": [{
+                "role": "user",
+                "parts": [{"text": "\n\n".join(combined_text_parts)}]
+            }],
             "generationConfig": {
                 "temperature": temp,
-                "maxOutputTokens": tokens
+                "maxOutputTokens": max(tokens, 800)
             }
         }
         res = requests.post(url, json=payload, timeout=self.PROVIDER_CONFIGS["GEMINI"]["timeout"])

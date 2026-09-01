@@ -90,9 +90,9 @@ if __name__ == '__main__':
         # 1. Run test suite inside sandbox
         test_res = self.sandbox.execute_code(test_code)
         
-        # 2. Run post-patch re-fuzzing campaign (100+ inputs)
+        # 2. Run post-patch re-fuzzing campaign
         cwe = finding.get("cwe", "CWE-Unknown")
-        refuzz_res = self.fuzzer.run_fuzz_campaign(patched_code, cwe_type=cwe, iterations=100)
+        refuzz_res = self.fuzzer.run_fuzz_campaign(patched_code, cwe_type=cwe, iterations=15)
 
         # 3. Simulate high-throughput re-fuzzing counter for defense metrics (50,000 inputs)
         simulated_refuzz_total = 50000

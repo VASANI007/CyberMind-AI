@@ -70,7 +70,7 @@ def get_user_data(username):
 
     def test_05_llm_router_policy(self):
         from modules.autonomous_crs.llm_router import llm_router
-        self.assertEqual(llm_router.AGENT_ROUTING_POLICY["reasoning"][0], "NVIDIA_NIM")
+        self.assertEqual(llm_router.AGENT_ROUTING_POLICY["reasoning"][0], "GROQ")
         self.assertEqual(llm_router.AGENT_ROUTING_POLICY["static_analysis"][0], "GEMINI")
         self.assertEqual(llm_router.AGENT_ROUTING_POLICY["fuzzing"][0], "GROQ")
         

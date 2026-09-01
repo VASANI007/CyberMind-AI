@@ -23,7 +23,7 @@ class AutonomousCRSOrchestrator:
     def __init__(self, use_offline_mode: bool = False):
         self.use_offline_mode = use_offline_mode
         self.scanner = CodeSecurityScanner()
-        self.sandbox = DynamicSandbox(timeout_seconds=3.5)
+        self.sandbox = DynamicSandbox(timeout_seconds=2.0)
         self.reasoning_agent = CyberReasoningAgent(use_offline_fallback=use_offline_mode)
         self.fuzzer = FuzzingEngine(sandbox=self.sandbox)
         self.reproducer = VulnerabilityReproducer(sandbox=self.sandbox)
@@ -81,7 +81,7 @@ class AutonomousCRSOrchestrator:
 
         # ── Step 3: Targeted Fuzzing & Input Generation ──
         log_event("🧪 Fuzz Agent", f"Synthesizing dynamic mutation corpus for {top_finding['cwe']}. Launching sandbox fuzzing campaign.", "RUNNING")
-        fuzz_res = self.fuzzer.run_fuzz_campaign(code_content, cwe_type=top_finding["cwe"], iterations=100)
+        fuzz_res = self.fuzzer.run_fuzz_campaign(code_content, cwe_type=top_finding["cwe"], iterations=25)
         log_event("🧪 Fuzz Agent", f"Fuzzed {fuzz_res['inputs_tested']} inputs. Discovered {fuzz_res['total_crashes']} crash trigger(s).", "COMPLETE")
 
         # ── Step 4: Vulnerability Reproduction & Proof-of-Concept ──

@@ -84,6 +84,7 @@ TRANSLATIONS = {
         "Connections": "Connections",
         "Help & Support": "Help & Support",
         "MAIN": "MAIN",
+        "REASONING & REPAIR": "REASONING & REPAIR",
         "ANALYSIS": "ANALYSIS",
         "SYSTEM": "SYSTEM",
         "About Developer": "About Developer",
@@ -123,6 +124,7 @@ TRANSLATIONS = {
         "Connections": "कनेक्शन",
         "Help & Support": "सहायता और समर्थन",
         "MAIN": "मुख्य मेनू",
+        "REASONING & REPAIR": "रीजनिंग और रिपेयर",
         "ANALYSIS": "विश्लेषण",
         "SYSTEM": "सिस्टम",
         "About Developer": "डेवलपर के बारे में",
@@ -2529,7 +2531,7 @@ def render_sidebar():
 
         # AUTONOMOUS CRS (AI KAVACH) section
         if not collapsed:
-            st.markdown('<div class="sb-section" style="color:#22D3EE; font-weight:800;">🛡️ REASONING & REPAIR</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="sb-section">{t("REASONING & REPAIR")}</div>', unsafe_allow_html=True)
         for label, icon in AUTONOMOUS_CRS_MENU:
             active = st.session_state.active_page == label
             btn_label = icon if collapsed else f"{icon}  {label}"
@@ -2576,7 +2578,7 @@ def render_sidebar():
             )
 
         if not collapsed:
-            st.markdown('<div class="sb-version">v1.0.0 Enterprise</div>', unsafe_allow_html=True)
+            st.markdown('<div class="sb-version">v2.0.0 Enterprise</div>', unsafe_allow_html=True)
             # Inject interactive Drag-to-Resize handle for sidebar invisibly
             components.html(
                 """
@@ -8066,7 +8068,7 @@ def render_settings_page():
                     <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--text-faint); border-top:1px solid var(--border); padding-top:10px;">
                         <span>🎓 <strong>Degree:</strong> M.Sc. Data Science</span>
                         <span>📅 <strong>Build Date:</strong> 07-07-2026</span>
-                        <span>🛡️ <strong>Version:</strong> v1.0.0 Enterprise</span>
+                        <span>🛡️ <strong>Version:</strong> v2.0.0 Enterprise</span>
                     </div>
                 </div>
             </div>
