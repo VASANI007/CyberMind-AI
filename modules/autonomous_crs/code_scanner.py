@@ -278,22 +278,25 @@ class CodeSecurityScanner:
                         "rule_id": "BANDIT-B303"
                     })
 
-                # Path Traversal in open()
-                elif func_name in ("open", "io.open", "os.open"):
-                    if node.args and isinstance(node.args[0], (ast.JoinedStr, ast.BinOp)):
+                # Path Traversal in open() / os.path.join
+                elif func_name in ("open", "io.open", "os.open", "os.path.join", "pathlib.Path"):
+                    has_dynamic_first = node.args and isinstance(node.args[0], (ast.JoinedStr, ast.BinOp))
+                    has_tainted_first = node.args and isinstance(node.args[0], ast.Name) and node.args[0].id in tainted_vars
+                    is_join_multi = func_name == "os.path.join" and len(node.args) >= 2
+                    if has_dynamic_first or has_tainted_first or is_join_multi or func_name == "open":
                         lineno = getattr(node, "lineno", 1)
                         snippet = lines[lineno - 1] if lineno <= len(lines) else ""
                         findings.append({
                             "id": "CWE-22",
-                            "name": "Path Traversal in File Access",
+                            "name": "Path Traversal (Unvalidated File Path Access)",
                             "cwe": "CWE-22",
                             "owasp": "A01:2021-Broken Access Control",
                             "severity": "HIGH",
-                            "confidence": 0.89,
+                            "confidence": 0.92,
                             "file": filename,
                             "line": lineno,
                             "code_snippet": snippet.strip(),
-                            "description": "Dynamic file path constructed without sanitization or path canonicalization.",
+                            "description": "File path constructed dynamically without base directory boundary enforcement.",
                             "mitre": "T1005 - Data from Local System",
                             "rule_id": "SEMGREP-PY-PATH-TRAVERSAL"
                         })
@@ -376,45 +379,92 @@ class CodeSecurityScanner:
         }
 
     def scan_zip(self, zip_bytes: bytes) -> Dict[str, Any]:
-        """Unpacks ZIP in a temporary directory and scans all Python files."""
+        """Unpacks ZIP in a temporary directory and performs full dynamic project discovery & SAST security audit."""
         files_dict = {}
         all_findings = []
-        scanned_files = 0
+        scanned_py_files = 0
+        total_files = 0
+        other_files = 0
+        test_files = []
+        dependencies = set()
+        project_name = "Target Project Archive"
 
         with tempfile.TemporaryDirectory() as tmpdir:
             zip_path = Path(tmpdir) / "uploaded.zip"
             with open(zip_path, "wb") as f:
                 f.write(zip_bytes)
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(tmpdir)
+            try:
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(tmpdir)
+                    namelist = zip_ref.namelist()
+                    if namelist:
+                        first_dir = namelist[0].split("/")[0]
+                        if first_dir and not first_dir.endswith(".py"):
+                            project_name = first_dir
+            except Exception:
+                pass
 
             for root, _, files in os.walk(tmpdir):
                 for f in files:
+                    if f == "uploaded.zip":
+                        continue
+                    total_files += 1
+                    full_p = Path(root) / f
+                    rel_p = str(full_p.relative_to(tmpdir)).replace("\\", "/")
+
+                    # Dependency discovery
+                    if f.lower() in ("requirements.txt", "requirements.in"):
+                        try:
+                            with open(full_p, "r", encoding="utf-8", errors="ignore") as req_file:
+                                for line in req_file:
+                                    line_s = line.strip()
+                                    if line_s and not line_s.startswith("#") and not line_s.startswith("-"):
+                                        pkg_name = line_s.split("==")[0].split(">=")[0].split("<=")[0].split("~=")[0].strip()
+                                        if pkg_name:
+                                            dependencies.add(pkg_name)
+                        except Exception:
+                            pass
+                    elif f.lower() == "pyproject.toml" or f.lower() == "setup.py":
+                        dependencies.add("standard-packaging")
+
+                    # Python module discovery
                     if f.endswith(".py"):
-                        full_p = Path(root) / f
-                        rel_p = str(full_p.relative_to(tmpdir)).replace("\\", "/")
+                        scanned_py_files += 1
+                        if "test" in f.lower():
+                            test_files.append(rel_p)
                         try:
                             with open(full_p, "r", encoding="utf-8", errors="ignore") as file_handle:
                                 code = file_handle.read()
                             files_dict[rel_p] = code
                             res = self.scan_code_string(code, filename=rel_p)
                             all_findings.extend(res["findings"])
-                            scanned_files += 1
                         except Exception:
                             pass
+                    else:
+                        other_files += 1
 
         severity_weight = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "INFO": 0}
         all_findings.sort(key=lambda x: severity_weight.get(x["severity"], 0), reverse=True)
 
+        dep_list = sorted(list(dependencies))
+
         return {
             "total_findings": len(all_findings),
-            "files_scanned": scanned_files,
+            "files_scanned": scanned_py_files,
+            "total_files": total_files,
+            "python_files": scanned_py_files,
+            "other_files": other_files,
+            "dependencies_count": len(dep_list),
+            "dependencies": dep_list,
+            "test_files_count": len(test_files),
+            "test_files": test_files,
+            "project_name": project_name,
             "critical": sum(1 for f in all_findings if f["severity"] == "CRITICAL"),
             "high": sum(1 for f in all_findings if f["severity"] == "HIGH"),
             "medium": sum(1 for f in all_findings if f["severity"] == "MEDIUM"),
             "low": sum(1 for f in all_findings if f["severity"] == "LOW"),
             "findings": all_findings,
             "files_dict": files_dict,
-            "target": "Uploaded Project Archive (.zip)"
+            "target": f"{project_name} (.zip)"
         }
 

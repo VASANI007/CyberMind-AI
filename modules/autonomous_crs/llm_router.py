@@ -28,22 +28,22 @@ class LLMRouter:
             "name": "Groq LPU",
             "env_key": ["GROQ_API_KEY"],
             "endpoint": "https://api.groq.com/openai/v1/chat/completions",
-            "default_model": "groq/compound",
-            "timeout": 3
+            "default_model": "llama-3.3-70b-versatile",
+            "timeout": 2.5
         },
         "GEMINI": {
             "name": "Google Gemini",
             "env_key": ["GEMINI_API_KEY", "GOOGLE_API_KEY"],
-            "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
-            "default_model": "gemini-3.6-flash",
-            "timeout": 3
+            "endpoint": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+            "default_model": "gemini-2.5-flash",
+            "timeout": 2.5
         },
         "NVIDIA_NIM": {
             "name": "NVIDIA NIM",
             "env_key": ["NVIDIA_API_KEY", "NIM_API_KEY"],
             "endpoint": "https://integrate.api.nvidia.com/v1/chat/completions",
-            "default_model": "ai21labs/jamba-1.5-large-instruct",
-            "timeout": 2
+            "default_model": "meta/llama-3.3-70b-instruct",
+            "timeout": 2.0
         }
     }
 

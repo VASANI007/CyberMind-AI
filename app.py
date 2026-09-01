@@ -87,7 +87,8 @@ TRANSLATIONS = {
         "REASONING & REPAIR": "REASONING & REPAIR",
         "ANALYSIS": "ANALYSIS",
         "SYSTEM": "SYSTEM",
-        "About Developer": "About Developer",
+        "About the CyberMind AI Team": "About the CyberMind AI Team",
+        "About Developer": "About the CyberMind AI Team",
         "General Settings": "General Settings",
         "Language": "Application Language",
         "Auto Save": "Auto Save Reports",
@@ -127,7 +128,8 @@ TRANSLATIONS = {
         "REASONING & REPAIR": "रीजनिंग और रिपेयर",
         "ANALYSIS": "विश्लेषण",
         "SYSTEM": "सिस्टम",
-        "About Developer": "डेवलपर के बारे में",
+        "About the CyberMind AI Team": "साइबरमाइंड एआई टीम के बारे में",
+        "About Developer": "साइबरमाइंड एआई टीम के बारे में",
         "General Settings": "सामान्य सेटिंग्स",
         "Language": "एप्लिकेशन भाषा",
         "Auto Save": "रिपोर्ट स्वतः सहेजें",
@@ -8048,27 +8050,34 @@ def render_settings_page():
                     st.rerun()
 
     with right_c:
-        st.markdown(f'<div class="section-title">{t("About Developer")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-title">{t("About the CyberMind AI Team")}</div>', unsafe_allow_html=True)
         st.markdown(
             f"""
             <div class="chart-card" style="padding:22px; border-left:4px solid var(--grad-a);">
                 <div style="font-size:15.5px; color:var(--text); font-weight:700; line-height:1.6; margin-bottom:10px;">
-                    Developed by Daksh Vasani
+                    Developed by the CyberMind AI Team
                 </div>
-                <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65;">
+                <div style="font-size:13px; color:var(--text-muted); line-height:1.65;">
                     <p style="margin-bottom:8px;">
-                        Daksh Vasani is a passionate researcher and AI Developer pursuing a <strong>Master of Science in Data Science (M.Sc. DS)</strong>. 
-                        Specializing in Machine Learning and predictive security analytics, Daksh designed and developed <strong>CyberMind AI</strong> 
-                        to offer a unified, intelligent threat analysis dashboard.
+                        <strong>CyberMind AI</strong> is a collaborative AI-powered cybersecurity and threat intelligence platform designed to provide unified security analysis across URLs, websites, domains, IP addresses, files, emails, QR codes, and software codebases.
                     </p>
-                    <p style="margin-bottom:13.5px;">
-                        This platform integrates deep lexical profiling, multi-threaded domain intelligence, and ML predictions to evaluate risks 
-                        across web properties, files, and emails.
+                    <p style="margin-bottom:8px;">
+                        The platform combines AI/ML-driven analysis, threat intelligence, static and dynamic security analysis, SAST/AST scanning, intelligent fuzzing, sandbox execution, and autonomous cyber reasoning to identify, analyse, and respond to a broad range of cybersecurity risks.
                     </p>
-                    <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--text-faint); border-top:1px solid var(--border); padding-top:10px;">
-                        <span>🎓 <strong>Degree:</strong> M.Sc. Data Science</span>
-                        <span>📅 <strong>Build Date:</strong> 07-07-2026</span>
-                        <span>🛡️ <strong>Version:</strong> v2.0.0 Enterprise</span>
+                    <p style="margin-bottom:8px;">
+                        Its latest <strong>Autonomous Cyber Reasoning & Self-Healing Engine</strong> extends CyberMind AI beyond traditional detection by enabling complete software codebase analysis, vulnerability reasoning, controlled reproduction, AI-assisted patch generation, regression testing, post-patch re-fuzzing, and cryptographic proof-of-fix verification.
+                    </p>
+                    <p style="margin-bottom:12px;">
+                        The platform also integrates a multi-LLM architecture using <strong>Google Gemini, NVIDIA NIM, and Groq</strong>, enabling task-specific AI reasoning and resilient provider fallback.
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:6px; font-size:11.5px; color:var(--text-faint); border-top:1px solid var(--border); padding-top:12px;">
+                        <div>🎓 <strong>Team:</strong> CyberMind AI Team</div>
+                        <div>🛡️ <strong>Project:</strong> CyberMind AI — AI-Powered Cybersecurity & Autonomous Cyber Reasoning Platform</div>
+                        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                            <span>📅 <strong>Build Date:</strong> 07-07-2026</span>
+                            <span>🚀 <strong>Version:</strong> v2.0.0 Enterprise</span>
+                        </div>
+                        <div style="margin-top:2px;">🎯 <strong>Core Focus:</strong> Threat Intelligence • AI/ML Security Analysis • SAST/AST • Dynamic Analysis • Autonomous Cyber Reasoning • Vulnerability Remediation</div>
                     </div>
                 </div>
             </div>

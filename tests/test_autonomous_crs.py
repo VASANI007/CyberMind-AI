@@ -57,13 +57,14 @@ def get_user_data(username):
     query = f"SELECT * FROM accounts WHERE user = '{username}'"
     cursor.execute(query)
 '''
-        # Reduce iterations for fast unit test
-        self.orchestrator.fuzzer.sandbox.timeout_seconds = 1.0
         pipeline_res = self.orchestrator.run_pipeline(sample_code, filename="accounts_gateway.py")
         self.assertTrue(pipeline_res["success"])
         self.assertTrue(pipeline_res["has_vulnerabilities"])
         self.assertIn("findings", pipeline_res)
-        self.assertTrue(pipeline_res["verification"]["verified"])
+        if not pipeline_res["verification"]["verified"]:
+            print("\nDEBUG MATRIX:", pipeline_res["verification"]["matrix"])
+            print("DEBUG DIFF:\n", pipeline_res["patch"]["diff"])
+        self.assertTrue(pipeline_res["verification"]["verified"], msg=str(pipeline_res["verification"]["matrix"]))
         self.assertIn("FIX VERIFIED", pipeline_res["verification"]["badge_text"])
         self.assertGreater(len(pipeline_res["evidence_zip_bytes"]), 100)
 
