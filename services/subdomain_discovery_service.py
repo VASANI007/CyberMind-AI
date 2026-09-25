@@ -22,7 +22,8 @@ class SubdomainDiscoveryService:
     2. DNS brute-force against a common subdomains wordlist
     """
 
-    DNS_TIMEOUT = 3
+    DNS_TIMEOUT = 1.0
+    _cache: dict[str, tuple[float, dict]] = {}
 
     def __init__(self) -> None:
         self._wordlist: list[str] = []
@@ -50,22 +51,25 @@ class SubdomainDiscoveryService:
 
     def discover(self, domain: str) -> dict[str, Any]:
         """
-        Discover subdomains for *domain*.
-
-        Returns
-        -------
-        dict with keys:
-            subdomains   : list[dict] — each with name, source, ip (if resolved)
-            ct_count     : int        — subdomains from CT logs
-            dns_count    : int        — subdomains from DNS brute-force
-            total        : int
+        Discover subdomains for *domain* with in-memory TTL caching and parallel DNS resolution.
         """
+        import time
+        import copy
+        import concurrent.futures
+
+        domain_key = domain.strip().lower()
+        now = time.time()
+        if domain_key in self._cache:
+            ts, cached_val = self._cache[domain_key]
+            if now - ts < 600:
+                return copy.deepcopy(cached_val)
+
         all_subdomains: dict[str, dict] = {}
 
         # 1. CT Logs
         try:
             from services.ct_logs_service import ct_logs_service
-            ct_result = ct_logs_service.get_certificates(domain)
+            ct_result = ct_logs_service.get_certificates(domain_key)
             for sub in ct_result.get("subdomains", []):
                 if sub not in all_subdomains:
                     all_subdomains[sub] = {
@@ -78,37 +82,43 @@ class SubdomainDiscoveryService:
 
         ct_count = len(all_subdomains)
 
-        # 2. DNS Brute-force (limited to wordlist)
+        # 2. DNS Brute-force in parallel
         dns_found = 0
         try:
             import dns.resolver
 
-            resolver = dns.resolver.Resolver()
-            resolver.timeout = self.DNS_TIMEOUT
-            resolver.lifetime = self.DNS_TIMEOUT
+            prefixes_to_test = [
+                p for p in self._wordlist[:12]
+                if f"{p}.{domain_key}" not in all_subdomains
+            ]
 
-            for prefix in self._wordlist[:12]:
-                fqdn = f"{prefix}.{domain}"
-                if fqdn in all_subdomains:
-                    continue
-
+            def _resolve_sub(prefix: str):
+                fqdn = f"{prefix}.{domain_key}"
                 try:
-                    answers = resolver.resolve(fqdn, "A")
-                    ips = [str(rdata) for rdata in answers]
-                    all_subdomains[fqdn] = {
-                        "name": fqdn,
-                        "source": "DNS Brute-force",
-                        "ip": ips[0] if ips else "",
-                    }
-                    dns_found += 1
-                except (
-                    dns.resolver.NXDOMAIN,
-                    dns.resolver.NoAnswer,
-                    dns.resolver.Timeout,
-                    dns.resolver.NoNameservers,
-                    Exception,
-                ):
-                    continue
+                    res = dns.resolver.Resolver()
+                    res.timeout = self.DNS_TIMEOUT
+                    res.lifetime = self.DNS_TIMEOUT
+                    ans = res.resolve(fqdn, "A")
+                    ips = [str(rdata) for rdata in ans]
+                    return fqdn, ips[0] if ips else ""
+                except Exception:
+                    return fqdn, None
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+                futures = [executor.submit(_resolve_sub, p) for p in prefixes_to_test]
+                done, not_done = concurrent.futures.wait(futures, timeout=1.5)
+                for future in done:
+                    try:
+                        fqdn, ip = future.result()
+                        if ip:
+                            all_subdomains[fqdn] = {
+                                "name": fqdn,
+                                "source": "DNS Brute-force",
+                                "ip": ip,
+                            }
+                            dns_found += 1
+                    except Exception:
+                        pass
 
         except ImportError:
             logger.warning("dnspython not available for subdomain brute-force")
@@ -117,12 +127,14 @@ class SubdomainDiscoveryService:
 
         results = sorted(all_subdomains.values(), key=lambda x: x["name"])
 
-        return {
+        res = {
             "subdomains": results,
             "ct_count": ct_count,
             "dns_count": dns_found,
             "total": len(results),
         }
+        self._cache[domain_key] = (now, res)
+        return copy.deepcopy(res)
 
     def analyze(self, domain: str) -> dict[str, Any]:
         """Plugin interface."""

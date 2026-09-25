@@ -485,49 +485,26 @@ class DomainService:
 
         report["domain"] = domain
 
-        report["dns"] = self.dns(
+        import concurrent.futures
 
-            domain
+        task_map = {
+            "dns": lambda: self.dns(domain),
+            "whois": lambda: self.whois(domain),
+            "ssl": lambda: self.ssl(domain),
+            "geo": lambda: self.geo(domain),
+            "ip_information": lambda: self.ip_information(domain),
+            "blacklist": lambda: self.blacklist(domain),
+        }
 
-        )
-
-        report["whois"] = self.whois(
-
-            domain
-
-        )
-
-        report["ssl"] = self.ssl(
-
-            domain
-
-        )
-
-        report["geo"] = self.geo(
-
-            domain
-
-        )
-
-        report["ip_information"] = (
-
-            self.ip_information(
-
-                domain
-
-            )
-
-        )
-
-        report["blacklist"] = (
-
-            self.blacklist(
-
-                domain
-
-            )
-
-        )
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(task_map)) as executor:
+            future_to_key = {executor.submit(fn): key for key, fn in task_map.items()}
+            for future in concurrent.futures.as_completed(future_to_key):
+                key = future_to_key[future]
+                try:
+                    report[key] = future.result()
+                except Exception as e:
+                    logger.warning("Domain sub-analysis %s failed: %s", key, e)
+                    report[key] = {}
 
         report["reputation"] = (
 

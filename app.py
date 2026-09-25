@@ -50,6 +50,25 @@ st.set_page_config(
     initial_sidebar_state="collapsed", # Hide native sidebar natively
 )
 
+# ── Background Pre-warm of ML Models (Async Zero-Latency Scans) ───────────
+if "ml_warmed" not in st.session_state:
+    st.session_state.ml_warmed = True
+    def _warmup_ml_models():
+        try:
+            from ml.model_loader import model_loader
+            _m_dir = BASE_DIR / "ml" / "models"
+            p1 = _m_dir / "phishing_url_model.pkl"
+            p2 = _m_dir / "online_valid_model.pkl"
+            if p1.exists():
+                model_loader.load(str(p1))
+            if p2.exists():
+                model_loader.load(str(p2))
+        except Exception:
+            pass
+
+    import threading
+    threading.Thread(target=_warmup_ml_models, daemon=True).start()
+
 if "sidebar_state" not in st.session_state:
     st.session_state.sidebar_state = "expanded"
 

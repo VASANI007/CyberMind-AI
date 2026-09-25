@@ -45,7 +45,9 @@ def verify_https(hostname: str, timeout: float = 4.0) -> dict:
 
 
 class SSLService:
-    def verify_https(self, hostname: str, timeout: float = 4.0) -> dict:
+    _cache: dict[str, tuple[float, dict]] = {}
+
+    def verify_https(self, hostname: str, timeout: float = 3.0) -> dict:
         return verify_https(hostname, timeout=timeout)
 
 
@@ -55,48 +57,52 @@ class SSLService:
         port: int = 443
     ) -> dict:
         """
-        Fetch SSL certificate.
+        Fetch SSL certificate with in-memory TTL caching and fast timeout.
         """
+        import time
+        import copy
+
+        clean_host = hostname.strip().lower()
+        if "://" in clean_host:
+            clean_host = clean_host.split("://")[1]
+        clean_host = clean_host.split("/")[0].split(":")[0]
+
+        now = time.time()
+        cache_key = f"{clean_host}:{port}"
+        if cache_key in self._cache:
+            ts, cached_val = self._cache[cache_key]
+            if now - ts < 600:
+                return copy.deepcopy(cached_val)
 
         try:
-
             context = ssl.create_default_context()
-
             with socket.create_connection(
-                (hostname, port),
-                timeout=5
+                (clean_host, port),
+                timeout=2.5
             ) as sock:
-
                 with context.wrap_socket(
                     sock,
-                    server_hostname=hostname
+                    server_hostname=clean_host
                 ) as secure_socket:
-
                     certificate = secure_socket.getpeercert()
-
                     protocol = secure_socket.version()
-
                     cipher = secure_socket.cipher()
 
-            return {
-
+            res = {
                 "available": True,
-
                 "certificate": certificate,
-
                 "protocol": protocol,
-
                 "cipher": cipher
-
             }
+            self._cache[cache_key] = (now, res)
+            return copy.deepcopy(res)
 
         except Exception:
-
-            return {
-
+            res = {
                 "available": False
-
             }
+            self._cache[cache_key] = (now, res)
+            return copy.deepcopy(res)
 
     def expiry_date(
         self,

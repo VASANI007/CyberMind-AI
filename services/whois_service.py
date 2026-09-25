@@ -13,31 +13,66 @@ import whois
 
 class WhoisService:
 
+    _cache: dict[str, tuple[float, dict]] = {}
+
     def lookup(
         self,
         domain: str
     ) -> dict:
         """
-        Perform WHOIS lookup with strict 3-second thread execution timeout.
+        Perform WHOIS lookup with strict 2.5-second thread execution timeout and in-memory TTL caching.
         """
+        import time
+        import copy
         import socket
         import concurrent.futures
+
+        domain_key = domain.strip().lower()
+        now = time.time()
+        if domain_key in self._cache:
+            ts, cached_val = self._cache[domain_key]
+            if now - ts < 600:
+                return copy.deepcopy(cached_val)
 
         def _raw_whois():
             old_timeout = socket.getdefaulttimeout()
             try:
-                socket.setdefaulttimeout(3)
-                return whois.whois(domain)
+                socket.setdefaulttimeout(2.5)
+                return whois.whois(domain_key)
             finally:
                 socket.setdefaulttimeout(old_timeout)
 
         try:
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
                 future = executor.submit(_raw_whois)
-                result = future.result(timeout=3)
-                return self._format(result)
+                result = future.result(timeout=2.5)
+                formatted = self._format(result)
+                self._cache[domain_key] = (now, formatted)
+                return formatted
         except Exception:
-            return {}
+            empty = {}
+            self._cache[domain_key] = (now, empty)
+            return empty
+
+    def _calc_age(self, created) -> int | None:
+        if created is None:
+            return None
+        if hasattr(created, "tzinfo") and created.tzinfo is not None:
+            created = created.replace(tzinfo=None)
+        try:
+            return (datetime.now() - created).days
+        except Exception:
+            return None
+
+    def _calc_expires(self, expiry) -> int | None:
+        if expiry is None:
+            return None
+        if hasattr(expiry, "tzinfo") and expiry.tzinfo is not None:
+            expiry = expiry.replace(tzinfo=None)
+        try:
+            return (expiry - datetime.now()).days
+        except Exception:
+            return None
 
     def exists(
         self,
@@ -46,9 +81,7 @@ class WhoisService:
         """
         Check whether domain exists.
         """
-
         result = self.lookup(domain)
-
         return bool(result)
 
     def age(
@@ -58,25 +91,8 @@ class WhoisService:
         """
         Return domain age in days.
         """
-
         result = self.lookup(domain)
-
-        created = result.get(
-            "creation_date"
-        )
-
-        if created is None:
-
-            return None
-
-        if hasattr(created, "tzinfo") and created.tzinfo is not None:
-            created = created.replace(tzinfo=None)
-
-        return (
-
-            datetime.now() - created
-
-        ).days
+        return self._calc_age(result.get("creation_date"))
 
     def expires_in(
         self,
@@ -85,25 +101,8 @@ class WhoisService:
         """
         Return remaining days until expiration.
         """
-
         result = self.lookup(domain)
-
-        expiry = result.get(
-            "expiration_date"
-        )
-
-        if expiry is None:
-
-            return None
-
-        if hasattr(expiry, "tzinfo") and expiry.tzinfo is not None:
-            expiry = expiry.replace(tzinfo=None)
-
-        return (
-
-            expiry - datetime.now()
-
-        ).days
+        return self._calc_expires(result.get("expiration_date"))
 
     def analyze(
         self,
@@ -112,69 +111,33 @@ class WhoisService:
         """
         Analyze domain.
         """
-
         result = self.lookup(domain)
 
         if not result:
-
             return {
-
                 "domain": domain,
-
                 "exists": False
-
             }
 
+        created = result.get("creation_date")
+        expiry = result.get("expiration_date")
+        age_days = self._calc_age(created)
+        expires_days = self._calc_expires(expiry)
+
         return {
-
             "domain": domain,
-
             "exists": True,
-
-            "registrar": result.get(
-                "registrar"
-            ),
-
-            "creation_date": result.get(
-                "creation_date"
-            ),
-
-            "expiration_date": result.get(
-                "expiration_date"
-            ),
-
-            "updated_date": result.get(
-                "updated_date"
-            ),
-
-            "name_servers": result.get(
-                "name_servers"
-            ),
-
-            "status": result.get(
-                "status"
-            ),
-
-            "emails": result.get(
-                "emails"
-            ),
-
-            "dnssec": result.get(
-                "dnssec"
-            ),
-
-            "age_days": self.age(
-                domain
-            ),
-
-            "domain_age_days": self.age(
-                domain
-            ),
-
-            "expires_in_days": self.expires_in(
-                domain
-            )
-
+            "registrar": result.get("registrar"),
+            "creation_date": created,
+            "expiration_date": expiry,
+            "updated_date": result.get("updated_date"),
+            "name_servers": result.get("name_servers"),
+            "status": result.get("status"),
+            "emails": result.get("emails"),
+            "dnssec": result.get("dnssec"),
+            "age_days": age_days,
+            "domain_age_days": age_days,
+            "expires_in_days": expires_days
         }
 
     def _normalize_date(

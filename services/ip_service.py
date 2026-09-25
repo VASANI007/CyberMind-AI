@@ -50,11 +50,30 @@ class IPService:
         except Exception:
             version = "IPv4"
 
-        geo_data = geo_service.lookup(ip) or {}
-        ipinfo_data = ipinfo_service.lookup(ip) or {}
-        abuse_data = abuseipdb_service.lookup(ip) or {}
-        blacklist_data = blacklist_service.lookup(ip) or {}
-        abstract_data = abstract_ip_service.lookup(ip) or {}
+        import concurrent.futures
+
+        task_map = {
+            "geo": lambda: geo_service.lookup(ip) or {},
+            "ipinfo": lambda: ipinfo_service.lookup(ip) or {},
+            "abuse": lambda: abuseipdb_service.lookup(ip) or {},
+            "blacklist": lambda: blacklist_service.lookup(ip) or {},
+            "abstract": lambda: abstract_ip_service.lookup(ip) or {},
+        }
+        res_map = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(task_map)) as executor:
+            future_to_key = {executor.submit(fn): k for k, fn in task_map.items()}
+            for future in concurrent.futures.as_completed(future_to_key):
+                k = future_to_key[future]
+                try:
+                    res_map[k] = future.result()
+                except Exception:
+                    res_map[k] = {}
+
+        geo_data = res_map.get("geo", {})
+        ipinfo_data = res_map.get("ipinfo", {})
+        abuse_data = res_map.get("abuse", {})
+        blacklist_data = res_map.get("blacklist", {})
+        abstract_data = res_map.get("abstract", {})
         abstract_active = bool(abstract_data.get("configured") and abstract_data.get("success"))
 
         analysis = {

@@ -12,11 +12,13 @@ import dns.resolver
 
 class DNSService:
 
+    _cache: dict[str, tuple[float, dict]] = {}
+
     def __init__(self):
 
         self.resolver = dns.resolver.Resolver()
 
-        self.timeout = 5
+        self.timeout = 2.0
 
         self.resolver.timeout = self.timeout
 
@@ -149,34 +151,59 @@ class DNSService:
         domain: str
     ) -> dict:
         """
-        DNS analysis.
+        DNS analysis with in-memory TTL caching and parallel record queries.
         """
+        import time
+        import copy
+        import concurrent.futures
 
-        mx_res = self.mx(domain)
-        txt_res = self.txt(domain)
-        return {
+        domain_key = domain.strip().lower()
+        now = time.time()
+        if domain_key in self._cache:
+            ts, cached_val = self._cache[domain_key]
+            if now - ts < 600:
+                return copy.deepcopy(cached_val)
 
+        types_to_query = ["A", "AAAA", "MX", "NS", "TXT", "CNAME", "SOA"]
+        results: dict[str, list] = {}
+
+        def _query_type(rtype: str):
+            return rtype, self.lookup(domain_key, rtype)
+
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=len(types_to_query)) as executor:
+                futures = [executor.submit(_query_type, rt) for rt in types_to_query]
+                for future in concurrent.futures.as_completed(futures, timeout=2.5):
+                    try:
+                        rtype, records = future.result()
+                        results[rtype] = records
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+        a_res = results.get("A", [])
+        aaaa_res = results.get("AAAA", [])
+        mx_res = results.get("MX", [])
+        ns_res = results.get("NS", [])
+        txt_res = results.get("TXT", [])
+        cname_res = results.get("CNAME", [])
+        soa_res = results.get("SOA", [])
+
+        dns_report = {
             "domain": domain,
-
-            "a": self.a(domain),
-
-            "aaaa": self.aaaa(domain),
-
+            "a": a_res,
+            "aaaa": aaaa_res,
             "mx": mx_res,
-
             "mx_records": mx_res,
-
-            "ns": self.ns(domain),
-
+            "ns": ns_res,
             "txt": txt_res,
-
             "txt_records": txt_res,
-
-            "cname": self.cname(domain),
-
-            "soa": self.soa(domain)
-
+            "cname": cname_res,
+            "soa": soa_res
         }
+        self._cache[domain_key] = (now, dns_report)
+        return copy.deepcopy(dns_report)
 
 
 dns_service = DNSService()

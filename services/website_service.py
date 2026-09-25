@@ -1150,55 +1150,12 @@ class WebsiteService:
 
         }
 
-        report["url_analysis"] = (
-
-            url_service.analyze(
-
-                url
-
-            )
-
-        )
-
-        report["dns"] = dns_service.analyze(
-
-            url_service.hostname(
-
-                url
-
-            )
-
-        )
-
-        report["whois"] = whois_service.analyze(
-
-            url_service.hostname(
-
-                url
-
-            )
-
-        )
-
-        report["ssl"] = ssl_service.analyze(
-
-            url_service.hostname(
-
-                url
-
-            )
-
-        )
-
-        report["security_headers"] = (
-
-            security_headers_service.analyze(
-
-                url
-
-            )
-
-        )
+        url_analysis = url_service.analyze(url)
+        report["url_analysis"] = url_analysis
+        report["dns"] = url_analysis.get("dns") or dns_service.analyze(url_service.hostname(url))
+        report["whois"] = url_analysis.get("whois") or whois_service.analyze(url_service.hostname(url))
+        report["ssl"] = url_analysis.get("ssl") or ssl_service.analyze(url_service.hostname(url))
+        report["security_headers"] = url_analysis.get("security_headers") or security_headers_service.analyze(url)
 
         report["geo"] = geo_service.analyze(
 

@@ -21,7 +21,8 @@ class CTLogsService:
     """
 
     CRT_SH_URL = "https://crt.sh/"
-    TIMEOUT = 15
+    TIMEOUT = 3.0
+    _cache: dict[str, tuple[float, dict]] = {}
 
     @property
     def name(self) -> str:
@@ -31,21 +32,33 @@ class CTLogsService:
         """
         Query crt.sh for certificates matching *domain*.
         """
+        import time
+        import copy
+
+        domain_key = domain.strip().lower()
+        now = time.time()
+        if domain_key in self._cache:
+            ts, cached_val = self._cache[domain_key]
+            if now - ts < 600:
+                return copy.deepcopy(cached_val)
+
         from core.offline_mode import offline_mode
         if offline_mode.is_enabled:
             return {"certificates": [], "count": 0, "subdomains": [], "offline": True}
         try:
             resp = requests.get(
                 self.CRT_SH_URL,
-                params={"q": f"%.{domain}", "output": "json"},
+                params={"q": f"%.{domain_key}", "output": "json"},
                 timeout=self.TIMEOUT,
                 headers={"User-Agent": "CyberMind-AI/1.0"},
             )
             resp.raise_for_status()
             data = resp.json()
         except Exception as exc:
-            logger.warning("crt.sh query failed for %s: %s", domain, exc)
-            return {"certificates": [], "count": 0, "subdomains": []}
+            logger.warning("crt.sh query failed for %s: %s", domain_key, exc)
+            res = {"certificates": [], "count": 0, "subdomains": []}
+            self._cache[domain_key] = (now, res)
+            return res
 
         seen_names: set[str] = set()
         certs = []

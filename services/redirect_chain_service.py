@@ -20,8 +20,9 @@ class RedirectChainService:
     and returns the complete redirect chain.
     """
 
-    MAX_HOPS = 15
-    TIMEOUT = 8
+    MAX_HOPS = 6
+    TIMEOUT = 3.0
+    _cache: dict[str, tuple[float, dict]] = {}
 
     @property
     def name(self) -> str:
@@ -30,18 +31,20 @@ class RedirectChainService:
     def follow(self, url: str) -> dict[str, Any]:
         """
         Follow redirects from *url* and return the chain.
-
-        Returns
-        -------
-        dict  with keys:
-            chain   : list[dict]  — each hop with url, status_code, headers
-            hops    : int         — total number of redirects
-            final   : str         — final destination URL
-            loop    : bool        — True if a redirect loop was detected
         """
+        import time
+        import copy
+
+        url_key = url.strip()
+        now = time.time()
+        if url_key in self._cache:
+            ts, cached_val = self._cache[url_key]
+            if now - ts < 600:
+                return copy.deepcopy(cached_val)
+
         chain: list[dict[str, Any]] = []
         visited: set[str] = set()
-        current = url
+        current = url_key
         loop_detected = False
 
         for _ in range(self.MAX_HOPS):
@@ -57,6 +60,7 @@ class RedirectChainService:
                     timeout=self.TIMEOUT,
                     headers={"User-Agent": "CyberMind-AI/1.0"},
                     verify=False,
+                    stream=True,
                 )
 
                 hop = {

@@ -516,62 +516,34 @@ class URLService:
         )
 
         report["metadata"] = self.metadata(
-
             url
-
         )
 
         report["features"] = self.features(
-
             url
-
         )
 
-        report["dns"] = self.dns(
+        import concurrent.futures
 
-            url
+        task_map = {
+            "dns": lambda: self.dns(url),
+            "whois": lambda: self.whois(url),
+            "ssl": lambda: self.ssl(url),
+            "security_headers": lambda: self.security_headers(url),
+            "blacklist": lambda: self.blacklist(url),
+            "google_safe_browsing": lambda: self.google_safe_browsing(url),
+            "virustotal": lambda: self.virustotal(url),
+        }
 
-        )
-
-        report["whois"] = self.whois(
-
-            url
-
-        )
-
-        report["ssl"] = self.ssl(
-
-            url
-
-        )
-
-        report["security_headers"] = self.security_headers(
-
-            url
-
-        )
-
-        report["blacklist"] = self.blacklist(
-
-            url
-
-        )
-
-        report["google_safe_browsing"] = (
-
-            self.google_safe_browsing(
-
-                url
-
-            )
-
-        )
-
-        report["virustotal"] = self.virustotal(
-
-            url
-
-        )
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(task_map)) as executor:
+            future_to_key = {executor.submit(fn): key for key, fn in task_map.items()}
+            for future in concurrent.futures.as_completed(future_to_key):
+                key = future_to_key[future]
+                try:
+                    report[key] = future.result()
+                except Exception as e:
+                    logger.warning("URL sub-analysis %s failed: %s", key, e)
+                    report[key] = {}
 
         report["reputation"] = self.reputation(
 
