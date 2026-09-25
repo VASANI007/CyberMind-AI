@@ -13,10 +13,14 @@ from datetime import datetime
 from pathlib import Path
 import re
 import math
+import json
 from typing import Any
 import plotly.graph_objects as go
 import streamlit as st
 import streamlit.components.v1 as components
+
+_re = re
+_os = os
 
 BASE_DIR = Path(__file__).resolve().parent
 if str(BASE_DIR) not in sys.path:
@@ -24,13 +28,24 @@ if str(BASE_DIR) not in sys.path:
 
 import config.env
 from modules.ai_assistant import render_ai_assistant_panel
+import logging
+logger = logging.getLogger(__name__)
+
+# Load CyberMind Emoji Icon Mapping
+EMOJI_ICONS_FILE = BASE_DIR / "data" / "emoji_icons.json"
+try:
+    with open(EMOJI_ICONS_FILE, "r", encoding="utf-8") as _ef:
+        _emoji_map = json.load(_ef)
+        EMOJI_ICONS_JSON = json.dumps(_emoji_map)
+except Exception:
+    EMOJI_ICONS_JSON = "{}"
 
 
 
 # Page Configuration
 st.set_page_config(
     page_title="CyberMind AI",
-    page_icon="https://cdn-icons-png.flaticon.com/512/6071/6071531.png",
+    page_icon="https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true",
     layout="wide",
     initial_sidebar_state="collapsed", # Hide native sidebar natively
 )
@@ -521,11 +536,200 @@ style_template = """
     }
 
     /* Global Image Sizing Safety Rule */
-    .chart-card img, .stApp img[src*="18310827"], .stApp img[src*="flaticon"], .stApp img[src*="cdn-icons"] {
+    .chart-card img, .stApp img[src*="18310827"], .stApp img[src*="flaticon"]:not(.cyber-emoji-icon), .stApp img[src*="cdn-icons"]:not(.cyber-emoji-icon) {
         max-width: 24px !important;
         max-height: 24px !important;
         object-fit: contain !important;
         vertical-align: middle !important;
+    }
+
+    /* CyberMind Exact Emoji Icon Match (Scales proportionally to surrounding font size) */
+    .stApp img.cyber-emoji-icon, img.cyber-emoji-icon, .cyber-emoji-icon {
+        width: 1.15em !important;
+        height: 1.15em !important;
+        max-width: 1.15em !important;
+        max-height: 1.15em !important;
+        min-width: 1.15em !important;
+        min-height: 1.15em !important;
+        vertical-align: -0.16em !important;
+        display: inline-block !important;
+        object-fit: contain !important;
+        margin: 0 0.08em !important;
+        pointer-events: none !important;
+    }
+
+    /* Invisible container helper for custom script components */
+    iframe[height="0"], iframe[style*="height: 0px"], div[data-testid="stCustomComponentV1"]:has(> iframe[height="0"]) {
+        visibility: hidden !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        width: 0 !important;
+        height: 0 !important;
+        max-width: 0 !important;
+        max-height: 0 !important;
+        pointer-events: none !important;
+        border: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* =========================================================================
+       CYBERMIND UNIFIED ALERT & TOAST SYSTEM (MATCHING CYBER CARD UI)
+       ========================================================================= */
+    div[data-testid="stAlert"] {
+        position: relative !important;
+        background: rgba(18, 24, 38, 0.96) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border-radius: 12px !important;
+        padding: 14px 18px !important;
+        margin-top: 10px !important;
+        margin-bottom: 14px !important;
+        color: #ffffff !important;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+        line-height: 1.5 !important;
+        overflow: hidden !important;
+        border: 1px solid rgba(255, 170, 0, 0.5) !important;
+        border-left: 4px solid #FFAA00 !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 170, 0, 0.25) !important;
+    }
+    div[data-testid="stAlert"]::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #FFAA00, #FF5500) !important;
+    }
+    div[data-testid="stAlert"] div[data-baseweb="notification"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #ffffff !important;
+    }
+    div[data-testid="stAlert"] [data-testid="stMarkdownContainer"] p,
+    div[data-testid="stAlert"] [data-testid="stMarkdownContainer"] div,
+    div[data-testid="stAlert"] [data-testid="stMarkdownContainer"] span {
+        color: #ffffff !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+    }
+    div[data-testid="stAlert"] svg {
+        margin-top: 1px !important;
+    }
+
+    /* 1. ERROR ALERTS (st.error) */
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="negative"]),
+    div[data-testid="stAlert"]:has(svg[fill*="239"]),
+    div[data-testid="stAlert"]:has(svg[fill*="EF44"]),
+    div[data-testid="stAlert"]:has(svg[fill*="242, 84"]),
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="error"])) {
+        border: 1px solid rgba(239, 68, 68, 0.55) !important;
+        border-left: 4px solid #EF4444 !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.25) !important;
+    }
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="negative"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="239"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="EF44"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="242, 84"])::after,
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="error"]))::after {
+        background: linear-gradient(90deg, #EF4444, #F97316) !important;
+    }
+
+    /* 2. WARNING ALERTS (st.warning) */
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="warning"]),
+    div[data-testid="stAlert"]:has(svg[fill*="255, 170"]),
+    div[data-testid="stAlert"]:has(svg[fill*="FFAA"]),
+    div[data-testid="stAlert"]:has(svg[fill*="F59E"]),
+    div[data-testid="stAlert"]:has(svg[fill*="F5A6"]),
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="warning"])) {
+        border: 1px solid rgba(255, 170, 0, 0.55) !important;
+        border-left: 4px solid #FFAA00 !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 170, 0, 0.25) !important;
+    }
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="warning"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="255, 170"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="FFAA"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="F59E"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="F5A6"])::after,
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="warning"]))::after {
+        background: linear-gradient(90deg, #FFAA00, #FF5500) !important;
+    }
+
+    /* 3. INFO ALERTS (st.info) */
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="info"]),
+    div[data-testid="stAlert"]:has(svg[fill*="0, 210"]),
+    div[data-testid="stAlert"]:has(svg[fill*="00D2"]),
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="info"])) {
+        border: 1px solid rgba(0, 210, 255, 0.55) !important;
+        border-left: 4px solid #00D2FF !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 210, 255, 0.25) !important;
+    }
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="info"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="0, 210"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="00D2"])::after,
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="info"]))::after {
+        background: linear-gradient(90deg, #00D2FF, #0055FF) !important;
+    }
+
+    /* 4. SUCCESS ALERTS (st.success) */
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="positive"]),
+    div[data-testid="stAlert"]:has(svg[fill*="34, 197"]),
+    div[data-testid="stAlert"]:has(svg[fill*="22C5"]),
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="success"])) {
+        border: 1px solid rgba(34, 197, 94, 0.55) !important;
+        border-left: 4px solid #22C55E !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 197, 94, 0.25) !important;
+    }
+    div[data-testid="stAlert"]:has([data-baseweb="notification"][kind="positive"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="34, 197"])::after,
+    div[data-testid="stAlert"]:has(svg[fill*="22C5"])::after,
+    div[data-testid="stAlert"]:has([data-testid="stAlertContent"]:has(svg[data-testid*="success"]))::after {
+        background: linear-gradient(90deg, #22C55E, #00D2FF) !important;
+    }
+
+    /* 5. STREAMLIT TOAST (st.toast) UNIFIED STYLING */
+    div[data-testid="stToast"] {
+        position: relative !important;
+        background: rgba(18, 24, 38, 0.96) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        border: 1px solid rgba(255, 170, 0, 0.5) !important;
+        border-left: 4px solid #FFAA00 !important;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 170, 0, 0.25) !important;
+        border-radius: 12px !important;
+        color: #ffffff !important;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+        line-height: 1.4 !important;
+        overflow: hidden !important;
+        padding: 14px 18px !important;
+    }
+    div[data-testid="stToast"]::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #FFAA00, #FF5500) !important;
+    }
+    div[data-testid="stToast"] [data-testid="stMarkdownContainer"] p,
+    div[data-testid="stToast"] span,
+    div[data-testid="stToast"] div {
+        color: #ffffff !important;
+        font-size: 13px !important;
+    }
+
+    /* 6. INPUT ERROR RED BORDER SYSTEM */
+    .st-input-error div[data-baseweb="input"],
+    .st-input-error div[data-baseweb="textarea"],
+    .st-input-error input,
+    .st-input-error textarea {
+        border: 1.5px solid #EF4444 !important;
+        background-color: rgba(239, 68, 68, 0.08) !important;
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
     }
 
     /* 1. Custom Fixed Sidebar Outer Element Wrapper Node Zero-Out */
@@ -643,7 +847,7 @@ style_template = """
         display: inline-block !important;
         width: 44px !important;
         height: 44px !important;
-        background-image: url("https://cdn-icons-png.flaticon.com/512/6071/6071531.png") !important;
+        background-image: url("https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
@@ -944,7 +1148,30 @@ style_template = """
 
     .list-row{ display:flex;align-items:center;justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:12.6px; }
     .list-row:last-child{ border-bottom:none; }
-    .list-name{ color:var(--text-muted); }
+    .list-name{ color:inherit; font-weight:600; }
+
+    /* Explicit chart legend classes */
+    .legend-safe, .legend-safe * { color: #22C55E !important; }
+    .legend-low, .legend-low * { color: #3B82F6 !important; }
+    .legend-medium, .legend-medium * { color: #F5A623 !important; }
+    .legend-high, .legend-high * { color: #F2545B !important; }
+    .legend-critical, .legend-critical * { color: #9333EA !important; }
+
+    .legend-suspicious, .legend-suspicious * { color: #F5A623 !important; }
+    .legend-malicious, .legend-malicious * { color: #F2545B !important; }
+
+    .legend-module-url, .legend-module-url * { color: #8B5CF6 !important; }
+    .legend-module-web, .legend-module-web * { color: #3B82F6 !important; }
+    .legend-module-domain, .legend-module-domain * { color: #06B6D4 !important; }
+    .legend-module-email, .legend-module-email * { color: #10B981 !important; }
+    .legend-module-ip, .legend-module-ip * { color: #F5A623 !important; }
+    .legend-module-other, .legend-module-other * { color: #6B7280 !important; }
+
+    .legend-threat-phish, .legend-threat-phish * { color: #F2545B !important; }
+    .legend-threat-malware, .legend-threat-malware * { color: #F5A623 !important; }
+    .legend-threat-domain, .legend-threat-domain * { color: #FCD34D !important; }
+    .legend-threat-spam, .legend-threat-spam * { color: #3B82F6 !important; }
+    .legend-threat-leak, .legend-threat-leak * { color: #8B5CF6 !important; }
     .st-key-toggle_countries_wrap {
         display: flex !important;
         justify-content: flex-end !important;
@@ -1305,7 +1532,7 @@ style_template = """
     }
 
     /* Force text elements to respect our text variables */
-    p, span, label, .stMarkdown, .stSubheader, .stTitle, [data-testid="stWidgetLabel"] p, .stToggle label p, .stCheckbox label p {
+    p, label, .stMarkdown, .stSubheader, .stTitle, [data-testid="stWidgetLabel"] p, .stToggle label p, .stCheckbox label p {
         color: var(--text) !important;
     }
 
@@ -1502,7 +1729,7 @@ if st.session_state.get("sidebar_collapsed", False):
             display: block !important;
             width: 26px !important;
             height: 26px !important;
-            background-image: url("https://cdn-icons-png.flaticon.com/512/6071/6071531.png") !important;
+            background-image: url("https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true") !important;
             background-size: contain !important;
             background-repeat: no-repeat !important;
             background-position: center !important;
@@ -1541,6 +1768,156 @@ if st.session_state.get("sidebar_collapsed", False):
         """,
         unsafe_allow_html=True
     )
+
+# ── CYBERMIND REAL-TIME EMOJI-TO-ICON INJECTOR ──
+_emoji_replacer_html = """
+<script>
+(function() {
+    try {
+        var win = window.parent || window;
+        var doc = win.document;
+        if (!doc || !doc.body) return;
+
+        var emojiMap = __EMOJI_JSON__;
+        var keys = Object.keys(emojiMap);
+        if (!keys.length) return;
+
+        // Sort keys by descending string length so longer/compound emojis match first
+        keys.sort(function(a, b) { return b.length - a.length; });
+
+        var regexPattern = keys.join('|');
+        var emojiRegex = new RegExp(regexPattern, 'g');
+        var testRegex = new RegExp(regexPattern);
+
+        var ignoredTags = {
+            'SCRIPT': 1, 'STYLE': 1, 'NOSCRIPT': 1, 'TEXTAREA': 1,
+            'INPUT': 1, 'PRE': 1, 'CODE': 1, 'SVG': 1
+        };
+
+        var isReplacing = false;
+
+        function replaceInTextNode(textNode) {
+            var text = textNode.nodeValue;
+            if (!text || !testRegex.test(text)) return;
+
+            var parent = textNode.parentNode;
+            if (!parent) return;
+
+            var tag = parent.nodeName ? parent.nodeName.toUpperCase() : '';
+            if (ignoredTags[tag]) return;
+            if (parent.isContentEditable) return;
+            if (parent.closest && (parent.closest('.cyber-emoji-icon') || parent.closest('code') || parent.closest('pre'))) return;
+
+            var frag = doc.createDocumentFragment();
+            var lastIdx = 0;
+            var match;
+            emojiRegex.lastIndex = 0;
+
+            while ((match = emojiRegex.exec(text)) !== null) {
+                if (match.index > lastIdx) {
+                    frag.appendChild(doc.createTextNode(text.substring(lastIdx, match.index)));
+                }
+                var em = match[0];
+                var url = emojiMap[em] || emojiMap[em.replace(/\\ufe0f/g, '')];
+                if (url) {
+                    var img = doc.createElement('img');
+                    img.src = url;
+                    img.className = 'cyber-emoji-icon';
+                    img.alt = em;
+                    img.setAttribute('loading', 'lazy');
+                    img.setAttribute('decoding', 'async');
+                    frag.appendChild(img);
+                } else {
+                    frag.appendChild(doc.createTextNode(em));
+                }
+                lastIdx = emojiRegex.lastIndex;
+            }
+
+            if (lastIdx < text.length) {
+                frag.appendChild(doc.createTextNode(text.substring(lastIdx)));
+            }
+
+            parent.replaceChild(frag, textNode);
+        }
+
+        function walk(node) {
+            if (!node) return;
+            var tag = node.nodeName ? node.nodeName.toUpperCase() : '';
+            if (ignoredTags[tag]) return;
+            if (node.nodeType === 3) {
+                replaceInTextNode(node);
+            } else if (node.nodeType === 1) {
+                if (node.isContentEditable) return;
+                if (node.classList && node.classList.contains('cyber-emoji-icon')) return;
+                var child = node.firstChild;
+                while (child) {
+                    var next = child.nextSibling;
+                    walk(child);
+                    child = next;
+                }
+            }
+        }
+
+        function scanAndReplace() {
+            if (isReplacing) return;
+            isReplacing = true;
+            try {
+                walk(doc.body);
+            } catch(e) {
+            } finally {
+                isReplacing = false;
+            }
+        }
+
+        win.__cyberScanAndReplaceEmojis = scanAndReplace;
+
+        // Perform immediate replacements
+        scanAndReplace();
+        if (win.setTimeout) {
+            win.setTimeout(scanAndReplace, 40);
+            win.setTimeout(scanAndReplace, 150);
+            win.setTimeout(scanAndReplace, 400);
+            win.setTimeout(scanAndReplace, 1000);
+        }
+
+        // Clean up previous interval & observer if they exist on top window
+        if (win.__cyberEmojiInterval) {
+            try { win.clearInterval(win.__cyberEmojiInterval); } catch(e){}
+        }
+        if (win.__cyberEmojiObserver) {
+            try { win.__cyberEmojiObserver.disconnect(); } catch(e){}
+        }
+
+        // Attach debounced MutationObserver on top window
+        var debounceTimer = null;
+        var ObsClass = win.MutationObserver || MutationObserver;
+        if (ObsClass) {
+            var observer = new ObsClass(function() {
+                if (isReplacing) return;
+                if (debounceTimer) win.clearTimeout(debounceTimer);
+                debounceTimer = win.setTimeout(scanAndReplace, 30);
+            });
+
+            observer.observe(doc.body, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+            win.__cyberEmojiObserver = observer;
+        }
+
+        // Continuous pulse check for dynamic Streamlit route swaps
+        win.__cyberEmojiInterval = win.setInterval(scanAndReplace, 300);
+
+    } catch(err) {
+        console.error('CyberMind Emoji Replacer Init Error:', err);
+    }
+})();
+</script>
+""".replace("__EMOJI_JSON__", EMOJI_ICONS_JSON)
+
+components.html(_emoji_replacer_html, height=0, width=0)
+
 
 
 # ── GLOBAL AUDIO SYNTHESIS HELPER ──
@@ -1807,7 +2184,7 @@ def compute_scan_display(result, scanner_key=None):
         vt_status = f"{vt_data.get('malicious', 0)} / {vt_data.get('harmless', 96)}"
 
     blacklist_data = _as_dict(analysis_data.get("blacklist")) or _as_dict(raw_payload.get("blacklist"))
-    blacklist_detected = blacklist_data.get("detected") or (score > 50)
+    blacklist_detected = bool(blacklist_data.get("detected") or blacklist_data.get("blacklisted"))
     blacklist_status = "Listed" if blacklist_detected else "Not Found"
 
     reputation_data = _as_dict(analysis_data.get("reputation")) or _as_dict(raw_payload.get("reputation"))
@@ -2231,8 +2608,10 @@ def run_scan(scanner_key: str, mod_path: str, attr: str, value: str):
             db_level = "Critical"
         elif db_level == "Suspicious":
             db_level = "Medium"
+        elif db_level == "Unverified":
+            db_level = "Low"
         elif db_level not in ('Safe', 'Low', 'Medium', 'High', 'Critical'):
-            db_level = "Safe"
+            db_level = "Low"
             
         db.execute(
             """
@@ -2545,17 +2924,22 @@ def render_sidebar():
                             var sidebar = doc.querySelector('.st-key-navcol');
                             if (!sidebar) return;
                             
-                            // Guard: Check if sidebar is collapsed (width < 120px)
-                            var isCollapsed = sidebar.getBoundingClientRect().width < 120;
-                            if (isCollapsed) return;
+                            var mainContainers = doc.querySelectorAll('html body div.block-container, div.block-container, [data-testid="stMainBlockContainer"], .stMainBlockContainer');
                             
+                            // 1. Immediately clean up leftover collapsed inline styles so CSS takes over
+                            sidebar.style.removeProperty('width');
+                            sidebar.style.removeProperty('max-width');
+                            sidebar.style.removeProperty('min-width');
+                            mainContainers.forEach(function(el) {
+                                el.style.removeProperty('padding-left');
+                            });
+
                             function updateLayoutWidth(w) {
                                 sidebar.style.setProperty('width', w + 'px', 'important');
                                 sidebar.style.setProperty('max-width', w + 'px', 'important');
                                 sidebar.style.setProperty('min-width', w + 'px', 'important');
                                 
                                 var pOffset = (w + 24) + 'px';
-                                var mainContainers = doc.querySelectorAll('html body div.block-container, div.block-container, [data-testid="stMainBlockContainer"], .stMainBlockContainer');
                                 mainContainers.forEach(function(el) {
                                     el.style.setProperty('padding-left', pOffset, 'important');
                                 });
@@ -2563,6 +2947,20 @@ def render_sidebar():
                                 try { win.dispatchEvent(new Event('resize')); } catch(e){}
                             }
                             
+                            try {
+                                var savedWidth = localStorage.getItem('custom_sb_width');
+                                if (savedWidth) {
+                                    var w = parseInt(savedWidth);
+                                    if (w >= 160 && w <= 420) {
+                                        updateLayoutWidth(w);
+                                    } else {
+                                        try { win.dispatchEvent(new Event('resize')); } catch(e){}
+                                    }
+                                } else {
+                                    try { win.dispatchEvent(new Event('resize')); } catch(e){}
+                                }
+                            } catch(e){}
+
                             var handle = sidebar.querySelector('#sb-drag-handle');
                             if (!handle) {
                                 handle = doc.createElement('div');
@@ -2613,26 +3011,19 @@ def render_sidebar():
                                     }
                                 });
                             }
-                            
-                            try {
-                                var savedWidth = localStorage.getItem('custom_sb_width');
-                                if (savedWidth) {
-                                    var w = parseInt(savedWidth);
-                                    if (w >= 160 && w <= 420) {
-                                        updateLayoutWidth(w);
-                                    }
-                                }
-                            } catch(e){}
                         } catch(e) {}
                     }
                     
+                    initResizableSidebar();
                     if (window.parent.document.readyState === 'complete') {
                         initResizableSidebar();
                     } else {
                         window.parent.addEventListener('DOMContentLoaded', initResizableSidebar);
                     }
-                    setTimeout(initResizableSidebar, 150);
-                    setTimeout(initResizableSidebar, 600);
+                    setTimeout(initResizableSidebar, 30);
+                    setTimeout(initResizableSidebar, 100);
+                    setTimeout(initResizableSidebar, 300);
+                    setTimeout(initResizableSidebar, 700);
                 })();
                 </script>
                 """,
@@ -3176,6 +3567,131 @@ def render_offline_toast():
     st.markdown(toast_html, unsafe_allow_html=True)
 
 
+def show_cyber_toast(title: str, msg: str, kind: str = "warning"):
+    """
+    Trigger a 10-second animated floating cyber toast notification with moving progress line.
+    Matches the exact CyberMind dark glassmorphic design from render_offline_toast.
+    """
+    st.session_state["cyber_toast_data"] = {
+        "title": title,
+        "msg": msg,
+        "kind": kind,
+        "time": time.time()
+    }
+
+
+def render_cyber_toast():
+    toast_data = st.session_state.get("cyber_toast_data")
+    if not toast_data:
+        return
+
+    toast_time = toast_data.get("time", 0)
+    elapsed = time.time() - toast_time
+    if elapsed > 10.5:
+        st.session_state.pop("cyber_toast_data", None)
+        return
+
+    kind = toast_data.get("kind", "warning")
+    title = toast_data.get("title", "Notice")
+    msg = toast_data.get("msg", "")
+
+    if kind == "error":
+        icon = "<img src='https://cdn-icons-png.flaticon.com/512/564/564619.png' style='width:24px;height:24px;'>"
+        border_color = "rgba(239, 68, 68, 0.55)"
+        left_accent = "#EF4444"
+        shadow_color = "rgba(239, 68, 68, 0.25)"
+        grad_bar = "linear-gradient(90deg, #EF4444, #F97316)"
+    elif kind == "success":
+        icon = "<img src='https://cdn-icons-png.flaticon.com/512/6532/6532060.png' style='width:24px;height:24px;'>"
+        border_color = "rgba(34, 197, 94, 0.55)"
+        left_accent = "#22C55E"
+        shadow_color = "rgba(34, 197, 94, 0.25)"
+        grad_bar = "linear-gradient(90deg, #22C55E, #00D2FF)"
+    elif kind == "info":
+        icon = "<img src='https://cdn-icons-png.flaticon.com/512/6532/6532060.png' style='width:24px;height:24px;'>"
+        border_color = "rgba(0, 210, 255, 0.55)"
+        left_accent = "#00D2FF"
+        shadow_color = "rgba(0, 210, 255, 0.25)"
+        grad_bar = "linear-gradient(90deg, #00D2FF, #0055FF)"
+    else:  # warning
+        icon = "<img src='https://cdn-icons-png.flaticon.com/512/564/564619.png' style='width:24px;height:24px;'>"
+        border_color = "rgba(255, 170, 0, 0.55)"
+        left_accent = "#FFAA00"
+        shadow_color = "rgba(255, 170, 0, 0.25)"
+        grad_bar = "linear-gradient(90deg, #FFAA00, #FF5500)"
+
+    remaining_sec = max(0.1, 10.0 - elapsed)
+    toast_id = int(toast_time * 1000)
+
+    toast_html = f"""
+    <div id="cyber-toast-{toast_id}" class="st-cyber-toast-box-{toast_id}">
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding-right: 12px;">
+            <span style="font-size: 20px; line-height: 1; margin-top: 2px;">{icon}</span>
+            <div>
+                <div style="font-weight: 700; font-size: 14px; color: #ffffff; margin-bottom: 2px;">{title}</div>
+                <div style="font-weight: 400; font-size: 12.5px; color: rgba(255, 255, 255, 0.88); line-height: 1.45;">{msg}</div>
+            </div>
+        </div>
+        <div class="st-cyber-toast-progress-{toast_id}"></div>
+    </div>
+
+    <style>
+    .st-cyber-toast-box-{toast_id} {{
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 99999999;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 320px;
+        max-width: 440px;
+        padding: 14px 18px;
+        background: rgba(18, 24, 38, 0.96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid {border_color};
+        border-left: 4px solid {left_accent};
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px {shadow_color};
+        border-radius: 12px;
+        color: #ffffff;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        line-height: 1.4;
+        overflow: hidden;
+        animation: 
+            slideInCyberToast_{toast_id} 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+            slideOutCyberToast_{toast_id} 0.4s cubic-bezier(0.16, 1, 0.3, 1) {remaining_sec:.2f}s forwards;
+    }}
+
+    .st-cyber-toast-progress-{toast_id} {{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        background: {grad_bar};
+        animation: cyberToastProgressAnimation_{toast_id} {remaining_sec:.2f}s linear forwards;
+    }}
+
+    @keyframes slideInCyberToast_{toast_id} {{
+        from {{ transform: translateX(120%); opacity: 0; }}
+        to {{ transform: translateX(0); opacity: 1; }}
+    }}
+
+    @keyframes slideOutCyberToast_{toast_id} {{
+        from {{ transform: translateX(0); opacity: 1; }}
+        to {{ transform: translateX(120%); opacity: 0; }}
+    }}
+
+    @keyframes cyberToastProgressAnimation_{toast_id} {{
+        from {{ width: 100%; }}
+        to {{ width: 0%; }}
+    }}
+    </style>
+    """
+    st.markdown(toast_html, unsafe_allow_html=True)
+
+
 # Mapping scanner categories to circular icons
 RECENT_ICONS = {
     "URL Scanner": ("🔗", "rgba(139,92,246,0.12)", "#8B5CF6"),
@@ -3557,10 +4073,10 @@ def render_dashboard():
         st.markdown(
             clean_html(f"""
             <div style="font-size:12px; color:var(--text-muted); padding-top:4px;">
-                <div class="list-row"><span class="list-name"><span style="color:#22C55E; margin-right:8px;">●</span>Safe</span><span class="list-val">{safe_scans:,} ({safe_scans/t_tot*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#3B82F6; margin-right:8px;">●</span>Low Risk</span><span class="list-val">{low_risk_scans:,} ({low_risk_scans/t_tot*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#F5A623; margin-right:8px;">●</span>Medium Risk</span><span class="list-val">{medium_risk_scans:,} ({medium_risk_scans/t_tot*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#F2545B; margin-right:8px;">●</span>High Risk</span><span class="list-val">{threats_found:,} ({threats_found/t_tot*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-safe" style="color:#22C55E !important; font-weight:600;"><span style="color:#22C55E !important; margin-right:8px;">●</span>Safe</span><span class="list-val">{safe_scans:,} ({safe_scans/t_tot*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-low" style="color:#3B82F6 !important; font-weight:600;"><span style="color:#3B82F6 !important; margin-right:8px;">●</span>Low Risk</span><span class="list-val">{low_risk_scans:,} ({low_risk_scans/t_tot*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-medium" style="color:#F5A623 !important; font-weight:600;"><span style="color:#F5A623 !important; margin-right:8px;">●</span>Medium Risk</span><span class="list-val">{medium_risk_scans:,} ({medium_risk_scans/t_tot*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-high" style="color:#F2545B !important; font-weight:600;"><span style="color:#F2545B !important; margin-right:8px;">●</span>High Risk</span><span class="list-val">{threats_found:,} ({threats_found/t_tot*100:.1f}%)</span></div>
             </div>
             """),
             unsafe_allow_html=True
@@ -3603,10 +4119,10 @@ def render_dashboard():
         st.markdown(
             clean_html(f"""
             <div style="font-size:12px; color:var(--text-muted); padding-top:4px;">
-                <div class="list-row"><span class="list-name"><span style="color:#8B5CF6; margin-right:8px;">●</span>URL Scanner</span><span class="list-val">{module_values[0]:,} ({module_values[0]/t_mod*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#3B82F6; margin-right:8px;">●</span>Website Analyzer</span><span class="list-val">{module_values[1]:,} ({module_values[1]/t_mod*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#06B6D4; margin-right:8px;">●</span>Domain Intel</span><span class="list-val">{module_values[2]:,} ({module_values[2]/t_mod*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#10B981; margin-right:8px;">●</span>Email Intel</span><span class="list-val">{module_values[3]:,} ({module_values[3]/t_mod*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-module-url" style="color:#8B5CF6 !important; font-weight:600;"><span style="color:#8B5CF6 !important; margin-right:8px;">●</span>URL Scanner</span><span class="list-val">{module_values[0]:,} ({module_values[0]/t_mod*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-module-web" style="color:#3B82F6 !important; font-weight:600;"><span style="color:#3B82F6 !important; margin-right:8px;">●</span>Website Analyzer</span><span class="list-val">{module_values[1]:,} ({module_values[1]/t_mod*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-module-domain" style="color:#06B6D4 !important; font-weight:600;"><span style="color:#06B6D4 !important; margin-right:8px;">●</span>Domain Intel</span><span class="list-val">{module_values[2]:,} ({module_values[2]/t_mod*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-module-email" style="color:#10B981 !important; font-weight:600;"><span style="color:#10B981 !important; margin-right:8px;">●</span>Email Intel</span><span class="list-val">{module_values[3]:,} ({module_values[3]/t_mod*100:.1f}%)</span></div>
             </div>
             """),
             unsafe_allow_html=True
@@ -3656,10 +4172,10 @@ def render_dashboard():
         st.markdown(
             clean_html(f"""
             <div style="font-size:12px; color:var(--text-muted); padding-top:4px;">
-                <div class="list-row"><span class="list-name"><span style="color:#F2545B; margin-right:8px;">●</span>Phishing</span><span class="list-val">{threat_types['Phishing']:,} ({threat_types['Phishing']/t_threat*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#F5A623; margin-right:8px;">●</span>Malware</span><span class="list-val">{threat_types['Malware']:,} ({threat_types['Malware']/t_threat*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#FCD34D; margin-right:8px;">●</span>Suspicious Domain</span><span class="list-val">{threat_types['Suspicious Domain']:,} ({threat_types['Suspicious Domain']/t_threat*100:.1f}%)</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#3B82F6; margin-right:8px;">●</span>Spam/Other</span><span class="list-val">{threat_types['Spam']:,} ({threat_types['Spam']/t_threat*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-threat-phish" style="color:#F2545B !important; font-weight:600;"><span style="color:#F2545B !important; margin-right:8px;">●</span>Phishing</span><span class="list-val">{threat_types['Phishing']:,} ({threat_types['Phishing']/t_threat*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-threat-malware" style="color:#F5A623 !important; font-weight:600;"><span style="color:#F5A623 !important; margin-right:8px;">●</span>Malware</span><span class="list-val">{threat_types['Malware']:,} ({threat_types['Malware']/t_threat*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-threat-domain" style="color:#FCD34D !important; font-weight:600;"><span style="color:#FCD34D !important; margin-right:8px;">●</span>Suspicious Domain</span><span class="list-val">{threat_types['Suspicious Domain']:,} ({threat_types['Suspicious Domain']/t_threat*100:.1f}%)</span></div>
+                <div class="list-row"><span class="list-name legend-threat-spam" style="color:#3B82F6 !important; font-weight:600;"><span style="color:#3B82F6 !important; margin-right:8px;">●</span>Spam/Other</span><span class="list-val">{threat_types['Spam']:,} ({threat_types['Spam']/t_threat*100:.1f}%)</span></div>
             </div>
             """),
             unsafe_allow_html=True
@@ -4467,7 +4983,7 @@ def render_device_security_page():
                     <div class="ready-audit-hero-card">
                         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 60%); z-index: 0; pointer-events: none;"></div>
                         <div style="position: relative; z-index: 1; text-align: center; width: 100%;">
-                            <div style="margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.35));"><img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="90" height="90" style="object-fit: contain;"></div>
+                            <div style="margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.35));"><img src="https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo2.png?raw=true" width="150px" height="150px" style="object-fit: contain;"></div>
                             <h3 style="margin-bottom: 8px; color: var(--text); font-weight: 800; letter-spacing: 0.5px; font-size: 23px;">Ready to Audit System Security</h3>
                             <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 650px; margin: 0 auto 20px auto;">
                                 CyberMind AI will run an in-depth security scan of your device's active defenses, resource loads, active ports, startup configurations, and download folders.
@@ -4998,7 +5514,7 @@ def render_device_security_page():
                 <div class="chart-card" style="padding: 20px;">
                     <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                         <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(140,124,240,0.12);
-                                    display: flex; align-items: center; justify-content: center; font-size: 18px;"><img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="90" height="90" style="object-fit: contain;"></div>
+                                    display: flex; align-items: center; justify-content: center; font-size: 18px;"><img src="https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true" width="90" height="90" style="object-fit: contain;"></div>
                         <div>
                             <div style="font-size: 15px; font-weight: 700; color: var(--text);">CyberMind Local Scanner</div>
                             <div style="font-size: 12px; color: var(--text-muted);">
@@ -5191,9 +5707,11 @@ def render_ai_assistant_page():
             else:
                 st.markdown(
                     """
-                    <div style="padding: 30px; text-align: center; color: var(--text-muted); min-height: 150px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                         <div style="font-size: 40px; margin-bottom: 10px;"><img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" alt="AI Assistant" width="65" height="65"></div>
-                         <div style="font-size: 13.5px;">Hello! Ask me any question about cybersecurity or ask for suggestions based on your scan records.</div>
+                    <div style="padding: 36px 20px; text-align: center; color: var(--text-muted); min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                         <div style="margin-bottom: 16px;">
+                             <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" alt="AI Assistant" style="width: 140px !important; height: 140px !important; max-width: 140px !important; object-fit: contain; filter: drop-shadow(0 8px 24px rgba(34, 211, 238, 0.25)); display: block; margin: 0 auto;">
+                         </div>
+                         <div style="font-size: 14px; font-weight: 500; color: var(--text-muted); max-width: 520px; line-height: 1.6;">Hello! Ask me any question about cybersecurity or ask for suggestions based on your scan records.</div>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -5329,11 +5847,11 @@ def render_ai_assistant_page():
             st.markdown(
                 """
                 <div class="chart-card" style="padding: 16px; font-size: 12.5px; color: var(--text-muted); line-height: 1.6;">
-                    ✔ Passwords & Two-Factor Auth (2FA)<br>
-                    ✔ Phishing, Spam & Scam Detection<br>
-                    ✔ Network, Wi-Fi & VPN Configuration<br>
-                    ✔ Ransomware, Viruses & Malware Defense<br>
-                    ✔ SSL, Domain Age & Web Safety Rules
+                     ✔ Passwords & Two-Factor Auth (2FA)<br>
+                     ✔ Phishing, Spam & Scam Detection<br>
+                     ✔ Network, Wi-Fi & VPN Configuration<br>
+                     ✔ Ransomware, Viruses & Malware Defense<br>
+                     ✔ SSL, Domain Age & Web Safety Rules
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -5375,6 +5893,21 @@ def render_universal_scan_page():
                 example_triggered = True
                 selected_example = val
 
+    if st.session_state.get("universal_scan_err"):
+        st.markdown(
+            """
+            <style>
+            .st-key-universal_scan_input div[data-baseweb="input"],
+            .st-key-universal_scan_input input {
+                border: 1.5px solid #EF4444 !important;
+                background-color: rgba(239, 68, 68, 0.08) !important;
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.45) !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
     c1, c2 = st.columns([4, 1.3], vertical_alignment="center")
     with c1:
         user_input = st.text_input(
@@ -5391,8 +5924,10 @@ def render_universal_scan_page():
     target_to_scan = selected_example if example_triggered else user_input.strip()
     if scan_clicked or example_triggered:
         if not target_to_scan:
+            st.session_state["universal_scan_err"] = True
             st.warning("Please enter a valid input (Domain, Email, or URL) first.")
         else:
+            st.session_state["universal_scan_err"] = False
             with st.spinner("Analyzing input type and launching modules..."):
                 res = universal_scan_module.analyze(target_to_scan)
                 st.session_state.universal_scan_result = res
@@ -5841,6 +6376,31 @@ def render_scanner_page(scanner_key: str):
         country_list = get_country_codes()
         c_options = [f"{item['country']} ({item['dial_code']})" for item in country_list]
 
+        scanner_slug_css = re.sub(r"[^a-zA-Z0-9_]", "_", scanner_key)
+        if str(st.session_state.get(f"input_{scanner_key}", "")).strip():
+            st.session_state[f"input_err_{scanner_key}"] = False
+        if st.session_state.get(f"input_err_{scanner_key}"):
+            st.markdown(
+                f"""
+                <style>
+                .st-key-input_{scanner_slug_css} div[data-baseweb="input"],
+                .st-key-input_{scanner_slug_css} input,
+                div[data-testid="stTextInput"]:has(input[placeholder*="national phone number"]) div[data-baseweb="input"] {{
+                    border: 1.5px solid #EF4444 !important;
+                    background-color: rgba(239, 68, 68, 0.08) !important;
+                    box-shadow: 0 0 12px rgba(239, 68, 68, 0.45) !important;
+                }}
+                .st-key-input_{scanner_slug_css} div[data-baseweb="input"]:focus-within,
+                .st-key-input_{scanner_slug_css} input:focus {{
+                    border: 1.5px solid #22D3EE !important;
+                    background-color: rgba(34, 211, 238, 0.05) !important;
+                    box-shadow: 0 0 12px rgba(34, 211, 238, 0.4) !important;
+                }}
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+
         c1, c2, c3 = st.columns([0.75, 3.25, 1.0], vertical_alignment="center")
         with c1:
             sel_country_str = st.selectbox(
@@ -5854,7 +6414,7 @@ def render_scanner_page(scanner_key: str):
             value = st.text_input(
                 "Phone Number",
                 key=f"input_{scanner_key}",
-                placeholder="Enter national phone number (e.g., 7041112615)",
+                placeholder="Enter national phone number (e.g., 9876543211)",
                 label_visibility="collapsed"
             )
         with c3:
@@ -5868,15 +6428,19 @@ def render_scanner_page(scanner_key: str):
             c_info = country_list[sel_idx]
 
             if not scan_val:
-                st.warning("Please enter a phone number to scan.")
+                st.session_state[f"input_err_{scanner_key}"] = True
+                show_cyber_toast("Phone Number Required", "Please enter a phone number to scan.", kind="warning")
+                st.rerun()
             else:
                 is_valid, err_msg = validate_phone_with_country(scan_val, c_info) if not is_example_triggered else (True, "")
                 if not is_valid:
+                    st.session_state[f"input_err_{scanner_key}"] = True
                     st.session_state[f"scan_result_{scanner_key}"] = None
-                    st.warning(err_msg)
+                    show_cyber_toast("Invalid Phone Number", err_msg, kind="warning")
+                    st.rerun()
                 else:
+                    st.session_state[f"input_err_{scanner_key}"] = False
                     st.session_state[f"scan_result_{scanner_key}"] = None
-                    import re
                     digits = re.sub(r"[^\d]", "", scan_val.strip())
                     formatted_phone = scan_val if is_example_triggered else f"{c_info['dial_code']}{digits}"
                     with st.spinner("Running deep threat analysis..."):
@@ -5890,6 +6454,31 @@ def render_scanner_page(scanner_key: str):
                                 unsafe_allow_html=True
                             )
     else:
+        scanner_slug_css = re.sub(r"[^a-zA-Z0-9_]", "_", scanner_key)
+        if str(st.session_state.get(f"input_{scanner_key}", "")).strip():
+            st.session_state[f"input_err_{scanner_key}"] = False
+        if st.session_state.get(f"input_err_{scanner_key}"):
+            st.markdown(
+                f"""
+                <style>
+                .st-key-input_{scanner_slug_css} div[data-baseweb="input"],
+                .st-key-input_{scanner_slug_css} input,
+                div[data-testid="stTextInput"]:has(input[placeholder="{cfg['placeholder']}"]) div[data-baseweb="input"] {{
+                    border: 1.5px solid #EF4444 !important;
+                    background-color: rgba(239, 68, 68, 0.08) !important;
+                    box-shadow: 0 0 12px rgba(239, 68, 68, 0.45) !important;
+                }}
+                .st-key-input_{scanner_slug_css} div[data-baseweb="input"]:focus-within,
+                .st-key-input_{scanner_slug_css} input:focus {{
+                    border: 1.5px solid #22D3EE !important;
+                    background-color: rgba(34, 211, 238, 0.05) !important;
+                    box-shadow: 0 0 12px rgba(34, 211, 238, 0.4) !important;
+                }}
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+
         c1, c2 = st.columns([4, 1.3], vertical_alignment="center")
         with c1:
             value = st.text_input(f"Enter {cfg['value_label'].lower()} to scan",
@@ -5954,18 +6543,24 @@ def render_scanner_page(scanner_key: str):
         if scan_clicked or is_example_triggered:
             scan_val = example_value if is_example_triggered else value
             if not scan_val:
-                st.warning(f"Please enter a {cfg['value_label'].lower()} first.")
+                st.session_state[f"input_err_{scanner_key}"] = True
+                show_cyber_toast("Input Required", f"Please enter a {cfg['value_label'].lower()} first.", kind="warning")
+                st.rerun()
             else:
                 from core.validator import validate_scanner_input
                 is_valid, err_msg = validate_scanner_input(scanner_key, scan_val)
                 if not is_valid:
+                    st.session_state[f"input_err_{scanner_key}"] = True
                     st.session_state[f"scan_result_{scanner_key}"] = None
-                    st.warning(err_msg)
+                    show_cyber_toast("Validation Warning", err_msg, kind="warning")
+                    st.rerun()
                 else:
+                    st.session_state[f"input_err_{scanner_key}"] = False
                     st.session_state[f"scan_result_{scanner_key}"] = None
                     with st.spinner("Running deep threat analysis..."):
                         result = run_scan(scanner_key, cfg["mod"], cfg["attr"], scan_val)
                         st.session_state[f"scan_result_{scanner_key}"] = result
+
                         if st.session_state.get("settings_sound_alerts", False):
                             st.markdown(
                                 """
@@ -6141,6 +6736,16 @@ def render_scan_results(scanner_key: str):
             score_color = "var(--danger)"
             level_color = "var(--danger)"
 
+        ml_pred_str = str(ml_pred).strip().lower()
+        if ml_pred_str in ("legitimate", "safe", "clean", "benign"):
+            ml_pred_color = "var(--success)"
+        elif ml_pred_str in ("phishing", "malicious", "threat", "danger", "spam"):
+            ml_pred_color = "var(--danger)"
+        elif ml_pred_str in ("suspicious", "warning", "caution", "moderate", "low risk"):
+            ml_pred_color = "var(--warning)"
+        else:
+            ml_pred_color = level_color
+
         https_color = "var(--success)" if is_https == "Yes" else "var(--danger)"
 
         # Scanner-specific cards (Cards 5 & 6)
@@ -6230,7 +6835,7 @@ def render_scan_results(scanner_key: str):
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
                     <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-bottom:6px;">{d.get('ml_card_title', 'AI Prediction')}</div>
-                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{level_color};">{ml_pred}</div>
+                    <div class="metric-value" style="font-size:22px; font-weight:800; color:{ml_pred_color};">{ml_pred}</div>
                     <div style="font-size:11px; color:var(--text-muted); font-weight:500; margin-top:3px;">{d.get('ml_subtitle', f'Confidence: {prob_val:.1f}%')}</div>
                 </div>
                 <div class="chart-card" style="padding:16px 14px; text-align:center;">
@@ -6367,107 +6972,312 @@ def render_scan_results(scanner_key: str):
         # ── TAB 1: OVERVIEW ───────────────────────────────────────────
         with tab_overview:
             # 8.3 AI Executive Summary Card (with Multilingual & TTS Voice Synthesizer)
-            col_sum_header, col_sum_lang = st.columns([3, 1.2])
-            with col_sum_lang:
-                selected_lang = st.selectbox(
-                    "🌐 Language / भाषा",
-                    options=["English 🇬🇧", "Hindi 🇮🇳", "Hinglish 🇮🇳", "Gujarati 🇮🇳", "Marathi 🇮🇳", "Spanish 🇪🇸", "French 🇫🇷", "German 🇩🇪"],
-                    key=f"lang_sel_{scanner_key}",
-                    label_visibility="collapsed"
-                )
+            lang_key = f"lang_sel_{scanner_key}"
+            selected_lang = st.session_state.get(lang_key, "English 🇬🇧")
 
-            try:
-                from modules.ai_summary_module import ai_summary_module
-                raw_summary = ai_summary_module.generate_summary(result)
-                exec_summary = ai_summary_module.translate_summary(raw_summary, selected_lang)
-            except Exception:
-                exec_summary = "Scan analysis completed."
+            # Dynamic import & reload safety to prevent AttributeError: 'AISummaryModule' object has no attribute 'generate_tts'
+            import importlib
+            import modules.ai_summary_module
+            if not hasattr(modules.ai_summary_module.AISummaryModule, "generate_tts"):
+                importlib.reload(modules.ai_summary_module)
+            from modules.ai_summary_module import ai_summary_module
 
-            safe_exec_summary = html.escape(exec_summary).replace("'", "\\'").replace("\n", " ")
+            # Cache raw summary in session_state so clicking TTS or feedback doesn't re-trigger slow Groq calls
+            summary_cache_key = f"cache_raw_sum_{scanner_key}_{str(result.get('value', ''))}_{str(score)}"
+            if summary_cache_key not in st.session_state:
+                try:
+                    st.session_state[summary_cache_key] = ai_summary_module.generate_summary(result)
+                except Exception as exc:
+                    logger.warning("AI Summary generation failed: %s", exc)
+                    st.session_state[summary_cache_key] = "Scan analysis completed."
+
+            raw_summary = st.session_state[summary_cache_key]
+
+            # Cache translated summary per language
+            trans_cache_key = f"cache_trans_{summary_cache_key}_{selected_lang}"
+            if trans_cache_key not in st.session_state:
+                try:
+                    st.session_state[trans_cache_key] = ai_summary_module.translate_summary(raw_summary, selected_lang)
+                except Exception as exc:
+                    logger.warning("AI Summary translation failed: %s", exc)
+                    st.session_state[trans_cache_key] = raw_summary
+
+            exec_summary = st.session_state[trans_cache_key]
+
+            scanner_slug = re.sub(r"[^a-zA-Z0-9_]", "_", scanner_key)
             fb_key = f"fb_given_{scanner_key}"
             is_fb_submitted = st.session_state.get(fb_key, False)
 
+            # Style for the AI Executive Summary container card
             st.markdown(
                 f"""
-                <div style="background:rgba(34, 184, 240, 0.05); border:1px solid rgba(34, 184, 240, 0.25); border-radius:12px; padding:14px 18px 10px 18px; margin-bottom:14px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-                        <div style="font-size:12px; font-weight:700; color:#22D3EE; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px;">
-                            <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle;">
-                            <span>AI Executive Summary ({selected_lang})</span>
-                        </div>
-                        <button id="tts_btn_{scanner_key}" onclick="toggleTTS_{scanner_key}()" style="background:rgba(34,211,238,0.15); border:1px solid #22D3EE; color:#22D3EE; border-radius:6px; padding:5px 12px; font-size:11.5px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
-                            🔊 Listen AI Explanation
-                        </button>
-                    </div>
-                    <div id="summary_text_{scanner_key}" style="font-size:13.5px; line-height:1.5; color:var(--text); margin-bottom:6px;">{exec_summary}</div>
-                </div>
-                <script>
-                    function toggleTTS_{scanner_key}() {{
-                        const btn = document.getElementById("tts_btn_{scanner_key}");
-                        if (window.speechSynthesis.speaking) {{
-                            window.speechSynthesis.cancel();
-                            if (btn) btn.innerHTML = "🔊 Listen AI Explanation";
-                        }} else {{
-                            window.speechSynthesis.cancel();
-                            const txt = "{safe_exec_summary}";
-                            const msg = new SpeechSynthesisUtterance(txt);
-                            msg.rate = 0.95;
-                            msg.onend = function() {{
-                                if (btn) btn.innerHTML = "🔊 Listen AI Explanation";
-                            }};
-                            window.speechSynthesis.speak(msg);
-                            if (btn) btn.innerHTML = "⏹️ Stop Speech";
-                        }}
-                    }}
-                </script>
+                <style>
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) {{
+                    background: rgba(18, 24, 38, 0.7) !important;
+                    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+                    border-radius: 12px !important;
+                    padding: 16px 20px 14px 20px !important;
+                    margin-bottom: 14px !important;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(34, 211, 238, 0.04) !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) [data-testid="stVerticalBlock"] {{
+                    gap: 0.6rem !important;
+                }}
+
+                /* Sleek Cyber Selectbox inside Card Header */
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) div[data-testid="stSelectbox"] {{
+                    margin-bottom: 0px !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) div[data-testid="stSelectbox"] div[data-baseweb="select"] {{
+                    background: rgba(14, 20, 32, 0.85) !important;
+                    border: 1px solid rgba(34, 211, 238, 0.45) !important;
+                    border-radius: 8px !important;
+                    min-height: 36px !important;
+                    height: 36px !important;
+                    font-size: 12px !important;
+                    font-weight: 600 !important;
+                    color: #22D3EE !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) div[data-testid="stSelectbox"] div[data-baseweb="select"]:hover {{
+                    border-color: #22D3EE !important;
+                    box-shadow: 0 0 10px rgba(34, 211, 238, 0.25) !important;
+                }}
+
+                /* Sleek Cyber Listen AI Explanation Button */
+                div[class*="st-key-btn_tts_"] button,
+                .st-key-btn_tts_{scanner_key} button {{
+                    background: linear-gradient(135deg, rgba(34,211,238,0.15) 0%, rgba(6,182,212,0.25) 100%) !important;
+                    border: 1px solid rgba(34,211,238,0.55) !important;
+                    color: #22D3EE !important;
+                    border-radius: 8px !important;
+                    padding: 6px 14px !important;
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                    height: 36px !important;
+                    min-height: 36px !important;
+                    box-shadow: 0 2px 10px rgba(34,211,238,0.15) !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 6px !important;
+                    float: right !important;
+                    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                }}
+                div[class*="st-key-btn_tts_"] button:hover,
+                .st-key-btn_tts_{scanner_key} button:hover {{
+                    background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 100%) !important;
+                    border-color: #22D3EE !important;
+                    color: #0d1117 !important;
+                    box-shadow: 0 4px 18px rgba(34,211,238,0.45) !important;
+                    transform: translateY(-1px) !important;
+                }}
+
+                /* Markdown Table inside AI Executive Summary Card */
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) table {{
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border-collapse: collapse !important;
+                    margin: 10px 0 14px 0 !important;
+                    border-radius: 8px !important;
+                    overflow: hidden !important;
+                    border: 1px solid rgba(34, 211, 238, 0.25) !important;
+                    table-layout: auto !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) th {{
+                    background: rgba(34, 211, 238, 0.12) !important;
+                    color: #22D3EE !important;
+                    font-weight: 700 !important;
+                    font-size: 12.5px !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.6px !important;
+                    padding: 10px 14px !important;
+                    border: 1px solid rgba(34, 211, 238, 0.25) !important;
+                    text-align: left !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) td {{
+                    background: rgba(14, 20, 32, 0.7) !important;
+                    color: rgba(255, 255, 255, 0.9) !important;
+                    font-size: 13px !important;
+                    line-height: 1.6 !important;
+                    padding: 11px 15px !important;
+                    border: 1px solid rgba(34, 211, 238, 0.15) !important;
+                    word-break: break-word !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) td:first-child {{
+                    font-weight: 700 !important;
+                    color: #FFFFFF !important;
+                    width: 24% !important;
+                    background: rgba(34, 211, 238, 0.06) !important;
+                    white-space: nowrap !important;
+                }}
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) tr:hover td {{
+                    background: rgba(34, 211, 238, 0.08) !important;
+                }}
+
+                /* Dark Theme Audio Player */
+                div[data-testid="stVerticalBlockBorderWrapper"]:has(.ai-exec-card-anchor-{scanner_slug}) audio,
+                div[data-testid="stAudio"] audio {{
+                    width: 100% !important;
+                    height: 38px !important;
+                    border-radius: 8px !important;
+                    filter: invert(0.9) hue-rotate(180deg) !important;
+                    margin: 6px 0 10px 0 !important;
+                }}
+
+                /* Feedback & Action Buttons */
+                div[class*="st-key-fb_yes_"] button {{
+                    background: rgba(34, 197, 94, 0.12) !important;
+                    border: 1px solid rgba(34, 197, 94, 0.4) !important;
+                    color: #22C55E !important;
+                    border-radius: 8px !important;
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                    height: 35px !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    transition: all 0.2s ease !important;
+                }}
+                div[class*="st-key-fb_yes_"] button:hover {{
+                    background: rgba(34, 197, 94, 0.25) !important;
+                    border-color: #22C55E !important;
+                    color: #FFFFFF !important;
+                    box-shadow: 0 0 14px rgba(34, 197, 94, 0.35) !important;
+                }}
+                div[class*="st-key-fb_yes_"] button div[data-testid="stMarkdownContainer"] > p {{
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    gap: 6px !important;
+                    margin: 0 !important;
+                }}
+                div[class*="st-key-fb_yes_"] button div[data-testid="stMarkdownContainer"] > p::before {{
+                    content: "" !important;
+                    display: inline-block !important;
+                    width: 16px !important;
+                    height: 16px !important;
+                    background-image: url("https://cdn-icons-png.flaticon.com/512/4765/4765961.png") !important;
+                    background-size: contain !important;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
+                    vertical-align: middle !important;
+                }}
+
+                div[class*="st-key-fb_no_"] button {{
+                    background: rgba(239, 68, 68, 0.12) !important;
+                    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+                    color: #EF4444 !important;
+                    border-radius: 8px !important;
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                    height: 35px !important;
+                    transition: all 0.2s ease !important;
+                }}
+                div[class*="st-key-fb_no_"] button:hover {{
+                    background: rgba(239, 68, 68, 0.25) !important;
+                    border-color: #EF4444 !important;
+                    color: #FFFFFF !important;
+                    box-shadow: 0 0 14px rgba(239, 68, 68, 0.35) !important;
+                }}
+
+                div[class*="st-key-ask_chat_"] button {{
+                    background: rgba(34, 211, 238, 0.12) !important;
+                    border: 1px solid rgba(34, 211, 238, 0.45) !important;
+                    color: #22D3EE !important;
+                    border-radius: 8px !important;
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                    height: 35px !important;
+                    transition: all 0.2s ease !important;
+                }}
+                div[class*="st-key-ask_chat_"] button:hover {{
+                    background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 100%) !important;
+                    border-color: #22D3EE !important;
+                    color: #0d1117 !important;
+                    box-shadow: 0 4px 18px rgba(34, 211, 238, 0.4) !important;
+                    transform: translateY(-1px) !important;
+                }}
+                </style>
                 """,
                 unsafe_allow_html=True
             )
 
-            # Action buttons embedded inside card footer area
-            st.markdown("<div style='margin-top:-22px; padding:0 12px 10px 12px;'>", unsafe_allow_html=True)
-            if not is_fb_submitted:
-                col_fb1, col_fb2, col_fb3 = st.columns([1, 1, 4])
-                with col_fb1:
-                    if st.button("👍 Yes", key=f"fb_yes_{scanner_key}"):
-                        st.session_state[fb_key] = True
-                        try:
-                            from database.db import db
-                            db.execute(
-                                "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 1)",
-                                (scanner_key, str(result.get("value", "")), float(score))
-                            )
-                            st.toast("Thank you for your feedback!", icon="✅")
-                        except Exception:
-                            pass
-                        st.rerun()
-                with col_fb2:
-                    if st.button("👎 No", key=f"fb_no_{scanner_key}"):
-                        st.session_state[fb_key] = True
-                        try:
-                            from database.db import db
-                            db.execute(
-                                "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 0)",
-                                (scanner_key, str(result.get("value", "")), float(score))
-                            )
-                            st.toast("Feedback recorded. Models will adapt.", icon="📝")
-                        except Exception:
-                            pass
-                        st.rerun()
-                with col_fb3:
-                    if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
-                        if hasattr(st, "dialog"):
-                            render_scan_explainer_dialog()
-            else:
-                col_fb3, col_fb_msg = st.columns([2.5, 3.5])
-                with col_fb3:
-                    if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
-                        if hasattr(st, "dialog"):
-                            render_scan_explainer_dialog()
-                with col_fb_msg:
-                    st.markdown("<div style='font-size:12.5px; color:var(--success); font-weight:600; padding-top:6px;'>✅ Feedback Recorded</div>", unsafe_allow_html=True)
+            # Card Container wrapping Header, Summary Text AND Action Buttons INSIDE
+            with st.container(border=True):
+                st.markdown(f'<div class="ai-exec-card-anchor-{scanner_slug}" style="display:none;"></div>', unsafe_allow_html=True)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+                col_head1, col_head2 = st.columns([3.8, 1.2], gap="small", vertical_alignment="center")
+                with col_head1:
+                    st.markdown(
+                        f"""
+                        <div style="font-size:13px; font-weight:700; color:#22D3EE; text-transform:uppercase; letter-spacing:0.6px; display:flex; align-items:center; gap:8px;">
+                            <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle;">
+                            <span>AI Executive Summary</span>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                with col_head2:
+                    lang_opts = ["English 🇬🇧", "Hindi 🇮🇳", "Hinglish 🇮🇳", "Gujarati 🇮🇳", "Marathi 🇮🇳", "Spanish 🇪🇸", "French 🇫🇷", "German 🇩🇪"]
+                    cur_idx = lang_opts.index(selected_lang) if selected_lang in lang_opts else 0
+                    chosen_lang = st.selectbox(
+                        "🌐 Language",
+                        options=lang_opts,
+                        index=cur_idx,
+                        key=f"lang_sel_dropdown_{scanner_key}",
+                        label_visibility="collapsed"
+                    )
+                    if chosen_lang != selected_lang:
+                        st.session_state[lang_key] = chosen_lang
+                        st.rerun()
+
+                # Summary Text
+                st.markdown(
+                    f'<div id="summary_text_{scanner_key}" style="font-size:13.5px; line-height:1.6; color:var(--text); margin-top:8px; margin-bottom:12px; overflow-x:auto;">\n\n{exec_summary}\n\n</div>',
+                    unsafe_allow_html=True
+                )
+
+                # Action buttons (Yes, No, Ask About This Result) inside card footer
+                if not is_fb_submitted:
+                    col_fb1, col_fb2, col_fb3 = st.columns([1, 1, 3.8], gap="small")
+                    with col_fb1:
+                        if st.button("Yes", key=f"fb_yes_{scanner_key}"):
+                            st.session_state[fb_key] = True
+                            try:
+                                from database.db import db
+                                db.execute(
+                                    "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 1)",
+                                    (scanner_key, str(result.get("value", "")), float(score))
+                                )
+                                st.toast("Thank you for your feedback!", icon="")
+                            except Exception:
+                                pass
+                            st.rerun()
+                    with col_fb2:
+                        if st.button("👎 No", key=f"fb_no_{scanner_key}"):
+                            st.session_state[fb_key] = True
+                            try:
+                                from database.db import db
+                                db.execute(
+                                    "INSERT INTO feedback (scanner_key, target, risk_score, is_helpful) VALUES (?, ?, ?, 0)",
+                                    (scanner_key, str(result.get("value", "")), float(score))
+                                )
+                                st.toast("Feedback recorded. Models will adapt.", icon="📝")
+                            except Exception:
+                                pass
+                            st.rerun()
+                    with col_fb3:
+                        if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
+                            if hasattr(st, "dialog"):
+                                render_scan_explainer_dialog()
+                else:
+                    col_fb3, col_fb_msg = st.columns([2.5, 3.5], gap="small")
+                    with col_fb3:
+                        if st.button("💬 Ask About This Result", key=f"ask_chat_{scanner_key}"):
+                            if hasattr(st, "dialog"):
+                                render_scan_explainer_dialog()
+                    with col_fb_msg:
+                        st.markdown("<div style='font-size:12.5px; color:var(--success); font-weight:600; padding-top:6px;'>✅ Feedback Recorded</div>", unsafe_allow_html=True)
             st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
             col_row1_1, col_row1_2, col_row1_3 = st.columns(3, gap="large")
@@ -6716,8 +7526,10 @@ def render_scan_results(scanner_key: str):
             with col_row1_3:
                 if scanner_key == "Phone Threat Intelligence":
                     p_data = analysis_data or raw_payload.get("analysis", {})
-                    veri_active = p_data.get("veriphone_integrated", False)
-                    ipqs_active = p_data.get("ipqs_integrated", False)
+                    abs_active = p_data.get("abstract_phone_integrated", False)
+                    num_active = p_data.get("numverify_integrated", False)
+                    ver_active = p_data.get("verificaremails_integrated", False)
+                    active_provider = p_data.get("active_provider", "Telecom Heuristics")
                     abuse_c = "var(--danger)" if p_data.get("recent_abuse") == "Yes" else "var(--success)"
                     voip_c = "var(--warning)" if p_data.get("voip") == "Yes" else "var(--success)"
                     st.markdown('<div class="section-title">Telecom Intelligence</div>', unsafe_allow_html=True)
@@ -6725,8 +7537,10 @@ def render_scan_results(scanner_key: str):
                         f"""
                         <div class="chart-card" style="padding:0;">
                             <table class="scan-table">
-                                <tr><td>Veriphone Engine</td><td style="color:var(--success);font-weight:600;">{"Connected" if veri_active else "Standby"}</td></tr>
-                                <tr><td>IPQS Intelligence</td><td style="color:var(--success);font-weight:600;">{"Connected" if ipqs_active else "Standby"}</td></tr>
+                                <tr><td>Active Engine</td><td style="color:var(--success);font-weight:600;">{active_provider}</td></tr>
+                                <tr><td>AbstractAPI Phone</td><td style="color:var(--success);font-weight:600;">{"Connected" if abs_active else "Standby"}</td></tr>
+                                <tr><td>Numverify Engine</td><td style="color:var(--success);font-weight:600;">{"Connected" if num_active else "Standby"}</td></tr>
+                                <tr><td>VerificarEmails Engine</td><td style="color:var(--success);font-weight:600;">{"Connected" if ver_active else "Standby"}</td></tr>
                                 <tr><td>Abuse Report Check</td><td style="color:{abuse_c};font-weight:600;">{p_data.get('recent_abuse', 'Clean')}</td></tr>
                                 <tr><td>VoIP / Virtual Check</td><td style="color:{voip_c};font-weight:600;">{p_data.get('voip', 'No')}</td></tr>
                                 <tr><td>Scam Blacklist Check</td><td style="color:var(--success);font-weight:600;">Clean / Not Listed</td></tr>
@@ -7438,9 +8252,15 @@ def render_scan_results(scanner_key: str):
                 with st.expander("📱 Phone Threat & Telecom Reputation Analysis", expanded=True):
                     col_p1, col_p2 = st.columns([2, 1])
                     with col_p1:
-                        veri_active = phone_analysis.get("veriphone_integrated", False)
-                        ipqs_active = phone_analysis.get("ipqs_integrated", False)
-                        active_engine_str = "Veriphone API (Active)" if veri_active else ("IPQS Intelligence" if ipqs_active else "Rule-based Telecom Engine")
+                        abs_active = phone_analysis.get("abstract_phone_integrated", False)
+                        num_active = phone_analysis.get("numverify_integrated", False)
+                        ver_active = phone_analysis.get("verificaremails_integrated", False)
+                        active_engine_str = phone_analysis.get("active_provider") or (
+                            "AbstractAPI Phone (Active)" if abs_active
+                            else ("Numverify (Active)" if num_active
+                            else ("VerificarEmails (Active)" if ver_active
+                            else "Rule-based Telecom Engine"))
+                        )
 
                         table_data = [
                             {"Analysis Metric": "Primary Intelligence Engine", "Result": active_engine_str},
@@ -7466,14 +8286,17 @@ def render_scan_results(scanner_key: str):
                             <div class="chart-card" style="padding: 16px; margin-bottom: 12px;">
                                 <div style="font-weight: 700; font-size: 13px; color: var(--info); margin-bottom: 8px;">TELECOM & EXPOSURE SIGNALS</div>
                                 <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
-                                    <b>Veriphone Engine:</b> {"🟢 Connected" if veri_active else "🟡 Standby/Unconfigured"}<br>
+                                    <b>Active Provider:</b> <span style="color:var(--success);font-weight:600;">{active_engine_str}</span><br>
+                                    <b>AbstractAPI Phone:</b> {" Connected" if abs_active else " Standby"}<br>
+                                    <b>Numverify Engine:</b> {" Connected" if num_active else " Standby"}<br>
+                                    <b>VerificarEmails:</b> {" Connected" if ver_active else " Standby"}<br>
                                     <b>Public Business Identity:</b> {pub_identity.get('business_name', 'Not Available')}<br>
                                     <b>Exposure Record Flag:</b> {pub_identity.get('exposure_leaked', 'No')}<br>
                                     <b>Associated Email:</b> {pub_identity.get('associated_email', 'Not Available')}
                                 </div>
                             </div>
                             <div style="font-size: 11px; color: var(--text-faint); line-height: 1.5; padding: 8px 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
-                                🔒 <b>Privacy Notice:</b> CyberMind AI adheres strictly to legal & privacy-respecting standards. Unconsented private WhatsApp IDs or personal address scraping are intentionally excluded.
+                                 🔒 <b>Privacy Notice:</b> CyberMind AI adheres strictly to legal & privacy-respecting standards. Unconsented private WhatsApp IDs or personal address scraping are intentionally excluded.
                             </div>
                             """,
                             unsafe_allow_html=True
@@ -7499,8 +8322,7 @@ def render_scan_results(scanner_key: str):
                         rpt_notes = st.text_area("Incident Details / Notes (Optional)", placeholder="Describe the suspicious call or message...")
                         submit_report = st.form_submit_button("🚨 Submit Fraud Report", width="stretch")
                         if submit_report:
-                            from services.ipqs_service import ipqs_service
-                            rpt_res = ipqs_service.report_phone(rpt_phone, rpt_cat, rpt_notes)
+                            logger.info("Scam phone report logged locally: %s category=%s notes=%s", rpt_phone, rpt_cat, rpt_notes)
                             st.success(f"✅ Phone number {rpt_phone} successfully reported for category '{rpt_cat}'. Thank you!")
 
 
@@ -7641,7 +8463,7 @@ def render_scan_results(scanner_key: str):
 
             with tab_hist_col2:
                 st.markdown(
-                    f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div>""",
+                    clean_html(f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div></div>"""),
                     unsafe_allow_html=True
                 )
                 fig_tab = donut_chart(
@@ -7650,12 +8472,13 @@ def render_scan_results(scanner_key: str):
                 )
                 st.plotly_chart(fig_tab, width="stretch", config={"displayModeBar": False})
                 st.markdown(
-                    f"""
-                    <div class="list-row"><span class="list-name"><span style="color:#22C55E">●</span> Safe</span><span class="list-val">{tab_safe_n}</span></div>
-                    <div class="list-row"><span class="list-name"><span style="color:#F5A623">●</span> Suspicious</span><span class="list-val">{tab_susp_n}</span></div>
-                    <div class="list-row"><span class="list-name"><span style="color:#F2545B">●</span> Malicious</span><span class="list-val">{tab_mal_n}</span></div>
+                    clean_html(f"""
+                    <div style="font-size:12px; color:var(--text-muted); padding-top:4px;">
+                        <div class="list-row"><span class="list-name legend-safe" style="color:#22C55E !important; font-weight:600;"><span style="color:#22C55E !important; margin-right:8px;">●</span>Safe</span><span class="list-val">{tab_safe_n:,}</span></div>
+                        <div class="list-row"><span class="list-name legend-suspicious" style="color:#F5A623 !important; font-weight:600;"><span style="color:#F5A623 !important; margin-right:8px;">●</span>Suspicious</span><span class="list-val">{tab_susp_n:,}</span></div>
+                        <div class="list-row"><span class="list-name legend-malicious" style="color:#F2545B !important; font-weight:600;"><span style="color:#F2545B !important; margin-right:8px;">●</span>Malicious</span><span class="list-val">{tab_mal_n:,}</span></div>
                     </div>
-                    """,
+                    """),
                     unsafe_allow_html=True
                 )
 
@@ -7800,7 +8623,7 @@ def render_scan_results(scanner_key: str):
 
         with right_col:
             st.markdown(
-                f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div>""",
+                clean_html(f"""<div class="chart-card"><div class="chart-card-title"> Analytics</div></div>"""),
                 unsafe_allow_html=True
             )
             fig = donut_chart(
@@ -7809,12 +8632,13 @@ def render_scan_results(scanner_key: str):
             )
             st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
             st.markdown(
-                f"""
-                <div class="list-row"><span class="list-name"><span style="color:#22C55E">●</span> Safe</span><span class="list-val">{safe_n}</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#F5A623">●</span> Suspicious</span><span class="list-val">{susp_n}</span></div>
-                <div class="list-row"><span class="list-name"><span style="color:#F2545B">●</span> Malicious</span><span class="list-val">{mal_n}</span></div>
+                clean_html(f"""
+                <div style="font-size:12px; color:var(--text-muted); padding-top:4px;">
+                    <div class="list-row"><span class="list-name legend-safe" style="color:#22C55E !important; font-weight:600;"><span style="color:#22C55E !important; margin-right:8px;">●</span>Safe</span><span class="list-val">{safe_n:,}</span></div>
+                    <div class="list-row"><span class="list-name legend-suspicious" style="color:#F5A623 !important; font-weight:600;"><span style="color:#F5A623 !important; margin-right:8px;">●</span>Suspicious</span><span class="list-val">{susp_n:,}</span></div>
+                    <div class="list-row"><span class="list-name legend-malicious" style="color:#F2545B !important; font-weight:600;"><span style="color:#F2545B !important; margin-right:8px;">●</span>Malicious</span><span class="list-val">{mal_n:,}</span></div>
                 </div>
-                """,
+                """),
                 unsafe_allow_html=True
             )
 
@@ -7983,7 +8807,7 @@ def render_settings_page():
         # ── 5 Metric Cards (grid 5 columns, side-by-side) ─────────────────────
         st.markdown(f"""
         <div style="font-size:11px;color:var(--text-faint);margin-bottom:8px;letter-spacing:0.5px;">
-          🎯 Avg across 4 datasets · 5-fold Stratified CV · RandomForest Classifier
+           🎯 Avg across 4 datasets · 5-fold Stratified CV · RandomForest Classifier
         </div>
         <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;margin-bottom:10px;">
           <div class="chart-card" style="padding:16px 14px;text-align:center;border-top:3px solid {_acc_c};">
@@ -8118,9 +8942,9 @@ def render_settings_page():
         st.markdown(f"""
         <div class="chart-card" style="padding:10px 14px;font-size:11px;color:var(--text-faint);line-height:1.8;margin-top:8px;">
           <img src="https://cdn-icons-png.flaticon.com/512/18310/18310827.png" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"><b>{_m.get("model_type","RandomForestClassifier")}</b> &nbsp;·&nbsp;
-          🌳 Trees: <b>200</b> (n_estimators) &nbsp;·&nbsp;
-          📦 Total samples: <b>{_total_samples:,}</b><br>
-          🔢 Features — {_feat_parts}
+           🌳 Trees: <b>200</b> (n_estimators) &nbsp;·&nbsp;
+           📦 Total samples: <b>{_total_samples:,}</b><br>
+           🔢 Features — {_feat_parts}
         </div>
         """, unsafe_allow_html=True)
 
@@ -8428,8 +9252,10 @@ def render_connections_page():
         ("AbuseIPDB",            "ABUSEIPDB_API_KEY",            "🛡️"),
         ("IPInfo",               "IPINFO_API_KEY",               "🌐"),
         ("Groq",                 "GROQ_API_KEY",                 "🤖"),
-        ("Veriphone Telecom",    "VERIPHONE_API_KEY",            "📱"),
-        ("IPQS Fraud Score",     "IPQS_API_KEY",                 "📞"),
+        ("AbstractAPI Phone",    "ABSTRACTAPI_PHONE_KEY",        ""),
+        ("Numverify Phone",      "NUMVERIFY_API_KEY",            ""),
+        ("VerificarEmails",      "VERIFICAREMAILS_API_KEY",      ""),
+        ("AbstractAPI IP",       "ABSTRACTAPI_IP_KEY",           ""),
     ]
     api_status = []
     for api_name, env_key, api_icon in api_keys:
@@ -9238,12 +10064,19 @@ def render_analytics_page():
         st.plotly_chart(fig_pie, width="stretch", config={"displayModeBar": False})
         
         tot = sum(vals)
+        legend_cls_map = {
+            "Safe": "legend-safe",
+            "Low": "legend-low",
+            "Medium": "legend-medium",
+            "High": "legend-high",
+            "Critical": "legend-critical",
+        }
         rows_html = "".join(
-            f'<div class="list-row"><span class="list-name"><span style="color:{color}">●</span> {lbl}</span>'
+            f'<div class="list-row"><span class="list-name {legend_cls_map.get(lbl, "")}" style="color:{color} !important; font-weight:600;"><span style="color:{color} !important; margin-right:8px;">●</span>{lbl}</span>'
             f'<span class="list-val">{val} ({val/tot*100:.1f}%)</span></div>'
             for lbl, val, color in zip(lbls, vals, ["#22C55E", "#3B82F6", "#F5A623", "#F2545B", "#9333EA"])
         )
-        st.markdown(f'<div class="chart-card" style="padding:10px 14px;">{rows_html}</div>', unsafe_allow_html=True)
+        st.markdown(clean_html(f'<div class="chart-card" style="padding:10px 14px;">{rows_html}</div>'), unsafe_allow_html=True)
 
     with c2:
         st.markdown('<div class="section-title">🔮 Machine Learning Threat Predictions</div>', unsafe_allow_html=True)
@@ -9564,39 +10397,112 @@ def render_help_support_page():
 
     with c1:
         st.markdown('<div class="section-title">📚 Popular Help Topics</div>', unsafe_allow_html=True)
-        topics = [
-            ("🚀", "Getting Started with CyberMind AI"),
-            ("⚠️", "Understanding Risk Scores and Threat Levels"),
-            ("🔑", "Configuring API Keys for VirusTotal & Safe Browsing"),
-            ("📤", "Exporting Reports and Scanning Logs"),
-            ("🔧", "Troubleshooting Connection Errors"),
-            ("👤", "Managing Account Preferences"),
-            ("🔒", "Security and Data Privacy Disclosures"),
-        ]
-        rows_html = "".join(
-            f'<div style="display:flex;align-items:center;gap:10px;padding:10px 4px;'
-            f'border-bottom:1px solid var(--border);cursor:pointer;">'
-            f'<span style="font-size:15px;flex-shrink:0;">{ico}</span>'
-            f'<span style="font-size:13px;font-weight:500;color:var(--text);">{label}</span></div>'
-            for ico, label in topics
+        st.markdown(
+            """
+            <style>
+            div[class*="st-key-pht_card"],
+            div.st-key-pht_card {
+                background: var(--card-bg, #0B101D) !important;
+                border: 1px solid var(--border, rgba(255, 255, 255, 0.08)) !important;
+                border-radius: 12px !important;
+                padding: 6px 8px !important;
+                margin-bottom: 12px !important;
+            }
+            div[class*="st-key-pht_card"] div[data-testid="stButton"],
+            div.st-key-pht_card div[data-testid="stButton"] {
+                margin-bottom: 2px !important;
+            }
+            div[class*="st-key-pht_card"] div[data-testid="stButton"] > button,
+            div.st-key-pht_card div[data-testid="stButton"] > button {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                text-align: left !important;
+                width: 100% !important;
+                background: transparent !important;
+                border: none !important;
+                border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.07)) !important;
+                border-radius: 6px !important;
+                padding: 11px 12px !important;
+                color: var(--text, #E2E8F0) !important;
+                font-size: 13.5px !important;
+                font-weight: 500 !important;
+                cursor: pointer !important;
+                transition: all 0.2s ease !important;
+                box-shadow: none !important;
+            }
+            div[class*="st-key-pht_card"] div[data-testid="stButton"] > button:hover,
+            div.st-key-pht_card div[data-testid="stButton"] > button:hover {
+                background: rgba(0, 210, 255, 0.08) !important;
+                color: #22D3EE !important;
+                padding-left: 16px !important;
+                border-bottom: 1px solid rgba(0, 210, 255, 0.35) !important;
+            }
+            div[class*="st-key-pht_card"] div[data-testid="stButton"]:last-child > button,
+            div.st-key-pht_card div[data-testid="stButton"]:last-child > button {
+                border-bottom: none !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
         )
-        st.markdown(f'<div class="chart-card" style="padding:14px 16px;">{rows_html}</div>', unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown('<div class="section-title">❓ Frequently Asked Questions</div>', unsafe_allow_html=True)
-        faqs = [
-            ("How do I add a VirusTotal API key?",
-             "Go to **Settings → API Keys**, paste your key and click Save. The key is stored securely in your local `.env` file."),
-            ("What does a risk score mean?",
-             "Scores range from 0–100. **0–29** is Safe, **30–69** is Suspicious, and **70+** is Malicious."),
-            ("Can I export scan reports?",
-             "Yes! Open **Reports** from the sidebar and use the Export button to download PDF or CSV reports."),
-            ("Is my data sent to any external server?",
-             "Only the target URL / IP / file hash is sent to third-party APIs (VirusTotal, Google Safe Browsing). No personal data is shared."),
+        topics = [
+            (
+                "🚀",
+                "Getting Started with CyberMind AI",
+                "How do I get started with CyberMind AI? Please provide a complete overview of the scanners (URL, Domain, IP, File, Phone, Device Security), dashboard metrics, and how to perform my first scan."
+            ),
+            (
+                "⚠️",
+                "Understanding Risk Scores and Threat Levels",
+                "How do CyberMind AI risk scores and threat levels work? Explain the 0-100 scoring system, what 0-29 (Safe), 30-69 (Suspicious), and 70+ (Malicious) mean, and how machine learning calculates these scores."
+            ),
+            (
+                "🔑",
+                "Configuring API Keys for VirusTotal & Safe Browsing",
+                "How do I configure API keys for VirusTotal and Google Safe Browsing in CyberMind AI? Where are they entered in Settings and how does CyberMind AI use them?"
+            ),
+            (
+                "📤",
+                "Exporting Reports and Scanning Logs",
+                "How can I export scan reports and audit logs in CyberMind AI? What formats (PDF, CSV, JSON) are supported and where can I find them?"
+            ),
+            (
+                "🔧",
+                "Troubleshooting Connection Errors",
+                "How do I troubleshoot connection errors, offline scanners, or API request failures in CyberMind AI?"
+            ),
+            (
+                "👤",
+                "Managing Account Preferences",
+                "How do I manage my user profile, theme settings, notifications, and account preferences in CyberMind AI?"
+            ),
+            (
+                "🔒",
+                "Security and Data Privacy Disclosures",
+                "What are the data privacy and security disclosures of CyberMind AI? How is user data, scan history, and API key storage protected?"
+            ),
         ]
-        for q, a in faqs:
-            with st.expander(q):
-                st.markdown(a)
+
+        clicked_topic = None
+        with st.container(key="pht_card"):
+            for idx, (ico, label, prompt) in enumerate(topics):
+                if st.button(f"{ico}  {label}", key=f"pht_topic_btn_{idx}", width="stretch"):
+                    clicked_topic = (ico, label, prompt)
+
+        if clicked_topic:
+            ico, label, prompt = clicked_topic
+            from modules.ai_assistant import get_chat_response_with_suggestions
+            response, followup_qs = get_chat_response_with_suggestions(prompt)
+            if "ai_page_chat_history" not in st.session_state:
+                st.session_state.ai_page_chat_history = []
+            st.session_state.ai_page_chat_history.append(("user", f"{ico} {label}"))
+            st.session_state.ai_page_chat_history.append(("assistant", response))
+            st.session_state["ai_followup_questions"] = followup_qs
+            st.session_state["ai_assistant_origin_page"] = "Help & Support"
+            st.session_state.active_page = "AI Security Assistant"
+            st.rerun()
 
     with c2:
         # Read disabled datasets dynamically from session state
@@ -9648,26 +10554,254 @@ def render_help_support_page():
             <div class="chart-card" style="padding:18px;">
                 <div style="margin-bottom:14px;">
                     <div style="font-size:10.5px; color:var(--text-faint); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">📧 Email Support</div>
-                    <div style="font-size:13.5px; font-weight:600; color:var(--text); margin-top:4px;">support@cybermind.ai</div>
+                    <div style="font-size:13.5px; font-weight:600; color:#38BDF8; margin-top:4px;">cybermindxai@gmail.com</div>
+                    <div style="font-size:11px; color:#22C55E; margin-top:2px;"> Response within 24–25 Hours</div>
                 </div>
                 <div style="margin-bottom:14px; padding-top:12px; border-top:1px solid var(--border);">
-                    <div style="font-size:10.5px; color:var(--text-faint); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">💬 Live Chat</div>
-                    <div style="font-size:13px; font-weight:600; color:var(--text); margin-top:4px;">Mon – Fri · 9 AM – 5 PM IST</div>
+                    <div style="font-size:10.5px; color:var(--text-faint); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;"> Live Chat With Ai</div>
+                    <div style="font-size:13px; font-weight:600; color:var(--text); margin-top:4px;">24 X 7 Available</div>
                 </div>
                 <div style="margin-bottom:14px; padding-top:12px; border-top:1px solid var(--border);">
-                    <div style="font-size:10.5px; color:var(--text-faint); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">📞 Phone Support</div>
-                    <div style="font-size:13px; font-weight:600; color:var(--text); margin-top:4px;">+91 98765-43210</div>
+                    <div style="font-size:10.5px; color:var(--text-faint); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;"> Call Support</div>
+                    <div style="font-size:13px; font-weight:600; color:var(--text); margin-top:4px;">Currently Unavailable</div>
                     <div style="font-size:11px; color:var(--text-muted);">India Office</div>
                 </div>
                 <div style="padding-top:12px; border-top:1px solid var(--border);">
                     <div style="font-size:10.5px; color:var(--text-faint); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">🛡️ App Version</div>
-                    <div style="font-size:13px; font-weight:600; color:var(--text); margin-top:4px;">CyberMind AI Enterprise v2.0.0</div>
+                    <div style="font-size:13px; font-weight:600; color:var(--text); margin-top:4px;">CyberMind AI Enterprise v1.0.0</div>
                     <div style="font-size:11px; color:var(--text-muted);">Build Date: 07-07-2026</div>
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
+
+    # ── Frequently Asked Questions (2x2 Grid: 2 Columns, 2 Rows) ────────────
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="section-title">❓ Frequently Asked Questions</div>', unsafe_allow_html=True)
+    faqs = [
+        ("How do I add a VirusTotal API key?",
+         "Go to **Settings → API Keys**, paste your key and click Save. The key is stored securely in your local `.env` file."),
+        ("What does a risk score mean?",
+         "Scores range from 0–100. **0–29** is Safe, **30–69** is Suspicious, and **70+** is Malicious."),
+        ("Can I export scan reports?",
+         "Yes! Open **Reports** from the sidebar and use the Export button to download PDF or CSV reports."),
+        ("Is my data sent to any external server?",
+         "Only the target URL / IP / file hash is sent to third-party APIs (VirusTotal, Google Safe Browsing). No personal data is shared."),
+    ]
+    faq_col1, faq_col2 = st.columns(2, gap="medium")
+    with faq_col1:
+        with st.expander(faqs[0][0]):
+            st.markdown(faqs[0][1])
+        with st.expander(faqs[2][0]):
+            st.markdown(faqs[2][1])
+    with faq_col2:
+        with st.expander(faqs[1][0]):
+            st.markdown(faqs[1][1])
+        with st.expander(faqs[3][0]):
+            st.markdown(faqs[3][1])
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── Customer Support Form Section ─────────────────────────────────────────
+    st.markdown(
+        """
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div class="section-title" style="margin:0;"> Contact Customer Support & Submit Ticket</div>
+            <div style="font-size:11.5px; background:rgba(34,211,238,0.12); color:#22D3EE; border:1px solid rgba(34,211,238,0.35); border-radius:20px; padding:4px 14px; font-weight:700; display:flex; align-items:center; gap:6px;">
+                <span>⏱️</span>
+                <span>Response Time: 24–25 Hours Guaranteed</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
+                Need help with a scan, false positive report, API integration, or system feature? 
+                Submit your query below. Our support team at <b style="color:#38BDF8;">cybermindxai@gmail.com</b> 
+                will receive your problem description immediately and you will receive an automatic confirmation email. 
+                Our engineers will contact you via email within <b style="color:#22D3EE;">24 to 25 hours</b>.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        cs_form_ver = st.session_state.get("cs_form_ver", 0)
+        cs_errors = st.session_state.get("cs_errors", set())
+
+        # Discard field from errors as soon as a valid value is present in session state
+        curr_name = st.session_state.get(f"cs_user_name_{cs_form_ver}", "")
+        curr_email = st.session_state.get(f"cs_user_email_{cs_form_ver}", "")
+        curr_sub = st.session_state.get(f"cs_subject_{cs_form_ver}", "")
+        curr_msg = st.session_state.get(f"cs_message_{cs_form_ver}", "")
+
+        if curr_name.strip():
+            cs_errors.discard("name")
+        if curr_email.strip() and "@" in curr_email and "." in curr_email:
+            cs_errors.discard("email")
+        if curr_sub.strip():
+            cs_errors.discard("subject")
+        if curr_msg.strip():
+            cs_errors.discard("message")
+
+        st.session_state["cs_errors"] = cs_errors
+
+        def clear_cs_field_err(field_key):
+            errs = st.session_state.get("cs_errors", set())
+            if field_key in errs:
+                errs.discard(field_key)
+                st.session_state["cs_errors"] = errs
+
+        # Dynamic red border styling for invalid inputs
+        css_rules = []
+        if "name" in cs_errors:
+            css_rules.append("""
+            div[class*="st-key-cs_user_name"] div[data-baseweb="input"],
+            div[class*="st-key-cs_user_name"] input {
+                border: 1.5px solid #EF4444 !important;
+                background-color: rgba(239, 68, 68, 0.08) !important;
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+            }
+            """)
+        if "email" in cs_errors:
+            css_rules.append("""
+            div[class*="st-key-cs_user_email"] div[data-baseweb="input"],
+            div[class*="st-key-cs_user_email"] input {
+                border: 1.5px solid #EF4444 !important;
+                background-color: rgba(239, 68, 68, 0.08) !important;
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+            }
+            """)
+        if "subject" in cs_errors:
+            css_rules.append("""
+            div[class*="st-key-cs_subject"] div[data-baseweb="input"],
+            div[class*="st-key-cs_subject"] input {
+                border: 1.5px solid #EF4444 !important;
+                background-color: rgba(239, 68, 68, 0.08) !important;
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+            }
+            """)
+        if "message" in cs_errors:
+            css_rules.append("""
+            div[class*="st-key-cs_message"] div[data-baseweb="textarea"],
+            div[class*="st-key-cs_message"] textarea {
+                border: 1.5px solid #EF4444 !important;
+                background-color: rgba(239, 68, 68, 0.08) !important;
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+            }
+            """)
+
+        # Override red border with standard cyan styling whenever user focuses on or enters a text box
+        css_rules.append("""
+        div[class*="st-key-cs_"] div[data-baseweb="input"]:focus-within,
+        div[class*="st-key-cs_"] input:focus,
+        div[class*="st-key-cs_"] div[data-baseweb="textarea"]:focus-within,
+        div[class*="st-key-cs_"] textarea:focus {
+            border: 1.5px solid #22D3EE !important;
+            background-color: rgba(34, 211, 238, 0.05) !important;
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.35) !important;
+        }
+        """)
+
+        st.markdown(f"<style>{''.join(css_rules)}</style>", unsafe_allow_html=True)
+
+        col_f1, col_f2 = st.columns(2, gap="medium")
+        with col_f1:
+            u_name = st.text_input(
+                " Your Full Name*",
+                placeholder="e.g. Daksh Vasani",
+                key=f"cs_user_name_{cs_form_ver}",
+                on_change=clear_cs_field_err,
+                args=("name",)
+            )
+        with col_f2:
+            u_email = st.text_input(
+                " Your Email Address*",
+                placeholder="e.g. yourname@gmail.com",
+                key=f"cs_user_email_{cs_form_ver}",
+                on_change=clear_cs_field_err,
+                args=("email",)
+            )
+
+        u_sub = st.text_input(
+            " Subject*",
+            placeholder="e.g. Issue with URL Scanner / Question about CyberMind AI",
+            key=f"cs_subject_{cs_form_ver}",
+            on_change=clear_cs_field_err,
+            args=("subject",)
+        )
+        u_msg = st.text_area(
+            " Problem Description*",
+            placeholder="Please write the problem, error message, or question you need help with...",
+            height=130,
+            key=f"cs_message_{cs_form_ver}",
+            on_change=clear_cs_field_err,
+            args=("message",)
+        )
+
+        col_btn, col_extra = st.columns([1.8, 3.2], gap="medium")
+        with col_btn:
+            submit_ticket = st.button("️ Send Support Request", key="btn_submit_support_ticket", type="primary")
+
+
+        if submit_ticket:
+            errs = set()
+            err_msgs = []
+            if not u_name.strip():
+                errs.add("name")
+                err_msgs.append("Full Name")
+            if not u_email.strip() or "@" not in u_email or "." not in u_email:
+                errs.add("email")
+                err_msgs.append("Valid Email Address")
+            if not u_sub.strip():
+                errs.add("subject")
+                err_msgs.append("Subject")
+            if not u_msg.strip():
+                errs.add("message")
+                err_msgs.append("Problem Description")
+
+            if errs:
+                st.session_state["cs_errors"] = errs
+                show_cyber_toast(
+                    "Input Validation Error",
+                    f"Please fill out the required field(s) marked in red: {', '.join(err_msgs)}.",
+                    kind="error"
+                )
+                st.rerun()
+            else:
+                st.session_state["cs_errors"] = set()
+                from services.email_support_service import send_support_ticket
+                ticket_res = send_support_ticket(
+                    name=u_name.strip(),
+                    email=u_email.strip(),
+                    subject=u_sub.strip(),
+                    message=u_msg.strip()
+                )
+
+                if ticket_res.get("success"):
+                    t_id = ticket_res.get("ticket_id")
+                    # Clean/reset all form text boxes safely by versioning
+                    st.session_state["cs_form_ver"] = cs_form_ver + 1
+                    st.session_state["cs_errors"] = set()
+
+                    show_cyber_toast(
+                        "Support Request Dispatched",
+                        f"Ticket {t_id} logged successfully! A confirmation email has been dispatched to {u_email.strip()}. Our team will contact you within 24–25 hours.",
+                        kind="success"
+                    )
+                    st.rerun()
+                else:
+                    show_cyber_toast(
+                        "Delivery Error",
+                        f"Failed to submit ticket: {ticket_res.get('message')}",
+                        kind="error"
+                    )
+                    st.rerun()
+
 
 
 
@@ -9689,6 +10823,7 @@ st.session_state.prev_active_page = st.session_state.active_page
 # Router — content renders in the normal block-container (CSS padding offsets for sidebar)
 
 render_offline_toast()
+render_cyber_toast()
 
 page = st.session_state.active_page
 if page == "Home" or page == "Dashboard":
@@ -9933,7 +11068,7 @@ if st.session_state.active_page != "AI Security Assistant":
 
 # ── SECTION 11: RED FLOATING SCAN EXPLAINER WIDGET ──
 if hasattr(st, "dialog"):
-    @st.dialog(" ")
+    @st.dialog(" ", width="large")
     def render_scan_explainer_dialog():
         st.markdown(
             """
@@ -9946,10 +11081,10 @@ if hasattr(st, "dialog"):
             div[data-baseweb="modal"],
             [data-testid="stDialog"],
             [data-testid="stModal"] {
-                background: rgba(0, 0, 0, 0.4) !important;
-                background-color: rgba(0, 0, 0, 0.4) !important;
-                backdrop-filter: blur(6px) !important;
-                -webkit-backdrop-filter: blur(6px) !important;
+                background: rgba(0, 0, 0, 0.65) !important;
+                background-color: rgba(0, 0, 0, 0.65) !important;
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
             }
             div[data-baseweb="modal"] > div,
             div[data-baseweb="modal"] > div > div,
@@ -9960,12 +11095,22 @@ if hasattr(st, "dialog"):
             div[data-baseweb="modal"] [role="dialog"],
             [data-testid="stDialog"] [role="dialog"],
             [data-testid="stDialog"] [data-testid="stDialogContent"] {
-                background: var(--dialog-bg) !important;
-                background-color: var(--dialog-bg) !important;
-                color: var(--dialog-text) !important;
-                border: 1px solid var(--dialog-border) !important;
+                background: #0f141f !important;
+                background-color: #0f141f !important;
+                color: var(--dialog-text, #ffffff) !important;
+                border: 1px solid rgba(34, 211, 238, 0.35) !important;
                 border-radius: 16px !important;
-                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5) !important;
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(34, 211, 238, 0.15) !important;
+                max-width: 94vw !important;
+                width: 900px !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
+            [data-testid="stDialog"] [data-testid="stDialogContent"] {
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                max-height: 85vh !important;
+                padding: 22px 26px !important;
             }
             div[data-testid="stDialogHeader"] h2,
             div[data-testid="stDialogHeader"] span,
@@ -9973,9 +11118,53 @@ if hasattr(st, "dialog"):
             [data-testid="stDialog"] h2 {
                 display: none !important;
             }
+
+            /* Responsive Table Styling - Prevents overflowing out of UI */
+            [data-testid="stDialog"] table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                border-collapse: collapse !important;
+                margin: 14px 0 !important;
+                border-radius: 8px !important;
+                overflow: hidden !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            }
+            [data-testid="stDialog"] th {
+                background: rgba(34, 211, 238, 0.14) !important;
+                color: #22D3EE !important;
+                font-weight: 700 !important;
+                font-size: 12.5px !important;
+                padding: 10px 12px !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                text-align: left !important;
+            }
+            [data-testid="stDialog"] td {
+                background: rgba(18, 24, 38, 0.55) !important;
+                color: rgba(255, 255, 255, 0.9) !important;
+                font-size: 13px !important;
+                line-height: 1.55 !important;
+                padding: 10px 12px !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+            }
+            [data-testid="stDialog"] tr:hover td {
+                background: rgba(34, 211, 238, 0.06) !important;
+            }
+            [data-testid="stDialog"] button[aria-label="Close"] {
+                color: rgba(255, 255, 255, 0.7) !important;
+            }
+            [data-testid="stDialog"] button[aria-label="Close"]:hover {
+                color: #ffffff !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+            }
             </style>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; margin-top: -10px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/6071/6071531.png" width="30" height="30" style="object-fit: contain;">
+                <img src="https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true" width="30" height="30" style="object-fit: contain;">
                 <span style="font-size: 19px; font-weight: 800; color: var(--text);">AI Scan Explanation</span>
             </div>
             """,
@@ -9998,28 +11187,69 @@ if hasattr(st, "dialog"):
         with st.spinner("Generating plain-language explanation with CyberMind-AI..."):
             import json
             from modules.ai_assistant import query_groq_api
+
+            findings_data = context.get('findings', {})
+            reasons = []
+            if isinstance(findings_data, dict):
+                reasons = (
+                    findings_data.get('risk', {}).get('reasons')
+                    or findings_data.get('reasons')
+                    or []
+                )
+            reasons_str = ", ".join(reasons) if reasons else "Standard automated scan attributes analyzed"
+
             prompt_messages = [
                 {
-                    "role": "system", 
-                    "content": "You are CyberMind AI, an expert security assistant. Explain the security scan results in simple plain language: 1) What was found, 2) Why it's safe or risky, and 3) 2-3 concrete steps the user should take right now. Keep your response under 200 words in Markdown."
+                    "role": "system",
+                    "content": (
+                        "You are CyberMind AI, an elite cybersecurity and threat intelligence analyst. "
+                        "Provide a comprehensive, authoritative, and in-depth security briefing for the scanned asset.\n\n"
+                        "Format your response with the following structured Markdown sections:\n"
+                        "### 1.  Detailed Diagnosis & Security Verdict\n"
+                        "Explain what this target is, the exact scanner used, and why it received its specific risk score and verdict.\n"
+                        "### 2. ️ Technical Risk Breakdown & Threat Vectors\n"
+                        "Break down each detected indicator (e.g., suspicious lexical tokens, domain age, SSL/security headers, blacklist entries, or telecom profile) and explain the concrete real-world danger (phishing, credential harvesting, malware execution, or financial fraud).\n"
+                        "Present this breakdown in clean, compact structured bullet cards or a neat 2-3 column table that fits cleanly within the modal window without overflowing.\n"
+                        "### 3. ️ Immediate Recommended Action Plan\n"
+                        "Provide 3-4 concrete, prioritized security steps for the user or administrator."
+                    )
                 },
                 {
                     "role": "user",
-                    "content": f"Scan Context: Target='{target}', Scanner='{scanner}', Risk Level='{level}', Risk Score={score}, Findings={context.get('findings', {})}"
+                    "content": (
+                        f"Target Asset: '{target}'\n"
+                        f"Scanner Module: {scanner}\n"
+                        f"Risk Score: {score}/100\n"
+                        f"Assigned Verdict: {level}\n"
+                        f"Specific Identified Risk Indicators: {reasons_str}\n"
+                        f"Technical Findings Summary: {str(findings_data)[:1200]}"
+                    )
                 }
             ]
-            exp_res = query_groq_api(prompt_messages)
-            if exp_res.startswith("Groq API Error") or exp_res.startswith("Error") or exp_res.startswith("Failed"):
-                exp_res = (
-                    f"**Analysis Summary for `{target}`:**\n\n"
-                    f"- **Security Status:** Classified as **{level}** with a risk score of **{score}/100**.\n"
-                    f"- **Assessment:** Evaluated against multiple threat databases, domain metrics, and Machine Learning models.\n\n"
-                    f"**Recommended Actions:**\n"
-                    f"1. {'Do not enter personal or financial information on this page.' if score >= 40 else 'Resource appears safe; proceed with normal caution.'}\n"
-                    f"2. Verify domain WHOIS registration age and SSL certificate authenticity.\n"
-                    f"3. Re-scan or request administrative clearance if unexpected."
+            exp_res = query_groq_api(prompt_messages, max_tokens=1500)
+            if exp_res.startswith("Groq API Error") or exp_res.startswith("Error") or exp_res.startswith("Failed") or exp_res.startswith("Error:"):
+                threat_desc = (
+                    "Critical threat: elevated probability of malicious payload delivery, phishing, or financial fraud."
+                    if score >= 70 else
+                    "Elevated suspicion: anomalous patterns detected; avoid sharing sensitive personal or payment details."
+                    if score >= 40 else
+                    "Low risk: no active malicious signatures detected."
                 )
-        st.markdown(exp_res)
+                exp_res = (
+                    f"###  Detailed Security Diagnosis for `{target}`\n\n"
+                    f"- **Scanner Module:** {scanner}\n"
+                    f"- **Assigned Verdict:** **{level}** (Risk Score: **{score}/100**)\n\n"
+                    f"### ️ Technical Risk Breakdown\n\n"
+                    f"- **Identified Risk Factors:** {reasons_str}\n"
+                    f"- **Threat Assessment:** Automated inspection evaluated lexical characteristics, threat intelligence feeds, domain parameters, and trained machine learning classifiers.\n"
+                    f"- **Risk Implication:** {threat_desc}\n\n"
+                    f"### ️ Immediate Recommended Action Plan\n\n"
+                    f"1. {'Immediately block network access and avoid loading any scripts or resources from this target.' if score >= 50 else 'Normal access permitted with standard operational security vigilance.'}\n"
+                    f"2. Inspect SSL/TLS certificates and WHOIS domain registration history before trusting.\n"
+                    f"3. Verify authentication requests via an out-of-band communication channel.\n"
+                    f"4. Report suspicious URLs or phone numbers to local security administrators or community feeds."
+                )
+        st.markdown(f'<div style="width:100%; max-width:100%; overflow-x:auto;">\n\n{exp_res}\n\n</div>', unsafe_allow_html=True)
 
 last_ctx = st.session_state.get("last_scan_context", {})
 active_p = st.session_state.get("active_page")

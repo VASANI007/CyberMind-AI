@@ -218,15 +218,14 @@ class URLScanner:
             )
 
         report["ml_prediction"] = self.ml_prediction(
-
             report
-
         )
 
+        if "ml_prediction" not in report.get("analysis", {}):
+            report.setdefault("analysis", {})["ml_prediction"] = report["ml_prediction"]
+
         report["risk"] = self.risk(
-
             report
-
         )
 
         report["recommendation"] = (

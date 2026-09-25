@@ -41,13 +41,50 @@ class PhoneScanner:
         logger.info("Phone threat scan started: %s", phone_number)
         analysis = phone_service.analyze(phone_number)
 
-        # Unified Risk Engine integration
-        risk = risk_engine.calculate(analysis)
+        # Phone-specific Risk Engine integration
+        # NOTE: Generic risk_engine.calculate() is designed for URL/domain/email with reputation,
+        # blacklist, ssl, google_safe_browsing, virustotal sources. For phone scans, none of those
+        # exist → missing_count=5 → always score=15, data_completeness=0%, level="Unverified".
+        # Instead, use phone_service's own rule_score (stored as fraud_score) directly.
+        phone_fraud_score = analysis.get("fraud_score", 0)
+        scam_risk = analysis.get("scam_risk", "Low")
 
-        # Align overall risk score with phone fraud score if specific threat signals present
-        if analysis.get("fraud_score", 0) > risk.get("score", 0):
-            risk["score"] = analysis["fraud_score"]
-            risk["level"] = risk_engine.level(risk["score"])
+        # Map phone scam_risk to standard risk level
+        _scam_to_level = {
+            "Low": "Safe",
+            "Unverified": "Low",   # IPQS data unavailable — cannot confirm safe, show cautious Low
+            "Medium": "Medium",
+            "High": "High",
+            "Critical": "Critical",
+        }
+        phone_risk_level = _scam_to_level.get(scam_risk, "Low")
+
+        # Build risk dict compatible with run_scan() expectations
+        risk = {
+            "score": phone_fraud_score,
+            "level": phone_risk_level,
+            "confidence": 75.0 if (
+                analysis.get("abstract_phone_integrated")
+                or analysis.get("numverify_integrated")
+                or analysis.get("verificaremails_integrated")
+                or analysis.get("veriphone_integrated")
+                or analysis.get("ipqs_integrated")
+            ) else 50.0,
+            "data_completeness": 100.0,
+            "sources_present": 1,
+            "sources_expected": 1,
+            "reasons": analysis.get("reasons", []),
+            "breakdown": {
+                "phone_fraud_score": phone_fraud_score,
+                "scam_risk": scam_risk,
+            },
+            "consensus": {
+                "sources_checked": 1,
+                "sources_flagged": 1 if phone_fraud_score >= 50 else 0,
+                "consensus_ratio": 1.0 if phone_fraud_score >= 50 else 0.0,
+                "summary": f"Phone intelligence score: {phone_fraud_score}/100"
+            }
+        }
 
         analysis["risk"] = risk
 
@@ -86,7 +123,7 @@ class PhoneScanner:
             "Phone Validation",
             "Telecom & Carrier Analysis",
             "VoIP & Prepaid Detection",
-            "IPQS Threat Intelligence",
+            "AbstractAPI / Numverify / VerificarEmails Phone Intelligence",
             "Scam & Abuse Risk Scoring",
             "Report Number Feature",
             "Unified Cyber Risk Engine"

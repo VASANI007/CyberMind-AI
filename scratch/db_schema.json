@@ -1,0 +1,973 @@
+{
+  "users": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "name",
+        "type": "TEXT",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "email",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "sqlite_sequence": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "name",
+        "type": "",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 1,
+        "name": "seq",
+        "type": "",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 2
+  },
+  "scan_history": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_type",
+        "type": "TEXT",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "target",
+        "type": "TEXT",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "risk_level",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "status",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "scan_time",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "country",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "country_code",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "latitude",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "longitude",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 114
+  },
+  "url_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "url",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "domain",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "https",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "status_code",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "response_time",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "redirect_count",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "server",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "content_type",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "google_safe_browsing",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 11,
+        "name": "virustotal",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 12,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 13,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "website_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "url",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "title",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "server",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "ssl_version",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "tls_version",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "security_headers",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "technologies",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "dns_records",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 11,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "domain_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "domain",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "registrar",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "creation_date",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "expiration_date",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "updated_date",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "dnssec",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "whois_status",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "email_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "email",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "provider",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "valid",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "mx_record",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "disposable",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "free_provider",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "ip_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "ip",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "country",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "city",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "region",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "asn",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "isp",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "abuse_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "latitude",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "longitude",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 11,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 12,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "file_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "filename",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "extension",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "mime_type",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "file_size",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "md5",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "sha1",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "sha256",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 9,
+        "name": "signature",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 10,
+        "name": "virustotal",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 11,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 12,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "qr_scans": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "payload",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "qr_type",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "decoded_text",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "is_short_url",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "contains_url",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 8,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "api_logs": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "api_name",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "request_url",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "status_code",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "response_time",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "success",
+        "type": "BOOLEAN",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "reports": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "report_name",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "report_type",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "report_path",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "settings": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "key",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "value",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 7
+  },
+  "scan_statistics": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scan_date",
+        "type": "DATE",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "total_scans",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "safe",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "low",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "medium",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "high",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 7,
+        "name": "critical",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 0
+  },
+  "feedback": {
+    "columns": [
+      {
+        "cid": 0,
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 1
+      },
+      {
+        "cid": 1,
+        "name": "scanner_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 2,
+        "name": "target",
+        "type": "TEXT",
+        "notnull": 1,
+        "pk": 0
+      },
+      {
+        "cid": 3,
+        "name": "risk_score",
+        "type": "REAL",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 4,
+        "name": "is_helpful",
+        "type": "INTEGER",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 5,
+        "name": "comment",
+        "type": "TEXT",
+        "notnull": 0,
+        "pk": 0
+      },
+      {
+        "cid": 6,
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "pk": 0
+      }
+    ],
+    "count": 2
+  }
+}

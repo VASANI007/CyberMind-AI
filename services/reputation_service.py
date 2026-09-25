@@ -8,6 +8,8 @@ Enterprise Production Version
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 from core.logger import logger
@@ -105,12 +107,48 @@ class ReputationService:
     }
 
     def __init__(self) -> None:
-
+        self.popular_domains: set[str] = set()
+        self._load_popular_domains()
         logger.info(
-
             "Reputation Service initialized."
-
         )
+
+    def _load_popular_domains(self) -> None:
+        try:
+            pop_path = Path(__file__).parent.parent / "data" / "domain" / "popular_domains.json"
+            if pop_path.exists():
+                with open(pop_path, "r", encoding="utf-8") as f:
+                    domains = json.load(f)
+                    if isinstance(domains, list):
+                        self.popular_domains = set(d.lower().strip() for d in domains if isinstance(d, str))
+        except Exception as exc:
+            logger.warning("Could not load popular_domains.json in reputation service: %s", exc)
+
+    def _extract_domain(self, report: dict[str, Any]) -> str:
+        domain = report.get("domain")
+        if isinstance(domain, dict):
+            domain = domain.get("domain") or domain.get("name")
+        if not domain:
+            url = report.get("url") or report.get("target") or ""
+            if "://" in url:
+                domain = url.split("://")[1].split("/")[0].split(":")[0]
+            elif "/" in url:
+                domain = url.split("/")[0].split(":")[0]
+            else:
+                domain = url
+        dom = str(domain or "").lower().strip()
+        if dom.startswith("www."):
+            dom = dom[4:]
+        return dom
+
+    def _is_popular_domain(self, report: dict[str, Any]) -> bool:
+        dom = self._extract_domain(report)
+        if not dom:
+            return False
+        for pop in self.popular_domains:
+            if dom == pop or dom.endswith("." + pop):
+                return True
+        return False
 
     def _limit_score(
 
@@ -576,18 +614,19 @@ class ReputationService:
         )
 
         if malicious > 0:
-
-            score += self.SCORE_WEIGHTS[
-
-                "virustotal"
-
-            ]
-
-            reasons.append(
-
-                f"VirusTotal detected {malicious} engine(s)."
-
-            )
+            if malicious == 1:
+                score += 5
+                reasons.append("VirusTotal single engine detection (possible false positive).")
+            elif malicious == 2:
+                score += 12
+                reasons.append(f"VirusTotal detected {malicious} engine(s).")
+            else:
+                score += self.SCORE_WEIGHTS[
+                    "virustotal"
+                ]
+                reasons.append(
+                    f"VirusTotal detected {malicious} engine(s)."
+                )
 
         ssl = self._section(
 
@@ -761,19 +800,25 @@ class ReputationService:
         )
 
         total_score = (
-
             feature_score
-
             +
-
             intelligence_score
-
         )
 
+        # Popular domains protection: if known authentic domain with clean hard threat intel, cap risk score
+        is_pop = self._is_popular_domain(report)
+        blacklist = self._section(report, "blacklist")
+        google = self._section(report, "google_safe_browsing")
+        has_hard_threat = (
+            bool(blacklist.get("detected") or blacklist.get("blacklisted"))
+            or bool(google.get("malicious"))
+            or (self._int(self._section(report, "virustotal").get("malicious", 0)) >= 3)
+        )
+        if is_pop and not has_hard_threat:
+            total_score = min(total_score, 5)
+
         total_score = self._limit_score(
-
             total_score
-
         )
 
         reasons = (

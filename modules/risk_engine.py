@@ -8,6 +8,8 @@ Enterprise Production Version
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 from core.logger import logger
@@ -40,12 +42,22 @@ class RiskEngine:
     def __init__(
         self
     ) -> None:
-
+        self.popular_domains: set[str] = set()
+        self._load_popular_domains()
         logger.info(
-
             "Risk Engine initialized."
-
         )
+
+    def _load_popular_domains(self) -> None:
+        try:
+            pop_path = Path(__file__).parent.parent / "data" / "domain" / "popular_domains.json"
+            if pop_path.exists():
+                with open(pop_path, "r", encoding="utf-8") as f:
+                    domains = json.load(f)
+                    if isinstance(domains, list):
+                        self.popular_domains = set(d.lower().strip() for d in domains if isinstance(d, str))
+        except Exception as exc:
+            logger.warning("Could not load popular_domains.json in risk engine: %s", exc)
 
     def calculate(
         self,
@@ -111,120 +123,264 @@ class RiskEngine:
             (sources_present / len(expected_sources)) * 100, 1
         ) if expected_sources else 100.0
 
-        # ── Fail-open: missing data = mild risk signal ──
         missing_count = len(expected_sources) - sources_present
-        if missing_count >= 3:
-            score += 15
-            reasons.append(f"Low data completeness ({sources_present}/{len(expected_sources)} sources)")
-        elif missing_count >= 2:
-            score += 8
-            reasons.append(f"Partial data ({sources_present}/{len(expected_sources)} sources)")
 
-        # Reputation
-        reputation_score = reputation.get("score", 100)
+        # Extract sub-sections for granular calculations
+        whois = _extract("whois")
+        sec_headers = _extract("security_headers")
+        features_data = _extract("features")
 
-        if reputation_score < 80:
-            score += 15
-            reasons.append("Low reputation score")
-        if reputation_score < 60:
-            score += 25
-        if reputation_score < 40:
-            score += 25
-
-        # Blacklist
-        if blacklist.get("detected", False) or blacklist.get("blacklisted", False):
-            score += 60
-            reasons.append("Blacklisted across threat databases")
-
-        # SSL
-        if not ssl.get("valid", True):
-            score += 15
-            reasons.append("Invalid SSL")
-
-        # Google Safe Browsing
+        # 1. Google Safe Browsing (Live Threat Feed)
         if google.get("malicious", False) or (
             "safe" in google and not google.get("safe", True)
         ):
-            score += 75
+            score += 65.0
             reasons.append("Google Safe Browsing Flagged Malicious")
 
-        # VirusTotal
-        malicious = virustotal.get("malicious", 0)
-        if malicious > 0:
-            score += min(malicious * 10, 75)
-            reasons.append(f"VirusTotal detected {malicious} engine flags")
+        # 2. Blacklist (Threat Databases)
+        if blacklist.get("detected", False) or blacklist.get("blacklisted", False):
+            score += 55.0
+            reasons.append("Blacklisted across threat databases")
 
-        # Homograph / Typosquat / Brand Impersonation
+        # 3. VirusTotal (Continuous Ratio of live engines)
+        malicious = virustotal.get("malicious", 0)
+        vt_stats = virustotal.get("stats") or virustotal.get("risk") or {}
+        total_engines = vt_stats.get("harmless", 0) + vt_stats.get("malicious", 0) + vt_stats.get("suspicious", 0)
+        if total_engines <= 0:
+            total_engines = 88
+        if malicious > 0:
+            if malicious == 1:
+                score += 2.0
+                reasons.append("VirusTotal: 1 engine flag (heuristic anomaly)")
+            elif malicious == 2:
+                score += 5.5
+                reasons.append(f"VirusTotal detected {malicious} engine flags")
+            else:
+                vt_ratio = malicious / total_engines
+                vt_pts = round(18.0 + min(50.0, vt_ratio * 95.0), 1)
+                score += vt_pts
+                reasons.append(f"VirusTotal detected {malicious} engine flags (+{int(vt_pts)} pts)")
+
+        # 4. SSL Analysis (Live TLS Handshake)
+        if not ssl.get("valid", True):
+            score += 14.0
+            reasons.append("Invalid or missing SSL certificate")
+
+        # 5. WHOIS Domain Age (Continuous Curve)
+        domain_age = whois.get("domain_age_days")
+        if domain_age is not None:
+            try:
+                age_days = float(domain_age)
+                if age_days < 30:
+                    age_pen = round(13.0 * (1.0 - (age_days / 30.0)), 1)
+                    score += age_pen
+                    reasons.append(f"Newly registered domain ({int(age_days)} days old)")
+                elif age_days < 180:
+                    age_pen = round(6.0 * (1.0 - ((age_days - 30) / 150.0)), 1)
+                    score += age_pen
+                elif age_days > 1825:
+                    trust_credit = min(5.0, round((age_days - 1825) / 1500.0, 1))
+                    score = max(0.0, score - trust_credit)
+            except Exception:
+                pass
+
+        # 6. Security Headers (Continuous floating score)
+        header_score = sec_headers.get("score")
+        if header_score is not None:
+            try:
+                h_val = float(header_score)
+                if h_val < 50:
+                    h_pen = round((50.0 - h_val) * 0.08, 1)
+                    score += h_pen
+            except Exception:
+                pass
+
+        # 7. URL Shannon Entropy (Continuous Float)
+        url_entropy = features_data.get("url_entropy")
+        if url_entropy is not None:
+            try:
+                e_val = float(url_entropy)
+                if e_val > 4.2:
+                    ent_pen = round(min(11.0, (e_val - 4.2) * 8.5), 1)
+                    score += ent_pen
+                    reasons.append(f"Suspicious URL entropy ({e_val:.2f})")
+            except Exception:
+                pass
+
+        # 8. Homograph / Typosquat / Brand Impersonation
         homograph_data = _extract("homograph")
         if homograph_data.get("is_homograph"):
-            score += 45
+            score += 38.0
             reasons.append("Homograph Unicode attack")
 
         typosquat_data = _extract("typosquat")
         if typosquat_data.get("is_typosquat"):
-            score += 35
+            score += 29.0
             reasons.append("Typosquatting domain")
 
         brand_data = _extract("brand_impersonation")
         if brand_data.get("is_impersonation"):
-            score += 50
+            score += 41.0
             reasons.append("Brand impersonation detected")
 
-        # TOR / VPN
+        # 9. TOR / VPN / Disposable
         tor_data = _extract("tor")
         if tor_data.get("is_tor"):
-            score += 55
+            score += 48.0
             reasons.append("TOR Exit Node IP")
 
         vpn_data = _extract("vpn_proxy")
         if vpn_data.get("is_vpn"):
-            score += 20
+            score += 16.0
             reasons.append("VPN / Proxy IP")
 
-        # Disposable email
         disposable_data = _extract("disposable")
         if disposable_data.get("is_disposable"):
-            score += 45
+            score += 37.0
             reasons.append("Disposable / temporary email domain")
 
-        # File entropy & Macros
+        # 10. File Entropy & Macros
         entropy_data = _extract("entropy_analysis")
         if entropy_data.get("is_suspicious"):
-            score += entropy_data.get("risk_contribution", 25)
+            score += float(entropy_data.get("risk_contribution", 22))
             reasons.append("Suspicious file entropy")
 
         macro_data = _extract("macro_detection")
         if macro_data.get("suspicious"):
-            score += macro_data.get("risk_contribution", 35)
+            score += float(macro_data.get("risk_contribution", 31))
             reasons.append("Suspicious Office VBA macro")
 
-        # Lexical suspicious keywords check
+        # 11. Lexical Suspicious Keywords
         keyword_check = _extract("lexical_keywords")
-
         if keyword_check.get("severity") == "high":
-            score += 65
+            score += 54.0
             matched_kws = keyword_check.get("matched_keywords", [])
             reasons.append(f"Alarming keyword(s) found in target: {', '.join(matched_kws)}")
         elif keyword_check.get("severity") == "medium":
-            score += 25
+            score += 19.0
             matched_kws = keyword_check.get("matched_keywords", [])
             reasons.append(f"Suspicious keyword(s) found in target: {', '.join(matched_kws)}")
 
-        # Phone Threat Intelligence rules
+        # 12. Phone Threat Intelligence
         if report.get("line_type") and report.get("scam_risk"):
             phone_fraud = report.get("fraud_score", 0)
             if phone_fraud > 0:
-                score = max(score, phone_fraud)
+                score = max(score, float(phone_fraud))
             if report.get("recent_abuse") == "Yes":
                 reasons.append("Phone number associated with recent abuse/scam reports")
             if report.get("voip") == "Yes":
+                score += 18.0
                 reasons.append("VoIP / Virtual Phone Line (High Risk)")
 
-        score = min(score, 100)
+        # Target domain extraction for trusted domain checks
+        dom_val = (
+            report.get("domain")
+            or report.get("domain_name")
+            or report.get("target")
+            or report.get("url")
+            or report.get("hostname")
+            or ""
+        )
+        if isinstance(dom_val, dict):
+            dom_val = dom_val.get("domain") or dom_val.get("name") or ""
+        dom_str = str(dom_val).lower().strip()
+        if "://" in dom_str:
+            dom_str = dom_str.split("://")[1].split("/")[0].split(":")[0]
+        elif "/" in dom_str:
+            dom_str = dom_str.split("/")[0].split(":")[0]
+        if ":" in dom_str:
+            dom_str = dom_str.split(":")[0]
+        if dom_str.startswith("www."):
+            dom_str = dom_str[4:]
 
+        is_trusted_popular = False
+        if dom_str and self.popular_domains:
+            for pop in self.popular_domains:
+                if dom_str == pop or dom_str.endswith("." + pop):
+                    is_trusted_popular = True
+                    break
+
+        has_verified_threat = (
+            bool(blacklist.get("detected") or blacklist.get("blacklisted"))
+            or bool(google.get("malicious") or ("safe" in google and not google.get("safe", True)))
+            or malicious >= 3
+        )
+
+        # 13. AI / ML Prediction Integration (Continuous Probability)
+        ml_data = _extract("ml_prediction")
+        if not ml_data and "ml_prediction" in report:
+            ml_data = report.get("ml_prediction") or {}
+        
+        ml_pred_name = str(ml_data.get("prediction", "")).strip().lower()
+        ml_conf_val = ml_data.get("confidence")
+        if ml_conf_val is None:
+            ml_conf_val = ml_data.get("probability")
+        try:
+            ml_conf_float = float(ml_conf_val) if ml_conf_val is not None else 0.0
+        except Exception:
+            ml_conf_float = 0.0
+
+        has_major_signals = (
+            has_verified_threat
+            or (keyword_check.get("severity") == "high")
+            or bool(homograph_data.get("is_homograph"))
+            or bool(brand_data.get("is_impersonation"))
+            or bool(typosquat_data.get("is_typosquat"))
+        )
+
+        prob_0_1 = ml_conf_float if ml_conf_float <= 1.0 else ml_conf_float / 100.0
+
+        if ml_pred_name in ("phishing", "malicious", "threat") and prob_0_1 >= 0.60:
+            ai_risk_weight = round(prob_0_1 * 34.0, 1)
+            score += ai_risk_weight
+            reasons.append(f"AI Phishing model flagged target ({prob_0_1:.1%} confidence)")
+        elif ml_pred_name in ("legitimate", "safe", "clean", "benign") and prob_0_1 >= 0.70:
+            if not has_major_signals:
+                ai_discount = round(prob_0_1 * 11.5, 1)
+                score = max(0.0, score - ai_discount)
+
+        # 14. Reputation Service (Continuous Deviation)
+        reputation_score = reputation.get("score")
+        if reputation_score is not None:
+            try:
+                rep_val = float(reputation_score)
+                if rep_val < 80.0:
+                    rep_pen = round((80.0 - rep_val) * 0.32, 1)
+                    score += rep_pen
+                    if rep_pen >= 7.0:
+                        reasons.append(f"Low reputation score ({int(rep_val)}/100)")
+            except Exception:
+                pass
+
+        # 15. Trusted Popular Domain Trust Credit (Natural continuous credit)
+        if is_trusted_popular and not has_major_signals:
+            score = max(0.0, score - 7.0)
+            reasons = [
+                r for r in reasons
+                if not (
+                    "Low reputation" in r or "VirusTotal" in r or "keyword" in r.lower()
+                    or "data completeness" in r.lower() or "Partial data" in r
+                )
+            ]
+            reasons.append(f"Verified authentic popular domain ({dom_str})")
+
+        # Fail-open / data completeness
+        if missing_count >= 3:
+            score += 11.0
+            reasons.append(f"Low data completeness ({sources_present}/{len(expected_sources)} sources)")
+        elif missing_count >= 2:
+            score += 6.0
+            reasons.append(f"Partial data ({sources_present}/{len(expected_sources)} sources)")
+
+        score = int(round(min(100.0, max(0.0, score))))
+
+
+        rep_val_breakdown = reputation.get("score")
+        if rep_val_breakdown is None:
+            rep_val_breakdown = 100
 
         breakdown = {
-            "reputation_weight": 20 if reputation_score < 80 else 0,
+            "reputation_weight": 20 if rep_val_breakdown < 80 else 0,
             "blacklist_weight": 40 if (blacklist.get("detected") or blacklist.get("blacklisted")) else 0,
             "ssl_weight": 15 if not ssl.get("valid", True) else 0,
             "threat_intel_weight": 50 if google.get("malicious") else min(malicious * 5, 50),

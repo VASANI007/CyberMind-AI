@@ -75,41 +75,52 @@ class AISummaryModule:
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
+        reasons_text = ", ".join(reasons[:3]) if reasons else "Standard automated scan attributes analyzed"
         prompt = (
-            f"Write a concise 3-sentence executive summary for a security scan on '{target}'. "
-            f"Risk Score: {score}/100 ({level}). Key risk factors: {', '.join(reasons) if reasons else 'No major issues'}. "
-            f"Provide actionable advice for non-technical managers."
+            f"You are CyberMind AI Executive Security Analyst. Write a concise, professional 2 to 3 sentence executive summary for target '{target}'.\n"
+            f"- Verdict: {level} (Risk Score: {score}/100)\n"
+            f"- Identified Indicators: {reasons_text}\n\n"
+            f"Include:\n"
+            f"1. Target identity and assigned verdict ({score}/100).\n"
+            f"2. Primary contributing threat factors in plain words.\n"
+            f"3. Concrete immediate recommended action.\n"
+            f"Keep the summary strictly under 60 words in plain text with bold highlights for key terms. Do NOT use markdown tables or headers."
         )
-        payload = {
-            "model": "groq/compound",
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.4,
-            "max_tokens": 200
-        }
-        resp = requests.post(url, json=payload, headers=headers, timeout=8)
-        if resp.status_code == 200:
-            return resp.json()["choices"][0]["message"]["content"].strip()
+        models_to_try = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+        for model_name in models_to_try:
+            payload = {
+                "model": model_name,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.3,
+                "max_tokens": 200
+            }
+            try:
+                resp = requests.post(url, json=payload, headers=headers, timeout=8)
+                if resp.status_code == 200:
+                    return resp.json()["choices"][0]["message"]["content"].strip()
+            except Exception as e:
+                logger.warning("Groq summary model %s failed: %s", model_name, e)
         return None
 
     def _offline_summary(self, target: str, score: float, level: str, reasons: list[str]) -> str:
         if str(level).lower() == "unverified":
-            status_desc = f"is in an **UNVERIFIED STATE** (Score: {score}/100)"
-            action = "Low data completeness was available to confirm safety. Exercise caution."
+            status_desc = f"is classified as **UNVERIFIED** (Score: {score}/100)"
+            action = "Limited baseline intelligence was available. Exercise heightened caution before interacting."
         elif score >= 70:
-            status_desc = f"has been flagged as **HIGH RISK** ({level}, Score: {score}/100)"
-            action = "Immediate isolation or blocking of this asset is recommended."
+            status_desc = f"has been flagged as **CRITICAL / HIGH RISK** ({level}, Score: {score}/100)"
+            action = "Immediate network isolation and blocking of all communication with this asset is strongly recommended."
         elif score >= 40:
-            status_desc = f"exhibits **MODERATE RISK** ({level}, Score: {score}/100)"
-            action = "Caution is advised when interacting with or visiting this asset."
+            status_desc = f"exhibits **MODERATE TO HIGH RISK** ({level}, Score: {score}/100)"
+            action = "Caution is advised. Avoid entering credentials, submitting sensitive financial details, or downloading attachments."
         elif score >= 20:
             status_desc = f"exhibits **LOW RISK** ({level}, Score: {score}/100)"
-            action = "Minor risk signals detected. Continue to monitor."
+            action = "Minor anomalous signals detected. Continue standard operational monitoring."
         else:
-            status_desc = f"appears to be **SAFE** ({level}, Score: {score}/100)"
-            action = "No immediate security threats were detected during automated analysis."
+            status_desc = f"appears to be **BENIGN & SAFE** ({level}, Score: {score}/100)"
+            action = "No active malware signatures or blacklist triggers were detected during telemetry inspection."
 
         factors_str = f" Key contributing factors include: {', '.join(reasons[:3])}." if reasons else ""
-        return f"Analysis for `{target}` indicates that the target {status_desc}.{factors_str} {action}"
+        return f"Automated inspection for `{target}` indicates that the target {status_desc}.{factors_str} {action}"
 
     def translate_summary(self, text: str, target_lang: str) -> str:
         """
@@ -121,47 +132,92 @@ class AISummaryModule:
         api_key = os.environ.get("GROQ_API_KEY", "").strip()
         from core.offline_mode import offline_mode
         if api_key and not offline_mode.is_enabled:
-            try:
-                url = "https://api.groq.com/openai/v1/chat/completions"
-                headers = {
-                    "Authorization": f"Bearer {api_key}",
-                    "Content-Type": "application/json"
-                }
-                prompt = (
-                    f"Translate the following security analysis executive summary into {target_lang}. "
-                    f"Keep technical terms clear and easy to understand for non-technical users.\n\n"
-                    f"Summary: {text}"
-                )
-                payload = {
-                    "model": "groq/compound",
-                    "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.3,
-                    "max_tokens": 300
-                }
-                resp = requests.post(url, json=payload, headers=headers, timeout=6)
-                if resp.status_code == 200:
-                    return resp.json()["choices"][0]["message"]["content"].strip()
-            except Exception as e:
-                logger.warning("Groq translation failed: %s", e)
+            models_to_try = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+            for model_name in models_to_try:
+                try:
+                    url = "https://api.groq.com/openai/v1/chat/completions"
+                    headers = {
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    }
+                    prompt = (
+                        f"Translate the following cybersecurity executive summary into {target_lang}. "
+                        f"Maintain technical formatting, headings, bullet points, and clear recommendations.\n\n"
+                        f"Summary:\n{text}"
+                    )
+                    payload = {
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": 0.3,
+                        "max_tokens": 900
+                    }
+                    resp = requests.post(url, json=payload, headers=headers, timeout=12)
+                    if resp.status_code == 200:
+                        return resp.json()["choices"][0]["message"]["content"].strip()
+                except Exception as e:
+                    logger.warning("Groq translation with %s failed: %s", model_name, e)
 
         # Fallback offline translations
         lang_lower = target_lang.lower()
         if "hindi" in lang_lower and "hinglish" not in lang_lower:
-            return f"सुरक्षा विश्लेषण: {text.replace('Analysis for', '').replace('indicates that the target', 'यह दर्शाता है कि टारगेट')}"
+            return f"सुरक्षा विश्लेषण:\n\n{text.replace('Security Diagnosis & Verdict', 'सुरक्षा निदान व निर्णय').replace('Threat Vector Analysis', 'खतरे के वैक्टर का विश्लेषण').replace('Recommended Protective Actions', 'अनुशंसित सुरक्षात्मक कदम')}"
         elif "hinglish" in lang_lower:
-            return f"Security Analysis Update: {text} (Note: Kripya security action lein)."
+            return f"Security Analysis Briefing:\n\n{text}\n\n*(CyberMind AI Alert: Kripya recommended security precautions follow karein)*"
         elif "gujarati" in lang_lower:
-            return f"સુરક્ષા વિશ્લેષણ: {text}"
+            return f"સુરક્ષા વિશ્લેષણ:\n\n{text.replace('Security Diagnosis & Verdict', 'સુરક્ષા નિદાન અને નિર્ણય').replace('Recommended Protective Actions', 'સૂચવેલ સુરક્ષા પગલાં')}"
         elif "marathi" in lang_lower:
-            return f"सुरक्षा विश्लेषण: {text}"
+            return f"सुरक्षा विश्लेषण:\n\n{text.replace('Security Diagnosis & Verdict', 'सुरक्षा निदान आणि निर्णय').replace('Recommended Protective Actions', 'शिफारस केलेल्या सुरक्षा उपाययोजना')}"
         elif "spanish" in lang_lower:
-            return f"Análisis de seguridad: {text}"
+            return f"Análisis de Seguridad:\n\n{text}"
         elif "french" in lang_lower:
-            return f"Analyse de sécurité: {text}"
+            return f"Analyse de Sécurité:\n\n{text}"
         elif "german" in lang_lower:
-            return f"Sicherheitsanalyse: {text}"
+            return f"Sicherheitsanalyse:\n\n{text}"
 
         return text
+
+    def generate_tts(self, text: str, lang: str = "English 🇬🇧") -> bytes | None:
+        """
+        Generate natural voice audio (MP3 bytes) for the given executive summary text.
+        """
+        if not text:
+            return None
+        try:
+            import io
+            from gtts import gTTS
+            import re
+
+            lang_lower = str(lang).lower()
+            if "hindi" in lang_lower and "hinglish" not in lang_lower:
+                lang_code = "hi"
+            elif "gujarati" in lang_lower:
+                lang_code = "gu"
+            elif "marathi" in lang_lower:
+                lang_code = "mr"
+            elif "spanish" in lang_lower:
+                lang_code = "es"
+            elif "french" in lang_lower:
+                lang_code = "fr"
+            elif "german" in lang_lower:
+                lang_code = "de"
+            elif "hinglish" in lang_lower:
+                lang_code = "hi"
+            else:
+                lang_code = "en"
+
+            clean_text = re.sub(r'[*#`_>|\[\]\(\)]', ' ', text)
+            clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+            if len(clean_text) > 700:
+                clean_text = clean_text[:700] + "..."
+
+            tts = gTTS(text=clean_text, lang=lang_code, slow=False)
+            fp = io.BytesIO()
+            tts.write_to_fp(fp)
+            fp.seek(0)
+            return fp.getvalue()
+        except Exception as exc:
+            logger.warning("TTS audio generation failed: %s", exc)
+            return None
 
     def analyze(self, scan_result: dict[str, Any]) -> str:
         """Plugin interface."""

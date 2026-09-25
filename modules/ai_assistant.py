@@ -428,7 +428,7 @@ _COMPILED_KB: list[tuple[list[re.Pattern], str]] = [
 
 
 
-def query_groq_api(messages: list[dict[str, str]]) -> str:
+def query_groq_api(messages: list[dict[str, str]], max_tokens: int = 1024) -> str:
     from dotenv import load_dotenv
     from pathlib import Path
     load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=True)
@@ -442,22 +442,25 @@ def query_groq_api(messages: list[dict[str, str]]) -> str:
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    payload = {
-        "model": "groq/compound",
-        "messages": messages,
-        "temperature": 0.5,
-        "max_tokens": 1024
-    }
-    
-    try:
-        response = requests.post(url, json=payload, headers=headers, timeout=15)
-        if response.status_code == 200:
-            res_data = response.json()
-            return res_data["choices"][0]["message"]["content"].strip()
-        else:
-            return f"Groq API Error (Status {response.status_code}): {response.text}"
-    except Exception as e:
-        return f"Failed to connect to Groq API: {str(e)}"
+    models_to_try = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+    last_err = ""
+    for model_name in models_to_try:
+        payload = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": 0.5,
+            "max_tokens": max_tokens
+        }
+        try:
+            response = requests.post(url, json=payload, headers=headers, timeout=15)
+            if response.status_code == 200:
+                res_data = response.json()
+                return res_data["choices"][0]["message"]["content"].strip()
+            else:
+                last_err = f"Groq API Error ({model_name} Status {response.status_code}): {response.text}"
+        except Exception as e:
+            last_err = f"Failed to connect to Groq API ({model_name}): {str(e)}"
+    return last_err
 
 
 def get_offline_response(user_message: str) -> str | None:

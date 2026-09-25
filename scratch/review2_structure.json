@@ -1,0 +1,4802 @@
+[
+  {
+    "slide_index": 1,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "Rectangle 23",
+        "type": "AUTO_SHAPE (1)",
+        "left": 0,
+        "top": 0,
+        "width": 12192001,
+        "height": 6858000,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Title 1",
+        "type": "PLACEHOLDER (14)",
+        "left": 6730000,
+        "top": 1524397,
+        "width": 4813072,
+        "height": 2609491,
+        "text_frame": [
+          {
+            "text": "CyberMind AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " AI",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "name": "Subtitle 2",
+        "type": "PLACEHOLDER (14)",
+        "left": 7362900,
+        "top": 6047651,
+        "width": 4829101,
+        "height": 810349,
+        "text_frame": [
+          {
+            "text": "Presented by Daksh Vasani",
+            "runs": [
+              {
+                "text": "Presented by ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Daksh Vasani ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "ER. NO: 2504070500037",
+            "runs": [
+              {
+                "text": "ER. NO: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "2504070500037",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "Picture 5",
+        "type": "PICTURE (13)",
+        "left": 1,
+        "top": 10,
+        "width": 6096000,
+        "height": 6857990,
+        "is_picture": true,
+        "image_filename": "image.jpeg",
+        "image_ext": "jpg",
+        "content_type": "image/jpeg"
+      },
+      {
+        "index": 4,
+        "name": "Straight Connector 25",
+        "type": "LINE (9)",
+        "left": 6805053,
+        "top": 4294754,
+        "width": 4389120,
+        "height": 0
+      },
+      {
+        "index": 5,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 6730000,
+        "top": 3885214,
+        "width": 4187936,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "AI-Powered Cyber Intelligence Platform",
+            "runs": [
+              {
+                "text": "AI-Powered Cyber Intelligence Platform",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 7",
+        "type": "TEXT_BOX (17)",
+        "left": 9777450,
+        "top": 102496,
+        "width": 6413988,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Project Review – II",
+            "runs": [
+              {
+                "text": "Project Review – II",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "TextBox 9",
+        "type": "TEXT_BOX (17)",
+        "left": 6096000,
+        "top": 108898,
+        "width": 2414209,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "SOCCA - MSC DS",
+            "runs": [
+              {
+                "text": "SOCCA - MSC DS",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 14468741,
+        "top": 152797,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 9,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 14621141,
+        "top": 305197,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 10,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 14773541,
+        "top": 457597,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 11,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 14925941,
+        "top": 609997,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 12,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15078341,
+        "top": 762397,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 13,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15230741,
+        "top": 914797,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 14,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15383141,
+        "top": 1067197,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 15,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15535541,
+        "top": 1219597,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 16,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15687941,
+        "top": 1371997,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 17,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15840341,
+        "top": 1524397,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 18,
+        "name": "Freeform 12",
+        "type": "FREEFORM (5)",
+        "left": 15992741,
+        "top": 1676797,
+        "width": 575097,
+        "height": 575097,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 19,
+        "name": "Straight Connector 31",
+        "type": "LINE (9)",
+        "left": 6096000,
+        "top": 471828,
+        "width": 1251438,
+        "height": 0
+      },
+      {
+        "index": 20,
+        "name": "Picture 33",
+        "type": "PICTURE (13)",
+        "left": 9411603,
+        "top": 108898,
+        "width": 425149,
+        "height": 420674,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 2,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 2",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "Project Overview",
+            "runs": [
+              {
+                "text": "P",
+                "font_name": "Georgia Pro Cond Light (Headings)",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "roject ",
+                "font_name": "Georgia Pro Cond Light (Headings)",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "O",
+                "font_name": "Georgia Pro Cond Light (Headings)",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "verview",
+                "font_name": "Georgia Pro Cond Light (Headings)",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 478814,
+        "top": 1211010,
+        "width": 11234371,
+        "height": 1200329,
+        "text_frame": [
+          {
+            "text": "CyberMind AI is an AI-powered Cyber Threat Intelligence and Malware Analysis Platform designed to consolidate heterogeneous sources and provide concise, actionable outputs for analysts. The system integrates rule-based scanners, machine learning detectors and generative AI explanations to produce a unified 0–100 cyber risk score and automated reports.",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " AI is an AI-powered Cyber Threat Intelligence and Malware Analysis Platform designed to consolidate heterogeneous sources and provide concise, actionable outputs for analysts. The system integrates rule-based scanners, machine learning detectors and generative AI explanations to produce a unified 0–100 cyber risk score and automated reports. ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "name": "Rectangle: Rounded Corners 5",
+        "type": "AUTO_SHAPE (1)",
+        "left": 478814,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "Rectangle: Rounded Corners 7",
+        "type": "AUTO_SHAPE (1)",
+        "left": 3465268,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "Rectangle: Rounded Corners 9",
+        "type": "AUTO_SHAPE (1)",
+        "left": 6451722,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "Rectangle: Rounded Corners 11",
+        "type": "AUTO_SHAPE (1)",
+        "left": 9438176,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 13",
+        "type": "TEXT_BOX (17)",
+        "left": 1290272,
+        "top": 2991538,
+        "width": 1758460,
+        "height": 646331,
+        "text_frame": [
+          {
+            "text": "10 Specialized Scanners",
+            "runs": [
+              {
+                "text": "10 Specialized Scanners",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "TextBox 15",
+        "type": "TEXT_BOX (17)",
+        "left": 1223232,
+        "top": 3747575,
+        "width": 1758460,
+        "height": 1077218,
+        "text_frame": [
+          {
+            "text": "Modular scanners for multi-vector analysis (URL, file, IP, device, etc.).",
+            "runs": [
+              {
+                "text": "Modular scanners for multi-vector analysis (URL, file, IP, device, etc.).",
+                "font_name": null,
+                "font_size": 16.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "name": "Rectangle: Rounded Corners 23",
+        "type": "AUTO_SHAPE (1)",
+        "left": 3465268,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 9,
+        "name": "TextBox 25",
+        "type": "TEXT_BOX (17)",
+        "left": 4276726,
+        "top": 2991538,
+        "width": 1758460,
+        "height": 646331,
+        "text_frame": [
+          {
+            "text": "30+ External TI APIs",
+            "runs": [
+              {
+                "text": "30+ External TI APIs",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 10,
+        "name": "TextBox 27",
+        "type": "TEXT_BOX (17)",
+        "left": 4209686,
+        "top": 3747575,
+        "width": 1758460,
+        "height": 1077218,
+        "text_frame": [
+          {
+            "text": "Aggregated feeds for enrichment and reputation scoring.",
+            "runs": [
+              {
+                "text": "Aggregated feeds for enrichment and reputation scoring.",
+                "font_name": null,
+                "font_size": 16.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 11,
+        "name": "Rectangle: Rounded Corners 29",
+        "type": "AUTO_SHAPE (1)",
+        "left": 6451722,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 12,
+        "name": "TextBox 31",
+        "type": "TEXT_BOX (17)",
+        "left": 7263180,
+        "top": 2991538,
+        "width": 1691420,
+        "height": 646331,
+        "text_frame": [
+          {
+            "text": "Machine Learning",
+            "runs": [
+              {
+                "text": "Machine Learning",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 13,
+        "name": "TextBox 33",
+        "type": "TEXT_BOX (17)",
+        "left": 7196140,
+        "top": 3642049,
+        "width": 1758460,
+        "height": 1569660,
+        "text_frame": [
+          {
+            "text": "Supervised classifiers and feature-based detectors for anomalies and malicious patterns.",
+            "runs": [
+              {
+                "text": "Supervised classifiers and feature-based detectors for anomalies and malicious patterns.",
+                "font_name": null,
+                "font_size": 16.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 14,
+        "name": "Rectangle: Rounded Corners 35",
+        "type": "AUTO_SHAPE (1)",
+        "left": 9438176,
+        "top": 2734228,
+        "width": 2502878,
+        "height": 2593731,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 15,
+        "name": "TextBox 37",
+        "type": "TEXT_BOX (17)",
+        "left": 10182594,
+        "top": 2980599,
+        "width": 1758460,
+        "height": 646331,
+        "text_frame": [
+          {
+            "text": "Generative",
+            "runs": [
+              {
+                "text": "Generative ",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "AI",
+            "runs": [
+              {
+                "text": "AI",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 16,
+        "name": "TextBox 39",
+        "type": "TEXT_BOX (17)",
+        "left": 10182594,
+        "top": 3637869,
+        "width": 1758460,
+        "height": 1323439,
+        "text_frame": [
+          {
+            "text": "Contextual explanations and remediation guidance using LLM models.",
+            "runs": [
+              {
+                "text": "Contextual explanations and remediation guidance using LLM models.",
+                "font_name": null,
+                "font_size": 16.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 17,
+        "name": "Straight Connector 41",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 18,
+        "name": "Freeform 29",
+        "type": "FREEFORM (5)",
+        "left": 9482136,
+        "top": 2943216,
+        "width": 793534,
+        "height": 742973,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 19,
+        "name": "Freeform 32",
+        "type": "FREEFORM (5)",
+        "left": 9550665,
+        "top": 3006014,
+        "width": 656476,
+        "height": 617371,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 20,
+        "name": "Freeform 29",
+        "type": "FREEFORM (5)",
+        "left": 6494204,
+        "top": 2943215,
+        "width": 793534,
+        "height": 742973,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 21,
+        "name": "Freeform 29",
+        "type": "FREEFORM (5)",
+        "left": 3507750,
+        "top": 2947714,
+        "width": 793534,
+        "height": 742973,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 22,
+        "name": "Freeform 29",
+        "type": "FREEFORM (5)",
+        "left": 496738,
+        "top": 2916532,
+        "width": 793534,
+        "height": 742973,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 23,
+        "name": "Freeform 33",
+        "type": "FREEFORM (5)",
+        "left": 628650,
+        "top": 2969896,
+        "width": 563880,
+        "height": 596264,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 24,
+        "name": "Freeform 30",
+        "type": "FREEFORM (5)",
+        "left": 3553285,
+        "top": 2969896,
+        "width": 702465,
+        "height": 689609,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 25,
+        "name": "Freeform 31",
+        "type": "FREEFORM (5)",
+        "left": 6517627,
+        "top": 2980599,
+        "width": 713753,
+        "height": 631281,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 26,
+        "name": "TextBox 71",
+        "type": "TEXT_BOX (17)",
+        "left": 11729232,
+        "top": 6198577,
+        "width": 638542,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "2",
+            "runs": [
+              {
+                "text": "2",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 27,
+        "name": "TextBox 73",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 28,
+        "name": "Picture 75",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 3,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 2",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "System Architecture",
+            "runs": [
+              {
+                "text": "S",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ystem ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "A",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "rchitecture",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 3",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 5",
+        "type": "PICTURE (13)",
+        "left": 5864890,
+        "top": 104695,
+        "width": 5995934,
+        "height": 6182776,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "TextBox 11",
+        "type": "TEXT_BOX (17)",
+        "left": 134083,
+        "top": 1217543,
+        "width": 3022355,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Architecture Highlights:",
+            "runs": [
+              {
+                "text": "Architecture Highlights:",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 13",
+        "type": "TEXT_BOX (17)",
+        "left": 259793,
+        "top": 1586875,
+        "width": 5507961,
+        "height": 4247317,
+        "text_frame": [
+          {
+            "text": "Decoupled 3-Tier Design: Presentation, Application, and Data layers are strictly separated for modular maintainability.",
+            "runs": [
+              {
+                "text": "Decoupled 3-Tier Design: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Presentation, Application, and Data layers are strictly separated for modular maintainability.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Provider-Agnostic Services: External APIs are queried exclusively from services/, keeping core scanner logic vendor-independent.",
+            "runs": [
+              {
+                "text": "Provider-Agnostic Services: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "External APIs are queried exclusively from services/, keeping core scanner logic vendor-independent.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Dual ML + LLM Integration: Combines Scikit-Learn Random Forest classifiers with Groq Llama-3 70B generative AI.",
+            "runs": [
+              {
+                "text": "Dual ML + LLM Integration: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Combines Scikit-Learn Random Forest classifiers with ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Groq",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " Llama-3 70B generative AI.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Centralized Telemetry: All scan logs, API latency records, and PDF report paths are persisted in SQLite database.",
+            "runs": [
+              {
+                "text": "Centralized Telemetry: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "All scan logs, API latency records, and PDF report paths are persisted in SQLite database.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 11733554,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "3",
+            "runs": [
+              {
+                "text": "3",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 7",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 9",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 4,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "Data Flow Diagram",
+            "runs": [
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ata ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "F",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "low ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "iagram",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 4",
+        "type": "PICTURE (13)",
+        "left": 172318,
+        "top": 1570308,
+        "width": 7834896,
+        "height": 4171096,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "TextBox 12",
+        "type": "TEXT_BOX (17)",
+        "left": 8007214,
+        "top": 1200976,
+        "width": 4302018,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "DFD LEVEL 0 — CONTEXT DIAGRAM",
+            "runs": [
+              {
+                "text": "DFD LEVEL 0 — CONTEXT DIAGRAM",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 14",
+        "type": "TEXT_BOX (17)",
+        "left": 8007214,
+        "top": 1685671,
+        "width": 4181339,
+        "height": 4247317,
+        "text_frame": [
+          {
+            "text": "User / Analyst Entity: Submits raw target input (URL, IP, Phone, File) ➔ Receives threat score, gauge meter, & PDF report.",
+            "runs": [
+              {
+                "text": "User / Analyst Entity: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Submits raw target input (URL, IP, Phone, File) ➔ Receives threat score, gauge meter, & PDF report.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Process 0.0: CyberMind AI Threat Intelligence Platform (Central Processing Unit).",
+            "runs": [
+              {
+                "text": "Process 0.0: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "CyberMind",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " AI Threat Intelligence Platform (Central Processing Unit).",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "External Threat APIs Entity: Receives target queries ➔ Returns live REST JSON threat payloads.",
+            "runs": [
+              {
+                "text": "External Threat APIs Entity: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Receives target queries ➔ Returns live REST JSON threat payloads.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "SQLite Data Store: Persists telemetry in scan_history master database table.",
+            "runs": [
+              {
+                "text": "SQLite Data Store: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Persists telemetry in ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "scan_history",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " master database table.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "TextBox 5",
+        "type": "TEXT_BOX (17)",
+        "left": 11733554,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "4",
+            "runs": [
+              {
+                "text": "4",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 7",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 9",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 5,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "Data Flow Diagram",
+            "runs": [
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ata ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "F",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "low ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "iagram",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 7",
+        "type": "PICTURE (13)",
+        "left": 5600699,
+        "top": 237392,
+        "width": 6397869,
+        "height": 6117047,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "TextBox 9",
+        "type": "TEXT_BOX (17)",
+        "left": 305152,
+        "top": 1194003,
+        "width": 5321739,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "DFD LEVEL 1 — 5 SUB-PROCESSES",
+            "runs": [
+              {
+                "text": "DFD LEVEL 1 — 5 SUB-PROCESSES",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 11",
+        "type": "TEXT_BOX (17)",
+        "left": 305153,
+        "top": 1678698,
+        "width": 5172455,
+        "height": 4247317,
+        "text_frame": [
+          {
+            "text": "Process 1.0 Input Validation: Sanitizes & validates target inputs via core/validator.py.",
+            "runs": [
+              {
+                "text": "Process 1.0 Input Validation: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Sanitizes & validates target inputs via core/validator.py.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Process 2.0 Scanner Engine: Dispatches target to specific scanner module in modules/.",
+            "runs": [
+              {
+                "text": "Process 2.0 Scanner Engine: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Dispatches target to specific scanner module in modules/.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Process 3.0 Service / API Execution: Queries 30+ REST APIs in services/*_service.py.",
+            "runs": [
+              {
+                "text": "Process 3.0 Service / API Execution: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Queries 30+ REST APIs in services/*_service.py.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Process 4.0 ML Risk Assessment: Evaluates ML .pkl models & computes score in modules/risk_engine.py.",
+            "runs": [
+              {
+                "text": "Process 4.0 ML Risk Assessment: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Evaluates ML .",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "pkl",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " models & computes score in modules/risk_engine.py.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Process 5.0 DB & Security Report: Stores record in database/cybermind.db & exports PDF report.",
+            "runs": [
+              {
+                "text": "Process 5.0 DB & Security Report: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Stores record in database/",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "cybermind.db",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " & exports PDF report.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 11746889,
+        "top": 6255016,
+        "width": 1175971,
+        "height": 769441,
+        "text_frame": [
+          {
+            "text": "5",
+            "runs": [
+              {
+                "text": "5",
+                "font_name": "Algerian",
+                "font_size": 44.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 10",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 6,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": -1,
+        "top": 0,
+        "width": 7666893,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "ER Diagram & Database Design",
+            "runs": [
+              {
+                "text": "E",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "R ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "iagram & ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "atabase ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "esign",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 7",
+        "type": "PICTURE (13)",
+        "left": 92627,
+        "top": 1032640,
+        "width": 7916851,
+        "height": 4779075,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "TextBox 9",
+        "type": "TEXT_BOX (17)",
+        "left": 7970533,
+        "top": 787326,
+        "width": 4417828,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "DATABASE TABLES ORGANIZATION",
+            "runs": [
+              {
+                "text": "DATABASE TABLES ORGANIZATION",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 15",
+        "type": "TEXT_BOX (17)",
+        "left": 7970532,
+        "top": 1156658,
+        "width": 4221467,
+        "height": 5355312,
+        "text_frame": [
+          {
+            "text": "Master Entity (Rectangle): SCAN_HISTORY (Central log table with scan_id Primary Key).",
+            "runs": [
+              {
+                "text": "Master Entity (Rectangle): ",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "SCAN_HISTORY (Central log table with ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "scan_id",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " Primary Key).",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "10 Scanner Detail Entities: phone_scans, url_scans, file_scans, ip_scans, website_scans, domain_scans, email_scans, qr_scans, device_scans, universal_scans.",
+            "runs": [
+              {
+                "text": "10 Scanner Detail Entities: ",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "phone_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "url_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "file_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "ip_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "website_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "domain_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "email_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "qr_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "device_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "universal_scans",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ".",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Relationship Diamonds: <Has_Phone_Data>, <Has_URL_Data>, etc., linking SCAN_HISTORY to each detail table in a 1-to-N (1:N) cardinality via scan_id Foreign Key.",
+            "runs": [
+              {
+                "text": "Relationship Diamonds: ",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "<",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Has_Phone_Data",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ">, <",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Has_URL_Data",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ">, etc., linking SCAN_HISTORY to each detail table in a 1-to-N (1:N) cardinality via ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "scan_id",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " Foreign Key.",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Attribute Ovals: Key fields including target, risk_score, risk_level, carrier, line_type, sha256, abuse_score.",
+            "runs": [
+              {
+                "text": "Attribute Ovals: ",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Key fields including target, ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "risk_score",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "risk_level",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", carrier, ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "line_type",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", sha256, ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "abuse_score",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ".",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 11733554,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "6",
+            "runs": [
+              {
+                "text": "6",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 10",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 7,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "UML Design",
+            "runs": [
+              {
+                "text": "U",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ML",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "esign",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 305152,
+        "top": 1194003,
+        "width": 3431579,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Use Case Diagram",
+            "runs": [
+              {
+                "text": "Use Case Diagram",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "TextBox 5",
+        "type": "TEXT_BOX (17)",
+        "left": 305154,
+        "top": 1678698,
+        "width": 3273316,
+        "height": 3693319,
+        "text_frame": [
+          {
+            "text": "Models system functionalities & actors:User Actor: Triggers 10 module scans, views history, downloads PDF.",
+            "runs": [
+              {
+                "text": "Models system functionalities & ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "actors:User",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " Actor: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Triggers 10 module scans, views history, downloads PDF.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Threat API Actor: Connects to 8 API-driven modules.",
+            "runs": [
+              {
+                "text": "Threat API Actor: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Connects to 8 API-driven modules.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "AI/ML Actor: Connects to ML models & Groq LLM.",
+            "runs": [
+              {
+                "text": "AI/ML Actor: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Connects to ML models & ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Groq",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " LLM.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "IEEE Standard: 0 line crossings.",
+            "runs": [
+              {
+                "text": "IEEE Standard: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "0 line crossings.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "Picture 7",
+        "type": "PICTURE (13)",
+        "left": 3815862,
+        "top": 416414,
+        "width": 8070985,
+        "height": 5685447,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 5,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 11733554,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "7",
+            "runs": [
+              {
+                "text": "7",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 9",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 11",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 8,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "UML Design",
+            "runs": [
+              {
+                "text": "U",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ML",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "esign",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "TextBox 3",
+        "type": "TEXT_BOX (17)",
+        "left": 8760421,
+        "top": 1317095,
+        "width": 3431579,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Class Diagram",
+            "runs": [
+              {
+                "text": "Class Diagram",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 8760423,
+        "top": 1801790,
+        "width": 3273316,
+        "height": 3693319,
+        "text_frame": [
+          {
+            "text": "Models 4-tier static structure:",
+            "runs": [
+              {
+                "text": "Models 4-tier static structure:",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Tier 1: ScannerEngine, RiskEngine, DatabaseManager.",
+            "runs": [
+              {
+                "text": "Tier 1: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ScannerEngine",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "RiskEngine",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "DatabaseManager",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ".",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Tier 2 & 3: 10 Scanner Classes (URL, Phone, File...).",
+            "runs": [
+              {
+                "text": "Tier 2 & 3: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "10 Scanner Classes (URL, Phone, File...).",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Tier 4: ExplainAI, AIAssistant, ReportService.",
+            "runs": [
+              {
+                "text": "Tier 4: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ExplainAI",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "AIAssistant",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ", ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "ReportService",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ".",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Aggregation: ScannerEngine holds 1:N scanners.",
+            "runs": [
+              {
+                "text": "Aggregation: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ScannerEngine",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " holds 1:N scanners.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 11741174,
+        "top": 6270256,
+        "width": 1175971,
+        "height": 769441,
+        "text_frame": [
+          {
+            "text": "8",
+            "runs": [
+              {
+                "text": "8",
+                "font_name": "Algerian",
+                "font_size": 44.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "TextBox 9",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "Picture 11",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 7,
+        "name": "Picture 8",
+        "type": "PICTURE (13)",
+        "left": 0,
+        "top": 1230842,
+        "width": 8701483,
+        "height": 4264267,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 9,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "UML Design",
+            "runs": [
+              {
+                "text": "U",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ML",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "esign",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "TextBox 3",
+        "type": "TEXT_BOX (17)",
+        "left": 601159,
+        "top": 1255549,
+        "width": 3431579,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Activity Diagram",
+            "runs": [
+              {
+                "text": "Activity Diagram",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 601159,
+        "top": 1678698,
+        "width": 5782055,
+        "height": 4247317,
+        "text_frame": [
+          {
+            "text": "Input Validation: User submits a target → system sanitizes and validates the input → invalid inputs trigger an alert; valid inputs go to the Module Router.",
+            "runs": [
+              {
+                "text": "Input Validation: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "User submits a target → system sanitizes and validates the input → invalid inputs trigger an alert; valid inputs go to the Module Router",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ".",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Parallel Processing: The system simultaneously performs API threat analysis, ML analysis, and local intelligence checks.",
+            "runs": [
+              {
+                "text": "Parallel Processing: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "The system simultaneously performs API threat analysis, ML analysis, and local intelligence checks.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Threat Aggregation: Results are combined → Unified Risk Engine calculates a 0–100 risk score and severity → Groq Llama-3 generates the threat explanation.",
+            "runs": [
+              {
+                "text": "Threat Aggregation: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Results are combined → Unified Risk Engine calculates a 0–100 risk score and severity → ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Groq",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " Llama-3 generates the threat explanation",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": ".",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Persistence & Output: Results are stored in SQLite → analytics are displayed on the Streamlit dashboard → optional PDF/JSON report is generated.",
+            "runs": [
+              {
+                "text": "Persistence & Output: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Results are stored in SQLite → analytics are displayed on the ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Streamlit",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " dashboard → optional PDF/JSON report is generated.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "Picture 7",
+        "type": "PICTURE (13)",
+        "left": 6696661,
+        "top": 68586,
+        "width": 4242347,
+        "height": 6297045,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 5,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 11733554,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 769441,
+        "text_frame": [
+          {
+            "text": "9",
+            "runs": [
+              {
+                "text": "9",
+                "font_name": "Algerian",
+                "font_size": 44.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 9",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 11",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 10,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "UML Design",
+            "runs": [
+              {
+                "text": "U",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "ML",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " D",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "esign",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "TextBox 3",
+        "type": "TEXT_BOX (17)",
+        "left": 8918682,
+        "top": 1422604,
+        "width": 3431579,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Sequence Diagram",
+            "runs": [
+              {
+                "text": "Sequence Diagram",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 8918684,
+        "top": 1907299,
+        "width": 3273316,
+        "height": 3693319,
+        "text_frame": [
+          {
+            "text": "Models threat scan lifecycle (10 steps):",
+            "runs": [
+              {
+                "text": "Models threat scan lifecycle (10 steps): ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "User ➔ UI ➔ Validator ➔ Scanner Engine ➔ External Threat API / ML Model ➔ RiskEngine ➔ SQLite DB ➔ Streamlit Dashboard.",
+            "runs": [
+              {
+                "text": "User ➔ UI ➔ Validator ➔ Scanner Engine ➔ External Threat API / ML Model ➔ ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "RiskEngine",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " ➔ SQLite DB ➔ ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Streamlit",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " Dashboard.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Fault Tolerance: Fallback if API times out.",
+            "runs": [
+              {
+                "text": "Fault Tolerance: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "Fallback if API times out.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "",
+            "runs": []
+          },
+          {
+            "text": "Sub-3 Second Execution.",
+            "runs": [
+              {
+                "text": "Sub-3 Second Execution.",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "Picture 9",
+        "type": "PICTURE (13)",
+        "left": 174299,
+        "top": 1367245,
+        "width": 8744383,
+        "height": 4123509,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 5,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 11363984,
+        "top": 6218821,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "10",
+            "runs": [
+              {
+                "text": "10",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 8",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "Picture 11",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 11,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "Model Planning",
+            "runs": [
+              {
+                "text": "M",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "odel ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "P",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "lanning",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 7",
+        "type": "PICTURE (13)",
+        "left": 1714500,
+        "top": 1015663,
+        "width": 8889023,
+        "height": 5367552,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 11430659,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "11",
+            "runs": [
+              {
+                "text": "11",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "Picture 9",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 12,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "UI Prototype",
+            "runs": [
+              {
+                "text": "U",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "I",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " P",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "rototype",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 22",
+        "type": "PICTURE (13)",
+        "left": 143045,
+        "top": 1712237,
+        "width": 5811374,
+        "height": 3267573,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "Picture 24",
+        "type": "PICTURE (13)",
+        "left": 6246514,
+        "top": 1712237,
+        "width": 5811374,
+        "height": 3267573,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 4,
+        "name": "Callout: Up Arrow 26",
+        "type": "AUTO_SHAPE (1)",
+        "left": 1837592,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554,
+        "text_frame": [
+          {
+            "text": "Dashboard",
+            "runs": [
+              {
+                "text": "Dashboard",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "Callout: Up Arrow 28",
+        "type": "AUTO_SHAPE (1)",
+        "left": 8393726,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554,
+        "text_frame": [
+          {
+            "text": "Scan History",
+            "runs": [
+              {
+                "text": "Scan History",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 6",
+        "type": "TEXT_BOX (17)",
+        "left": 11362079,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "12",
+            "runs": [
+              {
+                "text": "12",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "TextBox 8",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "name": "Picture 10",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 13,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 6097464,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "UI Prototype",
+            "runs": [
+              {
+                "text": "U",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "I",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": " P",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "rototype",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Picture 6",
+        "type": "PICTURE (13)",
+        "left": 143045,
+        "top": 1712235,
+        "width": 5811374,
+        "height": 3267573,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 3,
+        "name": "Picture 8",
+        "type": "PICTURE (13)",
+        "left": 6237582,
+        "top": 1712235,
+        "width": 5811373,
+        "height": 3267573,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      },
+      {
+        "index": 4,
+        "name": "Callout: Up Arrow 10",
+        "type": "AUTO_SHAPE (1)",
+        "left": 1837592,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554,
+        "text_frame": [
+          {
+            "text": "Analytics",
+            "runs": [
+              {
+                "text": "Analytics",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "Callout: Up Arrow 12",
+        "type": "AUTO_SHAPE (1)",
+        "left": 8393726,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554,
+        "text_frame": [
+          {
+            "text": "URL Scanner",
+            "runs": [
+              {
+                "text": "URL Scanner",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 11354459,
+        "top": 6205486,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "13",
+            "runs": [
+              {
+                "text": "13",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "TextBox 7",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "name": "Picture 11",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 14,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "TextBox 1",
+        "type": "TEXT_BOX (17)",
+        "left": 0,
+        "top": 0,
+        "width": 9729216,
+        "height": 1015663,
+        "text_frame": [
+          {
+            "text": "Current Project Progress — Review 2 Status",
+            "runs": [
+              {
+                "text": "C",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "urrent ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "P",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "roject ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "P",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "rogress — ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "R",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "eview 2 ",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "S",
+                "font_name": "+mj-lt",
+                "font_size": 60.0,
+                "bold": true,
+                "italic": null
+              },
+              {
+                "text": "tatus",
+                "font_name": "+mj-lt",
+                "font_size": 40.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Straight Connector 2",
+        "type": "LINE (9)",
+        "left": 0,
+        "top": 931985,
+        "width": 2479431,
+        "height": 0
+      },
+      {
+        "index": 2,
+        "name": "Rectangle: Rounded Corners 5",
+        "type": "AUTO_SHAPE (1)",
+        "left": 164592,
+        "top": 1563623,
+        "width": 5532120,
+        "height": 3886201,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "TextBox 11",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 1863971,
+        "width": 6277356,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "REVIEW 2 COMPLETED DESIGN MILESTONES",
+            "runs": [
+              {
+                "text": "REVIEW 2 COMPLETED DESIGN MILESTONES",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 15",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 2233303,
+        "width": 5266944,
+        "height": 2954142,
+        "text_frame": [
+          {
+            "text": "✔ Requirement Analysis & Feasibility Study",
+            "runs": [
+              {
+                "text": "✔ Requirement Analysis & Feasibility Study",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "✔ Decoupled 3-Tier System Architecture Design",
+            "runs": [
+              {
+                "text": "✔ Decoupled 3-Tier System Architecture Design",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "✔ Data Flow Diagrams (DFD Level 0 & Level 1)",
+            "runs": [
+              {
+                "text": "✔ Data Flow Diagrams (DFD Level 0 & Level 1)",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "✔ Peter Chen Style ER Diagram (15 DB Tables)",
+            "runs": [
+              {
+                "text": "✔ Peter Chen Style ER Diagram (15 DB Tables)",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "✔ 4-Tier UML Class Diagram & Sequence Diagram",
+            "runs": [
+              {
+                "text": "✔ 4-Tier UML Class Diagram & Sequence Diagram",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "✔ 10 Scanner Modules & Veriphone API Integration",
+            "runs": [
+              {
+                "text": "✔ 10 Scanner Modules & ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Veriphone",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " API Integration",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "✔ Streamlit UI Dashboard & Prototype Layouts",
+            "runs": [
+              {
+                "text": "✔ ",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Streamlit",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": " UI Dashboard & Prototype Layouts",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "Rectangle: Rounded Corners 23",
+        "type": "AUTO_SHAPE (1)",
+        "left": 5977128,
+        "top": 1563623,
+        "width": 5532120,
+        "height": 3886201,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "TextBox 25",
+        "type": "TEXT_BOX (17)",
+        "left": 6114288,
+        "top": 1863971,
+        "width": 6277356,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "NEXT PHASE — IMPLEMENTATION ROADMAP",
+            "runs": [
+              {
+                "text": "NEXT PHASE — IMPLEMENTATION ROADMAP",
+                "font_name": "Arial",
+                "font_size": null,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "name": "TextBox 27",
+        "type": "TEXT_BOX (17)",
+        "left": 6077712,
+        "top": 2233303,
+        "width": 5443728,
+        "height": 2124428,
+        "text_frame": [
+          {
+            "text": "Complete System Testing & Accuracy Benchmarking",
+            "runs": [
+              {
+                "text": "Complete System Testing & Accuracy Benchmarking",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "Enterprise SIEM / SOAR Webhook Connectors",
+            "runs": [
+              {
+                "text": "Enterprise SIEM / SOAR Webhook Connectors",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "Dynamic Malware Detonation Sandbox Integration",
+            "runs": [
+              {
+                "text": "Dynamic Malware Detonation Sandbox Integration",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "Automated Windows Firewall Active Response Scripts",
+            "runs": [
+              {
+                "text": "Automated Windows Firewall Active Response Scripts",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "Final Project Report Documentation & Deployment",
+            "runs": [
+              {
+                "text": "Final Project Report Documentation & Deployment",
+                "font_name": null,
+                "font_size": null,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "name": "TextBox 4",
+        "type": "TEXT_BOX (17)",
+        "left": 11344934,
+        "top": 6209296,
+        "width": 1175971,
+        "height": 830997,
+        "text_frame": [
+          {
+            "text": "14",
+            "runs": [
+              {
+                "text": "14",
+                "font_name": "Algerian",
+                "font_size": 48.0,
+                "bold": true,
+                "italic": null,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 9,
+        "name": "TextBox 7",
+        "type": "TEXT_BOX (17)",
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": null,
+                "italic": false,
+                "color": "SCHEME (2)"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 10,
+        "name": "Picture 9",
+        "type": "PICTURE (13)",
+        "left": 70104,
+        "top": 6471688,
+        "width": 334970,
+        "height": 331444,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  },
+  {
+    "slide_index": 15,
+    "shapes": [
+      {
+        "index": 0,
+        "name": "Rectangle 4",
+        "type": "AUTO_SHAPE (1)",
+        "left": 0,
+        "top": 6224954,
+        "width": 12192000,
+        "height": 633036,
+        "text_frame": [
+          {
+            "text": "",
+            "runs": []
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Picture 6",
+        "type": "PICTURE (13)",
+        "left": 6096000,
+        "top": 0,
+        "width": 6096000,
+        "height": 6857990,
+        "is_picture": true,
+        "image_filename": "image.jpeg",
+        "image_ext": "jpg",
+        "content_type": "image/jpeg"
+      },
+      {
+        "index": 2,
+        "name": "Title 1",
+        "type": "TEXT_BOX (17)",
+        "left": 285238,
+        "top": 2494274,
+        "width": 6748607,
+        "height": 2534926,
+        "text_frame": [
+          {
+            "text": "Thank You!",
+            "runs": [
+              {
+                "text": "Thank You!",
+                "font_name": null,
+                "font_size": 80.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "For Your Attention",
+            "runs": [
+              {
+                "text": "For Your Attention",
+                "font_name": null,
+                "font_size": 54.0,
+                "bold": null,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "name": "TextBox 10",
+        "type": "TEXT_BOX (17)",
+        "left": 350229,
+        "top": 4290619,
+        "width": 6216160,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "Stay Secure, Stay Smart, Stay Ahead.",
+            "runs": [
+              {
+                "text": "Stay Secure, Stay Smart, Stay Ahead.",
+                "font_name": null,
+                "font_size": null,
+                "bold": true,
+                "italic": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "name": "TextBox 12",
+        "type": "TEXT_BOX (17)",
+        "left": 656969,
+        "top": 246157,
+        "width": 1637824,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "CyberMind-AI",
+            "runs": [
+              {
+                "text": "CyberMind",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": true,
+                "italic": false
+              },
+              {
+                "text": "-AI",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": true,
+                "italic": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "name": "TextBox 14",
+        "type": "TEXT_BOX (17)",
+        "left": 4285663,
+        "top": 175819,
+        "width": 1947497,
+        "height": 369332,
+        "text_frame": [
+          {
+            "text": "SOCCA - MSC DS",
+            "runs": [
+              {
+                "text": "SOCCA - MSC DS",
+                "font_name": "+mj-lt",
+                "font_size": null,
+                "bold": true,
+                "italic": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "name": "Straight Connector 16",
+        "type": "LINE (9)",
+        "left": 4844562,
+        "top": 545151,
+        "width": 1251438,
+        "height": 0
+      },
+      {
+        "index": 7,
+        "name": "Subtitle 2",
+        "type": "TEXT_BOX (17)",
+        "left": -119758,
+        "top": 6047651,
+        "width": 4829101,
+        "height": 810349,
+        "text_frame": [
+          {
+            "text": "Presented by Daksh Vasani",
+            "runs": [
+              {
+                "text": "Presented by ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "Daksh Vasani ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          },
+          {
+            "text": "ER. NO: 2504070500037",
+            "runs": [
+              {
+                "text": "ER. NO: ",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": null,
+                "italic": null
+              },
+              {
+                "text": "2504070500037",
+                "font_name": null,
+                "font_size": 18.0,
+                "bold": true,
+                "italic": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "name": "Picture 2",
+        "type": "PICTURE (13)",
+        "left": 321998,
+        "top": 220486,
+        "width": 425149,
+        "height": 420674,
+        "is_picture": true,
+        "image_filename": "image.png",
+        "image_ext": "png",
+        "content_type": "image/png"
+      }
+    ]
+  }
+]

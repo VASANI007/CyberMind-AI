@@ -1,0 +1,122 @@
+⚠ | WARNING SIGN | Count: 65 | Files: app.py, core\validator.py, modules\universal_scan_module.py, root.py, services\email_service.py | https://cdn-icons-png.flaticon.com/512/8213/8213126.png
+🟢 | LARGE GREEN CIRCLE | Count: 45 | Files: app.py, modules\device_security_module.py, services\device_security_service.py | https://cdn-icons-png.flaticon.com/512/10037/10037255.png
+🛡 | SHIELD | Count: 32 | Files: README.md, app.py, config\settings.py, config\theme.py, root.py 
+🔴 | LARGE RED CIRCLE | Count: 30 | Files: app.py, modules\device_security_module.py, services\device_security_service.py
+● | BLACK CIRCLE | Count: 20 | Files: app.py
+📊 | BAR CHART | Count: 18 | Files: README.md, app.py, config\menu.py, core\navigation.py, services\email_support_service.py
+✅ | WHITE HEAVY CHECK MARK | Count: 18 | Files: README.md, app.py, services\email_service.py
+🌐 | GLOBE WITH MERIDIANS | Count: 17 | Files: README.md, app.py, config\menu.py, core\navigation.py, services\phone_service.py
+📄 | PAGE FACING UP | Count: 15 | Files: README.md, app.py, config\menu.py, services\email_support_service.py
+🔍 | LEFT-POINTING MAGNIFYING GLASS | Count: 13 | Files: app.py
+✔ | HEAVY CHECK MARK | Count: 13 | Files: app.py, root.py, tests\tests_root.py
+⏳ | HOURGLASS WITH FLOWING SAND | Count: 12 | Files: README.md
+🌍 | EARTH GLOBE EUROPE-AFRICA | Count: 11 | Files: README.md, app.py, config\menu.py, core\navigation.py
+📧 | E-MAIL SYMBOL | Count: 11 | Files: README.md, app.py, config\menu.py, core\navigation.py
+🔗 | LINK SYMBOL | Count: 10 | Files: README.md, app.py, config\menu.py
+⚙ | GEAR | Count: 10 | Files: app.py, config\menu.py, core\navigation.py, services\email_support_service.py
+🖥 | DESKTOP COMPUTER | Count: 8 | Files: README.md, app.py, config\menu.py, core\navigation.py
+🤖 | ROBOT FACE | Count: 8 | Files: README.md, app.py, modules\ai_assistant.py
+💬 | SPEECH BALLOON | Count: 8 | Files: app.py, services\email_support_service.py
+💡 | ELECTRIC LIGHT BULB | Count: 7 | Files: app.py
+⚡ | HIGH VOLTAGE SIGN | Count: 7 | Files: app.py
+🇧 | REGIONAL INDICATOR SYMBOL LETTER B | Count: 7 | Files: app.py, core\validator.py, modules\ai_summary_module.py, services\phone_service.py
+🇳 | REGIONAL INDICATOR SYMBOL LETTER N | Count: 7 | Files: app.py, core\validator.py, services\phone_service.py
+✘ | HEAVY BALLOT X | Count: 7 | Files: root.py
+🔳 | WHITE SQUARE BUTTON | Count: 6 | Files: app.py, core\navigation.py
+📱 | MOBILE PHONE | Count: 6 | Files: README.md, app.py, config\menu.py
+👤 | BUST IN SILHOUETTE | Count: 6 | Files: app.py, services\email_support_service.py
+🚀 | ROCKET | Count: 6 | Files: README.md, app.py, config\menu.py
+🎯 | DIRECT HIT | Count: 6 | Files: README.md, app.py
+🇬 | REGIONAL INDICATOR SYMBOL LETTER G | Count: 6 | Files: app.py, core\validator.py, modules\ai_summary_module.py, services\phone_service.py
+🇮 | REGIONAL INDICATOR SYMBOL LETTER I | Count: 6 | Files: app.py, core\validator.py, services\phone_service.py
+🕐 | CLOCK FACE ONE OCLOCK | Count: 5 | Files: app.py
+📈 | CHART WITH UPWARDS TREND | Count: 5 | Files: README.md, app.py
+🔑 | KEY | Count: 5 | Files: app.py
+📦 | PACKAGE | Count: 5 | Files: app.py
+🔊 | SPEAKER WITH THREE SOUND WAVES | Count: 4 | Files: app.py
+🧠 | BRAIN | Count: 4 | Files: README.md, app.py
+❌ | CROSS MARK | Count: 4 | Files: app.py, tests\tests_root.py
+🔄 | ANTICLOCKWISE DOWNWARDS AND UPWARDS OPEN CIRCLE ARROWS | Count: 4 | Files: README.md, app.py, services\device_security_service.py
+🇪 | REGIONAL INDICATOR SYMBOL LETTER E | Count: 4 | Files: app.py, services\phone_service.py
+🇸 | REGIONAL INDICATOR SYMBOL LETTER S | Count: 4 | Files: app.py, core\validator.py, services\phone_service.py
+🇷 | REGIONAL INDICATOR SYMBOL LETTER R | Count: 4 | Files: app.py, services\phone_service.py
+🟡 | LARGE YELLOW CIRCLE | Count: 4 | Files: app.py, modules\device_security_module.py, services\device_security_service.py
+🔒 | LOCK | Count: 4 | Files: README.md, app.py
+👥 | BUSTS IN SILHOUETTE | Count: 4 | Files: app.py, services\email_support_service.py
+📅 | CALENDAR | Count: 4 | Files: app.py, services\email_support_service.py
+✉ | ENVELOPE | Count: 4 | Files: app.py, services\email_support_service.py
+🇺 | REGIONAL INDICATOR SYMBOL LETTER U | Count: 4 | Files: core\validator.py, services\phone_service.py
+🇦 | REGIONAL INDICATOR SYMBOL LETTER A | Count: 4 | Files: services\phone_service.py
+📶 | ANTENNA WITH BARS | Count: 3 | Files: app.py
+▲ | BLACK UP-POINTING TRIANGLE | Count: 3 | Files: app.py
+⬇ | DOWNWARDS BLACK ARROW | Count: 3 | Files: app.py
+💻 | PERSONAL COMPUTER | Count: 3 | Files: app.py
+🏷 | LABEL | Count: 3 | Files: app.py
+✓ | CHECK MARK | Count: 3 | Files: app.py
+🕵 | SLEUTH OR SPY | Count: 3 | Files: app.py
+🇩 | REGIONAL INDICATOR SYMBOL LETTER D | Count: 3 | Files: app.py, services\phone_service.py
+📝 | MEMO | Count: 3 | Files: app.py
+📡 | SATELLITE ANTENNA | Count: 3 | Files: app.py, core\navigation.py
+⚪ | MEDIUM WHITE CIRCLE | Count: 3 | Files: app.py
+🚨 | POLICE CARS REVOLVING LIGHT | Count: 3 | Files: app.py, services\recommendation_service.py
+👁 | EYE | Count: 3 | Files: app.py
+📞 | TELEPHONE RECEIVER | Count: 3 | Files: app.py
+🗄 | FILE CABINET | Count: 3 | Files: app.py
+📑 | BOOKMARK TABS | Count: 3 | Files: README.md, config\menu.py, services\email_support_service.py
+🔇 | SPEAKER WITH CANCELLATION STROKE | Count: 2 | Files: app.py
+⌄ | DOWN ARROWHEAD | Count: 2 | Files: app.py
+📂 | OPEN FILE FOLDER | Count: 2 | Files: README.md, app.py
+🔧 | WRENCH | Count: 2 | Files: app.py
+👉 | WHITE RIGHT POINTING BACKHAND INDEX | Count: 2 | Files: app.py
+📁 | FILE FOLDER | Count: 2 | Files: app.py, core\navigation.py
+🔐 | CLOSED LOCK WITH KEY | Count: 2 | Files: app.py
+🎥 | MOVIE CAMERA | Count: 2 | Files: app.py
+🇫 | REGIONAL INDICATOR SYMBOL LETTER F | Count: 2 | Files: app.py, services\phone_service.py
+👍 | THUMBS UP SIGN | Count: 2 | Files: app.py
+👎 | THUMBS DOWN SIGN | Count: 2 | Files: app.py
+🛠 | HAMMER AND WRENCH | Count: 2 | Files: README.md, app.py
+🔮 | CRYSTAL BALL | Count: 2 | Files: app.py
+📋 | CLIPBOARD | Count: 2 | Files: app.py
+🎓 | GRADUATION CAP | Count: 2 | Files: README.md, app.py
+📚 | BOOKS | Count: 2 | Files: app.py, config\menu.py
+⏱ | STOPWATCH | Count: 2 | Files: app.py, services\email_support_service.py
+🏠 | HOUSE BUILDING | Count: 2 | Files: config\menu.py, core\navigation.py
+❔ | WHITE QUESTION MARK ORNAMENT | Count: 2 | Files: services\device_security_service.py
+🇨 | REGIONAL INDICATOR SYMBOL LETTER C | Count: 2 | Files: services\phone_service.py
+🇵 | REGIONAL INDICATOR SYMBOL LETTER P | Count: 2 | Files: services\phone_service.py
+🕸 | SPIDER WEB | Count: 1 | Files: app.py
+🔌 | ELECTRIC PLUG | Count: 1 | Files: app.py
+🚫 | NO ENTRY SIGN | Count: 1 | Files: app.py
+▼ | BLACK DOWN-POINTING TRIANGLE | Count: 1 | Files: app.py
+⚗ | ALEMBIC | Count: 1 | Files: app.py
+⬅ | LEFTWARDS BLACK ARROW | Count: 1 | Files: app.py
+🗑 | WASTEBASKET | Count: 1 | Files: app.py
+📢 | PUBLIC ADDRESS LOUDSPEAKER | Count: 1 | Files: app.py
+⬆ | UPWARDS BLACK ARROW | Count: 1 | Files: app.py
+🎵 | MUSICAL NOTE | Count: 1 | Files: app.py
+🧬 | DNA DOUBLE HELIX | Count: 1 | Files: app.py
+🔎 | RIGHT-POINTING MAGNIFYING GLASS | Count: 1 | Files: app.py
+⏹ | BLACK SQUARE FOR STOP | Count: 1 | Files: app.py
+🗺 | WORLD MAP | Count: 1 | Files: app.py
+🔀 | TWISTED RIGHTWARDS ARROWS | Count: 1 | Files: app.py
+🔤 | INPUT SYMBOL FOR LATIN LETTERS | Count: 1 | Files: app.py
+🔬 | MICROSCOPE | Count: 1 | Files: app.py
+🖼 | FRAME WITH PICTURE | Count: 1 | Files: app.py
+🏢 | OFFICE BUILDING | Count: 1 | Files: app.py
+🚧 | CONSTRUCTION SIGN | Count: 1 | Files: app.py
+🌳 | DECIDUOUS TREE | Count: 1 | Files: app.py
+🔢 | INPUT SYMBOL FOR NUMBERS | Count: 1 | Files: app.py
+🦠 | MICROBE | Count: 1 | Files: app.py
+💾 | FLOPPY DISK | Count: 1 | Files: app.py
+📤 | OUTBOX TRAY | Count: 1 | Files: app.py
+❓ | BLACK QUESTION MARK ORNAMENT | Count: 1 | Files: app.py
+📩 | ENVELOPE WITH DOWNWARDS ARROW ABOVE | Count: 1 | Files: app.py
+📌 | PUSHPIN | Count: 1 | Files: app.py
+⭐ | WHITE MEDIUM STAR | Count: 1 | Files: README.md
+🎨 | ARTIST PALETTE | Count: 1 | Files: README.md
+🧑 | ADULT | Count: 1 | Files: modules\ai_assistant.py
+🕒 | CLOCK FACE THREE OCLOCK | Count: 1 | Files: services\email_support_service.py
+🔔 | BELL | Count: 1 | Files: services\email_support_service.py
+🇯 | REGIONAL INDICATOR SYMBOL LETTER J | Count: 1 | Files: services\phone_service.py
+🇰 | REGIONAL INDICATOR SYMBOL LETTER K | Count: 1 | Files: services\phone_service.py
+🇿 | REGIONAL INDICATOR SYMBOL LETTER Z | Count: 1 | Files: services\phone_service.py

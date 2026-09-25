@@ -31,3 +31,4 @@ lime
 pefile
 oletools
 networkx
+gtts

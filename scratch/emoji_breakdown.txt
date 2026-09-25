@@ -1,0 +1,62 @@
+Total emojis with URLs: 96
+Total occurrences in app.py: 395
+
+Categories:
+  st_markdown_html: 156
+  st_button: 17
+  st_tabs: 0
+  menu_tuples: 0
+  st_alert: 10
+  other: 212
+
+Detailed sample:
+L350 [st_markdown_html] SPEAKER WITH CANCELLATION STROKE: <button id='mb' class='mute-btn' onclick='toggleMute(event)'>🔇 Muted</button>
+L351 [st_markdown_html] SPEAKER WITH THREE SOUND WAVES: <div id='ih' class='intro-hint'>🔊 Click anywhere to enable sound</div>
+L362 [other] SPEAKER WITH THREE SOUND WAVES: b.innerHTML = '🔊 Sound On';
+L376 [other] SPEAKER WITH CANCELLATION STROKE: b.innerHTML = '🔇 Muted';
+L378 [other] SPEAKER WITH THREE SOUND WAVES: b.innerHTML = '🔊 Sound On';
+L2499 [other] GLOBE WITH MERIDIANS: "icon": "🌐", "color": "#3B82F6", "bg": "rgba(59,130,246,0.12)",
+L2509 [other] LINK SYMBOL: "icon": "🔗", "color": "var(--success)", "bg": "var(--success-bg)",
+L2519 [other] GLOBE WITH MERIDIANS: "icon": "🌐", "color": "var(--info)", "bg": "var(--info-bg)",
+L2529 [other] EARTH GLOBE EUROPE-AFRICA: "icon": "🌍", "color": "#A78BFA", "bg": "rgba(167,139,250,0.12)",
+L2539 [other] DESKTOP COMPUTER: "icon": "🖥️", "color": "var(--warning)", "bg": "var(--warning-bg)",
+L2549 [other] E-MAIL SYMBOL: "icon": "📧", "color": "var(--info)", "bg": "var(--info-bg)",
+L2559 [other] PAGE FACING UP: "icon": "📄", "color": "var(--warning)", "bg": "var(--warning-bg)",
+L2569 [other] WHITE SQUARE BUTTON: "icon": "🔳", "color": "#2DD4BF", "bg": "rgba(45,212,191,0.12)",
+L2580 [other] SHIELD: "icon": "🛡️", "color": "var(--success)", "bg": "rgba(34,197,94,0.12)",
+L2590 [other] MOBILE PHONE: "icon": "📱", "color": "#F43F5E", "bg": "rgba(244,63,94,0.12)",
+L2637 [other] BAR CHART: ("Dashboard", "📊"), ("Scan History", "🕐"), ("Analytics", "📈"),
+L2637 [other] CLOCK FACE ONE OCLOCK: ("Dashboard", "📊"), ("Scan History", "🕐"), ("Analytics", "📈"),
+L2637 [other] CHART WITH UPWARDS TREND: ("Dashboard", "📊"), ("Scan History", "🕐"), ("Analytics", "📈"),
+L2640 [other] GLOBE WITH MERIDIANS: "Universal Scan": ("🌐", "Universal Scan"),
+L2641 [other] LINK SYMBOL: "URL Scanner": ("🔗", "URL Scanner"),
+L2642 [other] SPIDER WEB: "Website Scanner": ("🕸️", "Website Analyzer"),
+L2643 [other] EARTH GLOBE EUROPE-AFRICA: "Domain Scanner": ("🌍", "Domain Intelligence"),
+L2644 [other] E-MAIL SYMBOL: "Email Scanner": ("📧", "Email Intelligence"),
+L2645 [other] DESKTOP COMPUTER: "IP Scanner": ("🖥️", "IP Intelligence"),
+L2646 [other] WHITE SQUARE BUTTON: "QR Code Scanner": ("🔳", "QR Scanner"),
+L2647 [other] PAGE FACING UP: "File Scanner": ("📄", "File Analyzer"),
+L2648 [other] SHIELD: "Device Security Check": ("🛡️", "Device Security Check"),
+L2649 [other] MOBILE PHONE: "Phone Threat Intelligence": ("📱", "Phone Threat Intelligence"),
+L2653 [other] GEAR: ("Settings", "⚙️"), ("Profile", "👤"), ("Connections", "🔌"), ("Help & Support", "ℹ️")
+L2653 [other] BUST IN SILHOUETTE: ("Settings", "⚙️"), ("Profile", "👤"), ("Connections", "🔌"), ("Help & Support", "ℹ️")
+L2653 [other] ELECTRIC PLUG: ("Settings", "⚙️"), ("Profile", "👤"), ("Connections", "🔌"), ("Help & Support", "ℹ️")
+L3038 [st_button] SHIELD: st.button("🛡️ Run New Scan", key="run_scan_btn", on_click=go_to, args=("URL Scanner",))
+L3042 [st_button] BAR CHART: st.button("📊 View Dashboard", key="view_dash_btn", on_click=go_to, args=("Dashboard",))
+L3061 [st_markdown_html] BRAIN: <div class="shield-brain">🧠</div>
+L3172 [other] ANTENNA WITH BARS: "color": "var(--info)", "bg": "var(--info-bg)", "icon": "📶", "dc": "var(--success)"},
+L3174 [other] WARNING SIGN: "color": "var(--danger)", "bg": "var(--danger-bg)", "icon": "⚠️", "dc": "var(--danger)"},
+L3176 [other] SHIELD: "color": "var(--warning)", "bg": "var(--warning-bg)", "icon": "🛡️", "dc": "var(--warning)"},
+L3178 [other] WHITE HEAVY CHECK MARK: "color": "var(--success)", "bg": "var(--success-bg)", "icon": "✅", "dc": "var(--success)"},
+L3493 [other] LINK SYMBOL: "URL Scanner": ("🔗", "rgba(139,92,246,0.12)", "#8B5CF6"),
+L3494 [other] GLOBE WITH MERIDIANS: "Website Analyzer": ("🌐", "rgba(59,130,246,0.12)", "#3B82F6"),
+L3495 [other] EARTH GLOBE EUROPE-AFRICA: "Domain Intelligence": ("🌍", "rgba(6,182,212,0.12)", "#06B6D4"),
+L3496 [other] E-MAIL SYMBOL: "Email Intelligence": ("📧", "rgba(16,185,129,0.12)", "#10B981"),
+L3497 [other] DESKTOP COMPUTER: "IP Intelligence": ("🖥️", "rgba(245,166,35,0.12)", "#F5A623"),
+L3498 [other] WHITE SQUARE BUTTON: "QR Scanner": ("🔳", "rgba(245,166,35,0.12)", "#F5A623"),
+L3499 [other] PAGE FACING UP: "File Analyzer": ("📄", "rgba(239,68,68,0.12)", "#EF4444"),
+L3500 [other] GLOBE WITH MERIDIANS: "Universal Scan": ("🌐", "rgba(59,130,246,0.12)", "#3B82F6"),
+L3541 [other] SHIELD: icon, bg_c, text_c = RECENT_ICONS.get(r["scanner"], ("🛡️", "rgba(255,255,255,0.05)", "var(--text)"))
+L3743 [st_button] CLOCK FACE ONE OCLOCK: st.button("🕐 Scan History", key="dash_hero_history", width="stretch", type="primary", on_click=go_to
+L3745 [st_button] CHART WITH UPWARDS TREND: st.button("📈 Analytics Panel", key="dash_hero_analytics", width="stretch", type="secondary", on_clic
+L3758 [st_markdown_html] ANTENNA WITH BARS: <div style="width:38px; height:38px; border-radius:50%; background:rgba(59,130,246,0.14); color:#3B8

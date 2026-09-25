@@ -40,6 +40,9 @@ import pandas as pd
 
 warnings.filterwarnings("ignore")
 
+from urllib.parse import urlparse
+from scipy.sparse import hstack
+
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OrdinalEncoder
 
@@ -230,6 +233,67 @@ def extract_url_lexical_features(url: str) -> dict[str, float]:
     }
 
 
+def extract_online_valid_dense_features(urls: list[str] | pd.Series) -> np.ndarray:
+    """
+    Extract high-precision dense lexical, structural, and security token features
+    for the Online-Valid Phishing URL brand impersonation model.
+    """
+    feats = []
+    for u in urls:
+        u_str = str(u).lower().strip()
+        p_url = u_str if u_str.startswith(('http://', 'https://')) else ('http://' + u_str)
+        try:
+            parsed = urlparse(p_url)
+            domain = parsed.netloc
+            path = parsed.path
+            query = parsed.query
+        except Exception:
+            domain, path, query = "", "", ""
+
+        url_len = len(u_str)
+        num_dots = u_str.count('.')
+        num_slashes = u_str.count('/')
+        num_hyphens = u_str.count('-')
+        num_digits = sum(c.isdigit() for c in u_str)
+        num_at = u_str.count('@')
+        num_equals = u_str.count('=')
+        num_ampersand = u_str.count('&')
+        num_special = len(re.findall(r'[^a-zA-Z0-9./:-]', u_str))
+        has_ip = int(bool(re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', u_str)))
+        path_depth = min(num_slashes, 10)
+        query_len = len(query)
+        domain_len = len(domain)
+        dot_slash_ratio = num_dots / max(num_slashes, 1)
+        special_ratio = num_special / max(url_len, 1)
+        digit_ratio = num_digits / max(url_len, 1)
+        hyphen_ratio = num_hyphens / max(url_len, 1)
+
+        # Brand keywords
+        has_paypal_kw = int(any(k in u_str for k in ['paypal', 'pay-pal', 'paypa', 'webscr', 'cmd=_login', 'paypal-status', 'secure-paypal']))
+        has_blizzard_kw = int(any(k in u_str for k in ['blizzard', 'battle.net', 'battlenet', 'worldofwarcraft', 'warcraft', 'diablo', 'com-d3', 'us.battle']))
+        has_sulake_kw = int(any(k in u_str for k in ['sulake', 'habbo', 'habbohotel', 'knuddelz', 'pastehtml.com', 'habbocoins']))
+        has_aol_kw = int(any(k in u_str for k in ['screenname.aol', 'aol.com', 'aim.com', 'indaol', '_cqr']))
+        has_orkut_kw = int('orkut' in u_str or 'freeregister' in u_str)
+
+        # Security/phish tokens
+        has_login = int('login' in u_str or 'signin' in u_str or 'sign-in' in u_str or 'log-in' in u_str)
+        has_secure = int('secure' in u_str or 'security' in u_str or 'ssl' in u_str)
+        has_account = int('account' in u_str or 'acct' in u_str or 'user' in u_str)
+        has_verify = int('verify' in u_str or 'verification' in u_str or 'confirm' in u_str or 'valide' in u_str)
+        has_cgi = int('cgi-bin' in u_str or 'cmd=' in u_str or 'dispatch=' in u_str)
+        has_blog = int('blogspot' in u_str or 'wordpress' in u_str or 'wix' in u_str or 'pastehtml' in u_str)
+
+        feats.append([
+            url_len, int(u_str.startswith('https')), num_dots, num_slashes, num_hyphens,
+            num_digits, num_at, num_equals, num_ampersand, num_special,
+            has_ip, path_depth, query_len, domain_len,
+            dot_slash_ratio, special_ratio, digit_ratio, hyphen_ratio,
+            has_paypal_kw, has_blizzard_kw, has_sulake_kw, has_aol_kw, has_orkut_kw,
+            has_login, has_secure, has_account, has_verify, has_cgi, has_blog
+        ])
+    return np.array(feats, dtype=float)
+
+
 def build_phishing_url_feature_row(features: dict[str, Any]) -> np.ndarray:
     """
     Build the 50-column PhiUSIIL feature row from a dict of URL features.
@@ -383,20 +447,44 @@ def predict_brand_impersonation(url: str) -> dict[str, Any]:
     """
     try:
         model = model_loader.load(ONLINE_VALID_MODEL_PATH)
-        feat = extract_url_lexical_features(url)
-        df = pd.DataFrame([feat])[ONLINE_VALID_FEATURE_COLS]
-        X = SimpleImputer(strategy="mean").fit_transform(df.values.astype(float))
-        pred = model.predict(X)[0]
-        proba = model.predict_proba(X)[0]
-        classes = list(model.classes_)
-        confidence = float(max(proba))
-        return {
-            "brand":         str(pred),
-            "confidence":    confidence,
-            "probabilities": _fmt_proba(classes, proba),
-            "model":         "online_valid_model",
-            "available":     True,
-        }
+        if isinstance(model, dict) and "classifier" in model:
+            clf = model["classifier"]
+            tfidf_char = model.get("tfidf_char")
+            tfidf_word = model.get("tfidf_word")
+            u_clean = [str(url).strip().lower()]
+            X_dense = extract_online_valid_dense_features(u_clean)
+            parts = [X_dense]
+            if tfidf_char is not None:
+                parts.append(tfidf_char.transform(u_clean))
+            if tfidf_word is not None:
+                parts.append(tfidf_word.transform(u_clean))
+            X = hstack(parts).tocsr() if len(parts) > 1 else X_dense
+            pred = clf.predict(X)[0]
+            proba = clf.predict_proba(X)[0]
+            classes = list(clf.classes_)
+            confidence = float(max(proba))
+            return {
+                "brand":         str(pred),
+                "confidence":    confidence,
+                "probabilities": _fmt_proba(classes, proba),
+                "model":         "online_valid_model",
+                "available":     True,
+            }
+        else:
+            feat = extract_url_lexical_features(url)
+            df = pd.DataFrame([feat])[ONLINE_VALID_FEATURE_COLS]
+            X = SimpleImputer(strategy="mean").fit_transform(df.values.astype(float))
+            pred = model.predict(X)[0]
+            proba = model.predict_proba(X)[0]
+            classes = list(model.classes_)
+            confidence = float(max(proba))
+            return {
+                "brand":         str(pred),
+                "confidence":    confidence,
+                "probabilities": _fmt_proba(classes, proba),
+                "model":         "online_valid_model",
+                "available":     True,
+            }
     except Exception as exc:
         logger.exception("predict_brand_impersonation failed: %s", exc)
         return {"available": False, "error": str(exc)}

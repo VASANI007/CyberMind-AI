@@ -75,11 +75,9 @@ class URLFeatureService:
         "admin",
         "security",
         "support",
-        "office365",
-        "microsoft",
-        "apple",
-        "google",
-        "facebook"
+        "credential-login",
+        "billing-update",
+        "urgent-action"
 
     }
 
@@ -2136,54 +2134,42 @@ class URLFeatureService:
         url: str
     ) -> bool:
         """
-        Detect common brands.
+        Detect common brands appearing in untrusted/impersonating URLs.
+        If the URL belongs to the authentic brand domain, returns False.
         """
-
-        brands = {
-
-            "google",
-
-            "microsoft",
-
-            "paypal",
-
-            "amazon",
-
-            "facebook",
-
-            "instagram",
-
-            "apple",
-
-            "netflix",
-
-            "dropbox",
-
-            "github",
-
-            "linkedin",
-
-            "twitter",
-
-            "whatsapp",
-
-            "telegram",
-
-            "adobe",
-
-            "office365"
-
+        brand_domains = {
+            "google": ("google.com", "google.co", "google.", "youtube.com"),
+            "microsoft": ("microsoft.com", "live.com", "office.com", "office365.com"),
+            "paypal": ("paypal.com", "paypal.me"),
+            "amazon": ("amazon.com", "amazon.co", "amazon.", "aws.amazon.com"),
+            "facebook": ("facebook.com", "fb.com"),
+            "instagram": ("instagram.com",),
+            "apple": ("apple.com", "icloud.com"),
+            "netflix": ("netflix.com",),
+            "dropbox": ("dropbox.com",),
+            "github": ("github.com", "github.io"),
+            "linkedin": ("linkedin.com",),
+            "twitter": ("twitter.com", "x.com"),
+            "whatsapp": ("whatsapp.com",),
+            "telegram": ("telegram.org", "t.me"),
+            "adobe": ("adobe.com",),
+            "office365": ("office.com", "office365.com", "microsoft.com")
         }
 
         text = url.lower()
+        host = self.hostname(url).lower()
 
-        return any(
+        for brand, official_hosts in brand_domains.items():
+            if brand in text:
+                # If the domain is actually the brand's own official domain, it is NOT brand impersonation
+                is_legit = any(
+                    host == oh or host.endswith("." + oh.rstrip("."))
+                    for oh in official_hosts
+                )
+                if not is_legit:
+                    return True
 
-            brand in text
-
-            for brand in brands
-
-        )
+        return False
 
     # ---------------------------------------------------
 
