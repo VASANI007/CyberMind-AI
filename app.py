@@ -31,6 +31,16 @@ from modules.ai_assistant import render_ai_assistant_panel
 import logging
 logger = logging.getLogger(__name__)
 
+# Silence benign Streamlit background thread context warnings
+for _name in (
+    "streamlit.runtime.scriptrunner.script_run_context",
+    "streamlit.runtime.scriptrunner_utils.script_run_context",
+    "streamlit.runtime.scriptrunner",
+):
+    _l = logging.getLogger(_name)
+    _l.setLevel(logging.ERROR)
+    _l.addFilter(lambda r: "ScriptRunContext" not in r.getMessage())
+
 # Load CyberMind Emoji Icon Mapping
 EMOJI_ICONS_FILE = BASE_DIR / "data" / "emoji_icons.json"
 try:
@@ -67,7 +77,13 @@ if "ml_warmed" not in st.session_state:
             pass
 
     import threading
-    threading.Thread(target=_warmup_ml_models, daemon=True).start()
+    _warmup_t = threading.Thread(target=_warmup_ml_models, daemon=True)
+    try:
+        from streamlit.runtime.scriptrunner import add_script_run_ctx
+        add_script_run_ctx(_warmup_t)
+    except Exception:
+        pass
+    _warmup_t.start()
 
 if "sidebar_state" not in st.session_state:
     st.session_state.sidebar_state = "expanded"

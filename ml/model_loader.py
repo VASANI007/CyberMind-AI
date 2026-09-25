@@ -18,6 +18,14 @@ import joblib
 
 from core.logger import logger
 
+try:
+    import streamlit as st
+    @st.cache_resource(show_spinner=False)
+    def _st_cached_load(path_str: str) -> Any:
+        return joblib.load(Path(path_str))
+except Exception:
+    _st_cached_load = None
+
 
 class ModelLoader:
     """
@@ -127,27 +135,20 @@ class ModelLoader:
         )
 
         if cache_key in self._cache:
+            logger.info("Model loaded from cache : %s", cache_key)
+            return self._cache[cache_key]
 
-            logger.info(
-
-                "Model loaded from cache : %s",
-
-                cache_key
-
-            )
-
-            return self._cache[
-
-                cache_key
-
-            ]
+        if _st_cached_load is not None:
+            try:
+                model = _st_cached_load(cache_key)
+                self._cache[cache_key] = model
+                return model
+            except Exception:
+                pass
 
         logger.info(
-
             "Loading model : %s",
-
             cache_key
-
         )
 
         suffix = path.suffix.lower()

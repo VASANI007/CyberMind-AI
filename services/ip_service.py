@@ -59,9 +59,12 @@ class IPService:
             "blacklist": lambda: blacklist_service.lookup(ip) or {},
             "abstract": lambda: abstract_ip_service.lookup(ip) or {},
         }
+        from utils.thread_utils import get_current_st_context, wrap_thread_task
+        st_ctx = get_current_st_context()
+
         res_map = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(task_map)) as executor:
-            future_to_key = {executor.submit(fn): k for k, fn in task_map.items()}
+            future_to_key = {executor.submit(wrap_thread_task(fn, st_ctx)): k for k, fn in task_map.items()}
             for future in concurrent.futures.as_completed(future_to_key):
                 k = future_to_key[future]
                 try:

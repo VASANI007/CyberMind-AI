@@ -496,8 +496,11 @@ class DomainService:
             "blacklist": lambda: self.blacklist(domain),
         }
 
+        from utils.thread_utils import get_current_st_context, wrap_thread_task
+        st_ctx = get_current_st_context()
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(task_map)) as executor:
-            future_to_key = {executor.submit(fn): key for key, fn in task_map.items()}
+            future_to_key = {executor.submit(wrap_thread_task(fn, st_ctx)): key for key, fn in task_map.items()}
             for future in concurrent.futures.as_completed(future_to_key):
                 key = future_to_key[future]
                 try:
