@@ -14,7 +14,7 @@ import uuid
 from typing import Any
 from pathlib import Path
 from dotenv import load_dotenv
-
+import html
 from core.logger import logger
 
 # Ensure fresh environment variables
@@ -68,6 +68,7 @@ def _build_user_confirmation_html(ticket_id: str, name: str, email: str, subject
     """Dark cyber themed HTML email matching the exact CyberMind AI enterprise mockup design."""
     logo_url = "https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true"
     poster_url = "https://github.com/VASANI007/CyberMind-AI/blob/main/cyber.png?raw=true"
+    clean_message = html.escape(str(message or "").strip()).replace("\n", "<br>")
     
     return f"""<!DOCTYPE html>
 <html>
@@ -252,15 +253,13 @@ def _build_user_confirmation_html(ticket_id: str, name: str, email: str, subject
                       </tr>
                       <!-- Row 5: Your Message -->
                       <tr>
-                        <td style="padding:10px 0 4px 0; vertical-align:top;">
+                        <td style="padding:9px 0; width:32px; vertical-align:middle;">
                           <span style="display:inline-block; width:22px; height:22px; border-radius:5px; background:rgba(139, 92, 246, 0.15); border:1px solid rgba(139, 92, 246, 0.4); text-align:center; line-height:22px;"><img src="https://cdn-icons-png.flaticon.com/512/3790/3790214.png" width="12" height="12" style="vertical-align:middle; display:inline-block;" alt="" /></span>
                         </td>
-                        <td style="padding:10px 8px 4px 8px; font-size:12.5px; color:#94A3B8; vertical-align:top;">
+                        <td style="padding:9px 8px; font-size:12.5px; color:#94A3B8; width:34%; vertical-align:middle;">
                           Your Message:
                         </td>
-                        <td style="padding:10px 0 4px 0; font-size:13px; color:#F1F5F9; line-height:1.55; vertical-align:top; white-space:pre-wrap;">
-                          {message}
-                        </td>
+                        <td style="padding:9px 0; font-size:13px; color:#F1F5F9; font-weight:500; line-height:1.5; vertical-align:middle; word-break:break-word;">{clean_message}</td>
                       </tr>
                     </table>
                   </td>
@@ -357,6 +356,7 @@ def _build_admin_notification_html(ticket_id: str, name: str, email: str, subjec
     """Dark cyber themed HTML email sent to admin (cybermindxai@gmail.com) matching enterprise mockup."""
     logo_url = "https://github.com/VASANI007/CyberMind-AI/blob/main/static/logo.png?raw=true"
     poster_url = "https://github.com/VASANI007/CyberMind-AI/blob/main/cyber.png?raw=true"
+    clean_message = html.escape(str(message or "").strip()).replace("\n", "<br>")
     
     return f"""<!DOCTYPE html>
 <html>
@@ -500,16 +500,13 @@ def _build_admin_notification_html(ticket_id: str, name: str, email: str, subjec
                               <img src="https://cdn-icons-png.flaticon.com/512/3790/3790214.png" width="14" height="14" style="vertical-align:middle; display:inline-block;" alt="" />
                             </div>
                           </td>
-                          <td style="color:#F8FAFC; font-size:14px; line-height:1.6; white-space:pre-wrap; vertical-align:middle;">
-{message}
-                          </td>
+                          <td style="color:#F8FAFC; font-size:14px; line-height:1.6; vertical-align:middle; word-break:break-word;">{clean_message}</td>
                         </tr>
                       </table>
                     </div>
                   </td>
                 </tr>
               </table>
-
               <!-- CARD 3: RESPONSE GUIDELINE -->
               <div style="background:rgba(0, 210, 255, 0.04); border:1px solid rgba(0, 210, 255, 0.25); border-radius:10px; padding:14px 18px; margin-bottom:20px;">
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
@@ -528,7 +525,6 @@ def _build_admin_notification_html(ticket_id: str, name: str, email: str, subjec
                   </tr>
                 </table>
               </div>
-
               <!-- Direct Reply Action Button -->
               <div style="text-align:center; margin-bottom:22px;">
                 <a href="mailto:{email}?subject=Re: [CyberMind Support {ticket_id}] {subject}" 
@@ -536,7 +532,6 @@ def _build_admin_notification_html(ticket_id: str, name: str, email: str, subjec
                   <img src="https://cdn-icons-png.flaticon.com/512/888/888853.png" width="14" height="14" style="vertical-align:middle; display:inline-block;" alt="" /> &nbsp; Reply Directly to {name} <span style="opacity:0.85; font-size:12px; font-weight:400;">({email})</span> &nbsp; &rarr;
                 </a>
               </div>
-
               <!-- 4 Feature Pillars -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid rgba(255,255,255,0.06); padding-top:18px;">
                 <tr>
