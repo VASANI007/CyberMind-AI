@@ -1,0 +1,368 @@
+
+=== SLIDE 1 ===
+  * CyberMind AI
+  * Presented by Daksh Vasani
+  * ER. NO: 2504070500037
+  * AI-Powered Cyber Intelligence Platform
+  * PROJECT REVIEW – III
+  * SOCCA - MSC DS
+  * Under the Guidance of:
+  * Ms. Ritika Savaliya
+  * SOCCA – Silver Oak University | M.Sc. Data Science
+
+=== SLIDE 2 ===
+  * Project Overview
+  * CyberMind-AI
+  * 2
+  * CyberMind AI is an enterprise-grade AI-powered Cyber Threat Intelligence (CTI) and Malware Analysis Platform designed to consolidate multi-vector telemetry into a single pane of glass. The system integrates rule-based heuristics, 4 supervised machine learning classifiers, and generative AI explanations to produce a unified 0–100 cyber risk score and automated executive mitigation reports.
+  * 01 | 10 Specialized Scanners
+  * MODULAR MULTI-VECTOR ENGINES
+  * •  Full-spectrum threat surface coverage across Web, Network, Files, and Endpoints.
+  * •  Dedicated modules for URL, Website, Domain, Email, IP, Phone, File/PE, and QR.
+  * •  Universal Auto-Scanner with intelligent input type inference & auto-dispatch.
+  * 02 | 13 External APIs & 30+ Services
+  * AGGREGATED THREAT INTELLIGENCE FEEDS
+  * •  Real-time enrichment via 13 APIs: VirusTotal, AbuseIPDB, Google Safe Browsing, Groq, Veriphone, Numverify, Abstract, IPinfo, IPQS, VerificarEmails.
+  * •  IPinfo & IPQS for geolocation, ASN, proxy, and VPN/Tor exit-node detection.
+  * •  Resilient services layer with asynchronous timeouts and heuristic fallback.
+  * 03 | Machine Learning
+  * SUPERVISED THREAT CLASSIFIERS
+  * •  4 Scikit-Learn Random Forest models trained on 242,341 verified security samples.
+  * •  50 lexical and structural URL features extracted in real time for phishing.
+  * •  PE header anomaly detection, section entropy, and hex signature analysis.
+  * 04 | Generative AI
+  * GROQ LLAMA-3 70B SYNTHESIS
+  * •  Translates complex JSON telemetry into concise 3-sentence executive summaries.
+  * •  Tailored defensive recommendations for both analysts and executive leaders.
+  * •  Rule-based advisory fallback ensures continuous intelligence even offline.
+
+=== SLIDE 3 ===
+  * Review 2 ➔ Review 3 Progress
+  * CyberMind-AI
+  * 3
+  * REVIEW 2 — SYSTEM DESIGN & ARCHITECTURE (Completed)
+  * ✔ Requirement Analysis & Feasibility Study
+    Problem formulation, operational constraints, and multi-feed threat intelligence research.
+  * ✔ Decoupled 3-Tier System Architecture
+    Presentation, application services, and persistent database layers strictly decoupled.
+  * ✔ Data Flow Diagrams (DFD Level 0 & Level 1)
+    Context diagram and 5 operational sub-processes mapping target processing workflows.
+  * ✔ Peter Chen Style ER Diagram (15 DB Tables)
+    Master scan history entity correlated with 10 scanner-specific detail tables.
+  * ✔ 4-Tier UML Class, Sequence & Activity Diagrams
+    Static structure, dynamic call lifecycles, and parallel scanning activity models.
+  * ✔ Streamlit UI Prototype & Component Wireframes
+    Initial navigation mockups and dark cybersecurity themed interface prototypes.
+  * REVIEW 3 — WORKING PROTOTYPE & IMPLEMENTATION (Current)
+  * ✔ 10/10 Core Scanner Modules Operational
+    URL, Website, Domain, Email, IP, Phone, File/PE, QR, Device, & Universal modules active.
+  * ✔ 13 External APIs & 30+ Threat Intelligence Services Layer
+  * Random Forest models achieving 96.67% CV accuracy (99.40% ROC-AUC) for phishing, malware, & breaches.
+  * ✔ Multi-Factor 0–100 Unified Risk Engine
+    Mathematical weighted risk scoring with 5 severity bands and critical override triggers.
+  * Live persistence across 15 relational tables with 131 real scan records logged in cybermind.db.
+  * ✔ Interactive Streamlit Dashboard & Testing
+    Production UI with 156 automated Pytest test cases passing (100% pass rate) and 12 bug fixes.
+
+=== SLIDE 4 ===
+  * Implemented System Architecture
+  * CyberMind-AI
+  * 4
+  * 1. Analyst Target Input: URL, Domain, IP, Email, Phone, File, or QR code submitted via Dashboard
+  * 2. Input Validation & Sanitization: core/validator.py validates schemas, regex patterns, and type boundaries
+  * 3. Scanner Engine & Router: modules/scanner_engine.py routes sanitized target to specialized scanner
+  * 4. Threat Intelligence + ML Inference: Parallel execution of 30+ TI APIs (services/) and Random Forest classifiers (ml/)
+  * 5. Unified Risk Engine: modules/risk_engine.py aggregates multi-source scores into a 0–100 risk score
+  * 6. Groq Llama-3 Generative AI: modules/ai_assistant.py generates plain-English summary and mitigation steps
+  * 7. SQLite Persistence & Streamlit UI: Persisted in database/cybermind.db & visualized in Streamlit + PDF reports
+  * ✔ Decoupled 3-Tier Architecture
+Presentation (Streamlit), Application (Services/Modules/ML), and Data (SQLite) layers are strictly decoupled for maintainability and independent testing.
+  * ✔ Provider-Agnostic Services Layer
+External APIs are queried exclusively through modular adapters in services/, ensuring core scanner logic remains vendor-independent.
+  * ✔ Hybrid Machine Learning + Generative AI
+Combines high-speed supervised Random Forest models for anomaly classification with Groq Llama-3 70B for explainable contextual intelligence.
+  * ✔ Centralized Telemetry & Indexing
+Every scan event, API response latency, and detection flag is logged in SQLite with 11 performance indexes ensuring sub-second lookups.
+  * ✔ Automated Offline Fallbacks
+Every external service dependency implements graceful local heuristic fallbacks to guarantee platform uptime during network outages.
+
+=== SLIDE 5 ===
+  * Implemented Scanner Modules
+  * CyberMind-AI
+  * 5
+  * 01. URL Scanner  [✔ Operational]
+  * Phishing detection, lexical feature extraction, suspicious keyword entropy, and redirect trace.
+  * Code: modules/url_scanner.py
+  * 02. Website Security Scanner  [✔ Operational]
+  * SSL/TLS certificate verification, cipher audit, security headers (CSP/HSTS), and tech stack.
+  * Code: modules/website_scanner.py
+  * 03. Domain WHOIS Scanner  [✔ Operational]
+  * Registrar lookup, domain creation/expiration age, DNSSEC verification, and nameserver audit.
+  * Code: modules/domain_scanner.py
+  * 04. Email Deliverability Scanner  [✔ Operational]
+  * SPF, DKIM, DMARC record checks, MX host resolution, and disposable email domain filtering.
+  * Code: modules/email_scanner.py
+  * 05. IP Address & Abuse Scanner  [✔ Operational]
+  * AbuseIPDB reputation scoring, IPinfo geolocation, ASN lookup, and Tor exit-node detection.
+  * Code: modules/ip_scanner.py
+  * 06. Phone Threat Intelligence  [✔ Operational]
+  * Veriphone API carrier identification, line type validation, international E.164 formatting.
+  * Code: modules/phone_scanner.py
+  * 07. File & PE Malware Scanner  [✔ Operational]
+  * MD5/SHA-256 hash lookup, section entropy calculation, PE header parsing, and hex signatures.
+  * Code: modules/file_scanner.py
+  * 08. QR & Payment Fraud Scanner  [✔ Operational]
+  * QR payload decoding, UPI payment URI parameter validation, and malicious redirect checking.
+  * Code: modules/qr_scanner.py
+  * 09. Device Security Audit  [✔ Operational]
+  * Local OS hardening inspection, open ports scanning, Windows firewall status, and update audit.
+  * Code: modules/device_security_module.py
+  * 10. Universal Auto Scanner  [✔ Operational]
+  * Intelligent multi-pattern regex detector auto-identifying target type with consolidated dispatch.
+  * Code: modules/universal_scan_module.py
+
+=== SLIDE 6 ===
+  * API & Threat Intelligence Integration
+  * CyberMind-AI
+  * 6
+  * 13 EXTERNAL APIS & 30+ THREAT SERVICES: Scanner Engine ➔ Provider-Agnostic Services Layer (services/) ➔ External TI APIs ➔ Normalized Schema ➔ Risk Engine
+  * Resilience & Fallback Architecture: All API connectors implement strict 5-second asynchronous timeouts, connection retry limits, rate-limit backoffs, and automated fallback to local heuristic threat algorithms to maintain 100% platform availability.
+  * VirusTotal API
+  * 70+ AV Engines | services/virustotal_service.py
+  * • Queries 70+ antivirus vendor engines simultaneously.
+  * • Extracts detection ratios, engine flags, & reputation score.
+  * • Covers URLs, domain reputation, & SHA-256/MD5 hashes.
+  * AbuseIPDB API
+  * IP Reputation | services/abuseipdb_service.py
+  * • Calculates confidence of abuse score (0–100%).
+  * • Retrieves total reported abuse incidents & reporter count.
+  * • Checks ISP name, usage type (Datacenter/VPN), & country.
+  * Google Safe Browsing
+  * Real-Time Blacklist | google_safe_browsing_service.py
+  * • Lookup against Google's global threat databases v4.
+  * • Identifies active malware distribution & deceptive phishing.
+  * • Instantly escalates target severity score upon match.
+  * Groq Cloud Generative AI
+  * Llama-3 70B Engine | modules/ai_assistant.py
+  * • Translates complex JSON telemetry in <1.2s latency.
+  * • Plain-language threat diagnosis for non-technical stakeholders.
+  * • Actionable mitigation steps for SOC analysts & executives.
+  * Veriphone & Numverify
+  * Telephony Intel | veriphone & numverify_service.py
+  * • Parses international phone numbers to E.164 standard.
+  * • Identifies carrier name, line type (Mobile/VoIP/Landline).
+  * • Flags disposable VoIP numbers used in phishing & scams.
+  * Abstract IP & Phone APIs
+  * Telecom & IP Risk | abstract_ip & phone services
+  * • Deep telecom carrier fraud profiling & country risk scores.
+  * • IP security assessment, commercial proxy & VPN flags.
+  * • Real-time roaming status & telecom validity verification.
+  * IPinfo & IPQS Services
+  * Geo & Fraud Scoring | ipinfo_service & ipqs_service.py
+  * • Provides city, country, & precise latitude/longitude.
+  * • Extracts Autonomous System Number (ASN) & org info.
+  * • Flags commercial VPNs, open proxies, & Tor exit nodes.
+  * VerificarEmails & WHOIS
+  * Email & Domain | verificaremails, whois, dns_service
+  * • Deep email verification, disposable domain & SMTP handshake.
+  * • Executes RDAP/WHOIS for registrar & creation/expiry dates.
+  * • Validates DNSSEC, MX records, & crt.sh CT certificate logs.
+
+=== SLIDE 7 ===
+  * Machine Learning Implementation
+  * CyberMind-AI
+  * 7
+  * ML ARCHITECTURE & FEATURE ENGINEERING
+  * ✔ Real-Time Feature Engineering (ml/feature_engineering.py)
+    Extracts 50 dynamic lexical and structural features from target URLs: character counts, suspicious token entropy, TLD risk weights, path depths, and brand keyword similarity.
+  * ✔ Binary & Multi-Class Classifiers (ml/inference.py)
+    Scikit-Learn Random Forest ensemble models calibrated with 5-fold Stratified Cross-Validation for robust decision boundary convergence.
+  * ✔ Portable Serialized Artifacts (ml/models/*.pkl)
+    Pre-trained models loaded via thread-safe singleton cache in ml/model_loader.py, enabling sub-20ms inference latency per query.
+  * ✔ Explainability & Risk Contribution
+    Extracts feature importance weights feeding into the Unified Risk Engine to directly modulate risk scores based on ML model confidence.
+  * ACTUAL MEASURED MODEL BENCHMARKS (cybermind_metrics.json)
+  * OVERALL SYSTEM ML PERFORMANCE (5-Fold Stratified CV): • Accuracy: 96.67%  |  Precision: 96.84%  |  Recall: 96.67% • F1-Score: 96.63%  |  ROC-AUC: 0.9940  |  Ensemble: Random Forest
+  * ✔ PhiUSIIL Phishing URL Model (phishing_url_model.pkl):
+ • 234,987 samples, 50 features | Binary Classification
+ • Training CV Accuracy: 100.0% | ROC-AUC: 1.0000
+ • External OpenPhish Feed Benchmark (1,000 samples): 94.50% Accuracy
+  * ✔ File Signatures Model (file_signatures_model.pkl):
+ • 1,024 samples, 9 features | Multi-Class Risk Classification
+ • Accuracy: 97.56% | Precision: 97.67% | ROC-AUC: 0.9985
+ • High: 98.15% F1 | Medium: 97.76% F1 | Low: 96.85% F1
+  * ✔ Online-Valid Phishing Model (online_valid_model.pkl): • 5,810 samples, 10,080 features | Multi-Class Target Classifier • Accuracy: 90.26% | Precision: 90.79% | F1: 90.19% | ROC-AUC: 0.9777 (PayPal, Blizzard, Orkut, Sulake, Other)
+  * ✔ Data Breaches Model (breaches_model.pkl):  • 520 samples, 6 features | 5-Class Root-Cause Classifier  • Accuracy: 98.85% | Precision: 98.88% | F1: 98.75% | ROC-AUC: 1.0000
+
+=== SLIDE 8 ===
+  * Risk Engine & AI Explanation
+  * CyberMind-AI
+  * 8
+  * UNIFIED 0–100 RISK ENGINE (modules/risk_engine.py)
+  * Multi-Factor Mathematical Formulation:
+  Risk Score = (w1 · API_Score) + (w2 · ML_Prob) + (w3 · Heuristics)
+  Where w1=0.45, w2=0.35, w3=0.20 (dynamically weighted).
+  * Critical Override Logic:
+ If VirusTotal engine flags > 5 OR Google Safe Browsing triggers, the score is automatically escalated to 90–100 (Critical), overriding benign weights.
+  * 5 Standardized Severity Bands:
+  * • 🟢 SAFE (0–20): Clean reputation, valid SSL, zero engine blacklist hits.
+  * • 🔵 LOW (21–40): Minor misconfigurations (missing CSP headers, new domain).
+  * • 🟡 MEDIUM (41–60): Elevated entropy, suspicious redirects, or spam keywords.
+  * • 🟠 HIGH (61–80): Multiple threat indicators, high abuse confidence score.
+  * • 🔴 CRITICAL (81–100): Active malware distribution, verified phishing, known C2 IP.
+  * GROQ LLAMA-3 GENERATIVE AI EXPLANATION ENGINE
+  * ✔ Contextual Threat Translation
+Synthesizes multi-page JSON payloads from VirusTotal, AbuseIPDB, and ML models into a clean 3-sentence executive summary that non-technical managers can instantly comprehend.
+  * ✔ Actionable Remediation Directives
+Generates role-specific mitigation recommendations:
+• For SOC Analysts: Specific iptables block rules, DNS sinkhole targets, and hash blacklist values.
+• For Leadership: Business impact, user credential revoking advice, and policy adjustments.
+  * ✔ Low-Latency Inference via Groq Cloud
+Integrates Groq Llama-3 70B API via modules/ai_assistant.py, streaming high-speed reasoning tokens in under 1.2 seconds.
+  * ✔ Resilient Offline Heuristic Engine
+Includes an embedded deterministic template engine that automatically provides rule-based remediation when GROQ_API_KEY is not set or network is disconnected.
+
+=== SLIDE 9 ===
+  * Database Implementation
+  * CyberMind-AI
+  * 9
+  * DATABASE CONFIGURATION: SQLite 3 | database/cybermind.db | 15 Relational Tables | 11 Optimized B-Tree Indexes | PRAGMA foreign_keys = ON; | Thread-Safe Connection Pool
+  * Master Entity: scan_history
+  * 131 REAL SCAN RECORDS LOGGED
+  * • scan_id: INTEGER PRIMARY KEY AUTOINCREMENT
+  * • scan_type: TEXT (e.g. Website Scanner, URL, Phone)
+  * • target: TEXT (URL, IP, domain, phone number)
+  * • risk_level: TEXT (Safe, Low, Medium, High, Critical)
+  * • risk_score: REAL (0.0 to 100.0 unified score)
+  * • status: TEXT (Completed, Processing, Failed)
+  * • scan_time: TIMESTAMP (ISO 8601 UTC)
+  * • country: TEXT (Geolocation resolved country)
+  * • latitude / longitude: REAL (Coordinates for live map)
+  * Scanner Detail Tables
+  * NORMALIZED MULTI-VECTOR DATA
+  * • url_scans: 14 cols: status_code, redirects, age, VT flags
+  * • ip_scans: 13 cols: abuse_score, ASN, ISP, Tor exit flag
+  * • website_scans: 12 cols: SSL cert, cipher, headers, tech stack
+  * • email_scans: 10 cols: SPF, DKIM, DMARC, MX, disposable
+  * • domain_scans: 11 cols: WHOIS, registrar, DNSSEC, expiry
+  * • file_scans: 13 cols: MD5, SHA256, size, entropy, PE headers
+  * • qr_scans: 9 cols: decoded_text, payment_uri, redirect_url
+  * System Telemetry Tables
+  * AUDITING & ADMINISTRATION
+  * • api_logs: 7 cols: service, latency_ms, status_code, quota
+  * • reports: 5 cols: report_id, scan_id, pdf_path, json_path
+  * • settings: Key-value system configuration records
+  * • scan_statistics: Aggregated daily/weekly threat metrics
+  * • feedback: Analyst verification and review telemetry
+  * • users: Authentication and role permissions
+  * • support_tickets: 9 customer incident & technical support records• Performance: 9 B-Tree indexes on scan_time, risk_level, target
+
+=== SLIDE 10 ===
+  * Dashboard
+  * Scan History
+  * Working Prototype & UI Dashboard
+  * CyberMind-AI
+  * 10
+
+=== SLIDE 11 ===
+  * Analytics
+  * Web Scanner
+  * 13
+  * CyberMind-AI
+  * Working Prototype & UI Dashboard
+  * CyberMind-AI
+  * 11
+
+=== SLIDE 12 ===
+  * Testing Methodology & Verification
+  * CyberMind-AI
+  * 12
+  * TESTING ARCHITECTURE & AUTOMATION WORKFLOW
+  * ✔ Automated Pytest Framework (tests/tests_root.py)
+  * Enterprise Pytest test harness orchestrated via root.py, executing 15 test files with parallel execution and health assertions.
+  * ✔ Deterministic Test Fixtures (tests/conftest.py)
+Standardized session-scoped fixtures providing verified inputs: sample URLs, domains, emails, IP addresses, PE sample files, and decoded QR payloads.
+  * ✔ Multi-Stage Verification Pipeline
+Input Target ➔ core/validator.py Sanitization ➔ Service Execution ➔ Assertion of Expected vs. Actual Outputs ➔ Pass / Fail ➔ Auto-Fallback Verification.
+  * ✔ Diagnostics Master Orchestrator (root.py)
+Sequential 5-phase validation: module discovery, manager initialization, health checks, test suite execution, and live diagnostic scans.
+  * 7 IMPLEMENTED TESTING CATEGORIES (156 TEST CASES)
+  * 1. Functional Scanner Tests: test_modules.py & test_universal_scan.py: Routing, parameter handling, and return payload structure across all 10 scanners.
+  * 2. External Service & API Tests: test_api.py & test_services.py: Validates mock fallbacks, API rate limits, timeouts, and live endpoints.
+  * 3. ML Prediction & Inference Tests: test_ml.py: Verifies 50-feature array shapes, probability calibration, and model serialization.
+  * 4. Relational Database Tests: test_database.py: Asserts schema migrations, foreign keys, record CRUD, and multi-thread safe execution.
+  * 5. Device Hardening Audit Tests: test_device_security.py: Validates local port scanning, Windows firewall detection, and OS checks.
+  * 6. Input Validation & Error Handling: Tests malformed URLs, empty targets, non-numeric phones, and SQL injection sanitization.
+  * 7. Startup Diagnostics & Health Checks: test_startup.py: Comprehensive health verification across all 10 manager classes.
+
+=== SLIDE 13 ===
+  * Test Cases & Execution Matrix
+  * CyberMind-AI
+  * 13
+  * EXECUTION SUMMARY: Total Automated Test Cases: 156  |  Passed: 156 (100% Pass Rate)  |  Failed: 0  |  Execution Duration: 8.42s  |  All 10 Managers Verified Healthy
+
+=== SLIDE 14 ===
+  * Code Review, Bugs & Issue Resolution
+  * CyberMind-AI
+  * 14
+  * CODING STANDARDS & ARCHITECTURAL BEST PRACTICES APPLIED:
+  * ✔ Decoupled 3-Tier Layering: Strict separation between UI (Streamlit), Business Logic (Modules/Services/ML), and Storage (SQLite).
+  * ✔ Strict Schema Validation: All incoming payloads sanitized through core/validator.py before reaching scanner engines.
+  * ✔ Defensive Error Handling: Every external API call wrapped in try/except blocks with structured logging via core/logger.py.
+  * ✔ Type Hinting & Modularity: Comprehensive Python 3.12+ type annotations (from __future__ import annotations) throughout.
+
+=== SLIDE 15 ===
+  * Current Project Progress & Roadmap
+  * CyberMind-AI
+  * 15
+  * IMPLEMENTATION
+  * 90%
+  * Core Operational
+  * MODULES
+  * 10 / 10
+  * All Active
+  * SERVICES / APIs
+  * 30+
+  * Integrated & Cached
+  * ML ACCURACY
+  * 96.7%
+  * 5-Fold Stratified CV
+  * TEST CASES
+  * 156 / 156
+  * 100% Passing
+  * RESOLVED BUGS
+  * 12 Fixes
+  * Refactored & Verified
+  * REVIEW 3 COMPLETED MILESTONES
+  * ✔ 10 Scanner Modules Fully Operational
+    URL, Website, Domain, Email, IP, Phone, File/PE, QR, Device, and Universal.
+  * VirusTotal, AbuseIPDB, Google Safe Browsing, Groq, Veriphone, Numverify,
+  * Abstract, IPinfo, IPQS, and VerificarEmails.
+  * Random Forest models achieving 96.67% CV accuracy (99.40% ROC-AUC)
+  * across 242,341 samples.
+  * ✔ Unified 0–100 Multi-Factor Risk Engine
+    Dynamic weighted risk scores with 5 severity tiers and critical override triggers.
+  * ✔ Full Interactive Streamlit Dashboard
+    Multi-page navigation, live scan charts, KPI cards, and threat map.
+  * ✔ 156 Automated Pytest Test Cases Passing
+    100% passing test suite covering APIs, ML models, modules, and database.
+  * ROADMAP FOR REVIEW 4 / FINAL SUBMISSION
+  * • Dynamic Malware Detonation Sandbox
+    Integrate automated safe container detonation for runtime PE behavioral analysis.
+  * • Enterprise SIEM / SOAR Webhook Connectors
+    Real-time alert streaming to Splunk, Elastic Security, and Microsoft Sentinel.
+  * • Automated Windows Firewall Active Response
+    Automated script generation for immediate host-based IP and port blocking.
+  * • Multi-User Role-Based Access Control (RBAC)
+    Analyst vs. Administrator access tiers with audit trails and team reporting.
+  * • Final Project Dissertation & Deployment
+    Production Docker containerization and comprehensive M.Sc. dissertation report.
+
+=== SLIDE 16 ===
+  * Thank You!
+  * For Your Attention
+  * Stay Secure, Stay Smart, Stay Ahead.
+  * CyberMind-AI
+  * SOCCA - MSC DS
+  * Presented by Daksh Vasani
+  * ER. NO: 2504070500037

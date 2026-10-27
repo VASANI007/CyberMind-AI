@@ -1,0 +1,2717 @@
+[
+  {
+    "slide_index": 1,
+    "shapes_count": 22,
+    "texts": [
+      {
+        "text": "CyberMind AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 6730000,
+        "top": 1524397,
+        "width": 4813072,
+        "height": 2609491
+      },
+      {
+        "text": "Presented by Daksh Vasani",
+        "font_name": null,
+        "font_size": null,
+        "left": 7362900,
+        "top": 6047651,
+        "width": 4829101,
+        "height": 810349
+      },
+      {
+        "text": "ER. NO: 2504070500037",
+        "font_name": null,
+        "font_size": null,
+        "left": 7362900,
+        "top": 6047651,
+        "width": 4829101,
+        "height": 810349
+      },
+      {
+        "text": "AI-Powered Cyber Intelligence Platform",
+        "font_name": null,
+        "font_size": null,
+        "left": 6730000,
+        "top": 3885214,
+        "width": 4187936,
+        "height": 369332
+      },
+      {
+        "text": "PROJECT REVIEW – III",
+        "font_name": null,
+        "font_size": null,
+        "left": 10059105,
+        "top": 151862,
+        "width": 3100000,
+        "height": 400000
+      },
+      {
+        "text": "SOCCA - MSC DS",
+        "font_name": null,
+        "font_size": null,
+        "left": 6096000,
+        "top": 108898,
+        "width": 2414209,
+        "height": 369332
+      },
+      {
+        "text": "Under the Guidance of:",
+        "font_name": null,
+        "font_size": null,
+        "left": 6730000,
+        "top": 4550000,
+        "width": 4800000,
+        "height": 715581
+      },
+      {
+        "text": "Ms. Ritika Savaliya",
+        "font_name": null,
+        "font_size": null,
+        "left": 6730000,
+        "top": 4550000,
+        "width": 4800000,
+        "height": 715581
+      },
+      {
+        "text": "SOCCA – Silver Oak University | M.Sc. Data Science",
+        "font_name": null,
+        "font_size": null,
+        "left": 6730000,
+        "top": 4550000,
+        "width": 4800000,
+        "height": 715581
+      }
+    ]
+  },
+  {
+    "slide_index": 2,
+    "shapes_count": 20,
+    "texts": [
+      {
+        "text": "Project Overview",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "2",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "CyberMind AI is an enterprise-grade AI-powered Cyber Threat Intelligence (CTI) and Malware Analysis Platform designed to consolidate multi-vector telemetry into a single pane of glass. The system integrates rule-based heuristics, 4 supervised machine learning classifiers, and generative AI explanations to produce a unified 0–100 cyber risk score and automated executive mitigation reports.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1200000,
+        "width": 11292000,
+        "height": 1000000
+      },
+      {
+        "text": "01 | 10 Specialized Scanners",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 2550000,
+        "width": 2420000,
+        "height": 650000
+      },
+      {
+        "text": "MODULAR MULTI-VECTOR ENGINES",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "•  Full-spectrum threat surface coverage across Web, Network, Files, and Endpoints.",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "•  Dedicated modules for URL, Website, Domain, Email, IP, Phone, File/PE, and QR.",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "•  Universal Auto-Scanner with intelligent input type inference & auto-dispatch.",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "02 | 13 External APIs & 30+ Services",
+        "font_name": "Arial",
+        "font_size": 13.0,
+        "left": 3407000,
+        "top": 2550000,
+        "width": 2420000,
+        "height": 650000
+      },
+      {
+        "text": "AGGREGATED THREAT INTELLIGENCE FEEDS",
+        "font_name": null,
+        "font_size": null,
+        "left": 3437000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2654573
+      },
+      {
+        "text": "•  Real-time enrichment via 13 APIs: VirusTotal, AbuseIPDB, Google Safe Browsing, Groq, Veriphone, Numverify, Abstract, IPinfo, IPQS, VerificarEmails.",
+        "font_name": null,
+        "font_size": null,
+        "left": 3437000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2654573
+      },
+      {
+        "text": "•  IPinfo & IPQS for geolocation, ASN, proxy, and VPN/Tor exit-node detection.",
+        "font_name": null,
+        "font_size": null,
+        "left": 3437000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2654573
+      },
+      {
+        "text": "•  Resilient services layer with asynchronous timeouts and heuristic fallback.",
+        "font_name": null,
+        "font_size": null,
+        "left": 3437000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2654573
+      },
+      {
+        "text": "03 | Machine Learning",
+        "font_name": null,
+        "font_size": null,
+        "left": 6364000,
+        "top": 2550000,
+        "width": 2420000,
+        "height": 650000
+      },
+      {
+        "text": "SUPERVISED THREAT CLASSIFIERS",
+        "font_name": null,
+        "font_size": null,
+        "left": 6394000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2300630
+      },
+      {
+        "text": "•  4 Scikit-Learn Random Forest models trained on 242,341 verified security samples.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6394000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2300630
+      },
+      {
+        "text": "•  50 lexical and structural URL features extracted in real time for phishing.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6394000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2300630
+      },
+      {
+        "text": "•  PE header anomaly detection, section entropy, and hex signature analysis.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6394000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2300630
+      },
+      {
+        "text": "04 | Generative AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 9321000,
+        "top": 2550000,
+        "width": 2420000,
+        "height": 650000
+      },
+      {
+        "text": "GROQ LLAMA-3 70B SYNTHESIS",
+        "font_name": null,
+        "font_size": null,
+        "left": 9351000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "•  Translates complex JSON telemetry into concise 3-sentence executive summaries.",
+        "font_name": null,
+        "font_size": null,
+        "left": 9351000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "•  Tailored defensive recommendations for both analysts and executive leaders.",
+        "font_name": null,
+        "font_size": null,
+        "left": 9351000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      },
+      {
+        "text": "•  Rule-based advisory fallback ensures continuous intelligence even offline.",
+        "font_name": null,
+        "font_size": null,
+        "left": 9351000,
+        "top": 3300000,
+        "width": 2360000,
+        "height": 2600000
+      }
+    ]
+  },
+  {
+    "slide_index": 3,
+    "shapes_count": 12,
+    "texts": [
+      {
+        "text": "Review 2 ➔ Review 3 Progress",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "3",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "REVIEW 2 — SYSTEM DESIGN & ARCHITECTURE (Completed)",
+        "font_name": null,
+        "font_size": null,
+        "left": 634639,
+        "top": 1397977,
+        "width": 5027607,
+        "height": 452023
+      },
+      {
+        "text": "✔ Requirement Analysis & Feasibility Study\n    Problem formulation, operational constraints, and multi-feed threat intelligence research.",
+        "font_name": null,
+        "font_size": null,
+        "left": 500000,
+        "top": 1930000,
+        "width": 5450000,
+        "height": 3388107
+      },
+      {
+        "text": "✔ Decoupled 3-Tier System Architecture\n    Presentation, application services, and persistent database layers strictly decoupled.",
+        "font_name": null,
+        "font_size": null,
+        "left": 500000,
+        "top": 1930000,
+        "width": 5450000,
+        "height": 3388107
+      },
+      {
+        "text": "✔ Data Flow Diagrams (DFD Level 0 & Level 1)\n    Context diagram and 5 operational sub-processes mapping target processing workflows.",
+        "font_name": null,
+        "font_size": null,
+        "left": 500000,
+        "top": 1930000,
+        "width": 5450000,
+        "height": 3388107
+      },
+      {
+        "text": "✔ Peter Chen Style ER Diagram (15 DB Tables)\n    Master scan history entity correlated with 10 scanner-specific detail tables.",
+        "font_name": null,
+        "font_size": null,
+        "left": 500000,
+        "top": 1930000,
+        "width": 5450000,
+        "height": 3388107
+      },
+      {
+        "text": "✔ 4-Tier UML Class, Sequence & Activity Diagrams\n    Static structure, dynamic call lifecycles, and parallel scanning activity models.",
+        "font_name": null,
+        "font_size": null,
+        "left": 500000,
+        "top": 1930000,
+        "width": 5450000,
+        "height": 3388107
+      },
+      {
+        "text": "✔ Streamlit UI Prototype & Component Wireframes\n    Initial navigation mockups and dark cybersecurity themed interface prototypes.",
+        "font_name": null,
+        "font_size": null,
+        "left": 500000,
+        "top": 1930000,
+        "width": 5450000,
+        "height": 3388107
+      },
+      {
+        "text": "REVIEW 3 — WORKING PROTOTYPE & IMPLEMENTATION (Current)",
+        "font_name": null,
+        "font_size": null,
+        "left": 6576646,
+        "top": 1397977,
+        "width": 4980715,
+        "height": 452022
+      },
+      {
+        "text": "✔ 10/10 Core Scanner Modules Operational\n    URL, Website, Domain, Email, IP, Phone, File/PE, QR, Device, & Universal modules active.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1930000,
+        "width": 5442000,
+        "height": 3018775
+      },
+      {
+        "text": "✔ 13 External APIs & 30+ Threat Intelligence Services Layer",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1930000,
+        "width": 5442000,
+        "height": 3018775
+      },
+      {
+        "text": "Random Forest models achieving 96.67% CV accuracy (99.40% ROC-AUC) for phishing, malware, & breaches.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1930000,
+        "width": 5442000,
+        "height": 3018775
+      },
+      {
+        "text": "✔ Multi-Factor 0–100 Unified Risk Engine\n    Mathematical weighted risk scoring with 5 severity bands and critical override triggers.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1930000,
+        "width": 5442000,
+        "height": 3018775
+      },
+      {
+        "text": "Live persistence across 15 relational tables with 131 real scan records logged in cybermind.db.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1930000,
+        "width": 5442000,
+        "height": 3018775
+      },
+      {
+        "text": "✔ Interactive Streamlit Dashboard & Testing\n    Production UI with 156 automated Pytest test cases passing (100% pass rate) and 12 bug fixes.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1930000,
+        "width": 5442000,
+        "height": 3018775
+      }
+    ]
+  },
+  {
+    "slide_index": 4,
+    "shapes_count": 22,
+    "texts": [
+      {
+        "text": "Implemented System Architecture",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "4",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "1. Analyst Target Input: URL, Domain, IP, Email, Phone, File, or QR code submitted via Dashboard",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 1548920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "2. Input Validation & Sanitization: core/validator.py validates schemas, regex patterns, and type boundaries",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 2158920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "3. Scanner Engine & Router: modules/scanner_engine.py routes sanitized target to specialized scanner",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 2768920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "4. Threat Intelligence + ML Inference: Parallel execution of 30+ TI APIs (services/) and Random Forest classifiers (ml/)",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 3378920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "5. Unified Risk Engine: modules/risk_engine.py aggregates multi-source scores into a 0–100 risk score",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 3988920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "6. Groq Llama-3 Generative AI: modules/ai_assistant.py generates plain-English summary and mitigation steps",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 4598920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "7. SQLite Persistence & Streamlit UI: Persisted in database/cybermind.db & visualized in Streamlit + PDF reports",
+        "font_name": null,
+        "font_size": null,
+        "left": 550000,
+        "top": 5208920,
+        "width": 6300000,
+        "height": 420000
+      },
+      {
+        "text": "✔ Decoupled 3-Tier Architecture\nPresentation (Streamlit), Application (Services/Modules/ML), and Data (SQLite) layers are strictly decoupled for maintainability and independent testing.",
+        "font_name": null,
+        "font_size": null,
+        "left": 7500000,
+        "top": 1416840,
+        "width": 4150000,
+        "height": 4500000
+      },
+      {
+        "text": "✔ Provider-Agnostic Services Layer\nExternal APIs are queried exclusively through modular adapters in services/, ensuring core scanner logic remains vendor-independent.",
+        "font_name": null,
+        "font_size": null,
+        "left": 7500000,
+        "top": 1416840,
+        "width": 4150000,
+        "height": 4500000
+      },
+      {
+        "text": "✔ Hybrid Machine Learning + Generative AI\nCombines high-speed supervised Random Forest models for anomaly classification with Groq Llama-3 70B for explainable contextual intelligence.",
+        "font_name": null,
+        "font_size": null,
+        "left": 7500000,
+        "top": 1416840,
+        "width": 4150000,
+        "height": 4500000
+      },
+      {
+        "text": "✔ Centralized Telemetry & Indexing\nEvery scan event, API response latency, and detection flag is logged in SQLite with 11 performance indexes ensuring sub-second lookups.",
+        "font_name": null,
+        "font_size": null,
+        "left": 7500000,
+        "top": 1416840,
+        "width": 4150000,
+        "height": 4500000
+      },
+      {
+        "text": "✔ Automated Offline Fallbacks\nEvery external service dependency implements graceful local heuristic fallbacks to guarantee platform uptime during network outages.",
+        "font_name": null,
+        "font_size": null,
+        "left": 7500000,
+        "top": 1416840,
+        "width": 4150000,
+        "height": 4500000
+      }
+    ]
+  },
+  {
+    "slide_index": 5,
+    "shapes_count": 26,
+    "texts": [
+      {
+        "text": "Implemented Scanner Modules",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "5",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "01. URL Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 1190000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Phishing detection, lexical feature extraction, suspicious keyword entropy, and redirect trace.",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 1190000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/url_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 1190000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "02. Website Security Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 2160000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "SSL/TLS certificate verification, cipher audit, security headers (CSP/HSTS), and tech stack.",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 2160000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/website_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 2160000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "03. Domain WHOIS Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 3130000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Registrar lookup, domain creation/expiration age, DNSSEC verification, and nameserver audit.",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 3130000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/domain_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 3130000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "04. Email Deliverability Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 4100000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "SPF, DKIM, DMARC record checks, MX host resolution, and disposable email domain filtering.",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 4100000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/email_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 4100000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "05. IP Address & Abuse Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 5070000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "AbuseIPDB reputation scoring, IPinfo geolocation, ASN lookup, and Tor exit-node detection.",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 5070000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/ip_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 470000,
+        "top": 5070000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "06. Phone Threat Intelligence  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 1190000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Veriphone API carrier identification, line type validation, international E.164 formatting.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 1190000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/phone_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 1190000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "07. File & PE Malware Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 2160000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "MD5/SHA-256 hash lookup, section entropy calculation, PE header parsing, and hex signatures.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 2160000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/file_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 2160000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "08. QR & Payment Fraud Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 3130000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "QR payload decoding, UPI payment URI parameter validation, and malicious redirect checking.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 3130000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/qr_scanner.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 3130000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "09. Device Security Audit  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 4100000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Local OS hardening inspection, open ports scanning, Windows firewall status, and update audit.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 4100000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/device_security_module.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 4100000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "10. Universal Auto Scanner  [✔ Operational]",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 5070000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Intelligent multi-pattern regex detector auto-identifying target type with consolidated dispatch.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 5070000,
+        "width": 5360000,
+        "height": 780000
+      },
+      {
+        "text": "Code: modules/universal_scan_module.py",
+        "font_name": null,
+        "font_size": null,
+        "left": 6370000,
+        "top": 5070000,
+        "width": 5360000,
+        "height": 780000
+      }
+    ]
+  },
+  {
+    "slide_index": 6,
+    "shapes_count": 26,
+    "texts": [
+      {
+        "text": "API & Threat Intelligence Integration",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "6",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "13 EXTERNAL APIS & 30+ THREAT SERVICES: Scanner Engine ➔ Provider-Agnostic Services Layer (services/) ➔ External TI APIs ➔ Normalized Schema ➔ Risk Engine",
+        "font_name": "Arial",
+        "font_size": 11.5,
+        "left": 400000,
+        "top": 1190000,
+        "width": 11392000,
+        "height": 520000
+      },
+      {
+        "text": "Resilience & Fallback Architecture: All API connectors implement strict 5-second asynchronous timeouts, connection retry limits, rate-limit backoffs, and automated fallback to local heuristic threat algorithms to maintain 100% platform availability.",
+        "font_name": null,
+        "font_size": null,
+        "left": 400000,
+        "top": 5380000,
+        "width": 11392000,
+        "height": 580000
+      },
+      {
+        "text": "VirusTotal API",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 400000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "70+ AV Engines | services/virustotal_service.py",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Queries 70+ antivirus vendor engines simultaneously.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Extracts detection ratios, engine flags, & reputation score.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Covers URLs, domain reputation, & SHA-256/MD5 hashes.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "AbuseIPDB API",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 3290000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "IP Reputation | services/abuseipdb_service.py",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Calculates confidence of abuse score (0–100%).",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Retrieves total reported abuse incidents & reporter count.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Checks ISP name, usage type (Datacenter/VPN), & country.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Google Safe Browsing",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 6180000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Real-Time Blacklist | google_safe_browsing_service.py",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Lookup against Google's global threat databases v4.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Identifies active malware distribution & deceptive phishing.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Instantly escalates target severity score upon match.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Groq Cloud Generative AI",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 9070000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Llama-3 70B Engine | modules/ai_assistant.py",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Translates complex JSON telemetry in <1.2s latency.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Plain-language threat diagnosis for non-technical stakeholders.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Actionable mitigation steps for SOC analysts & executives.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 1880000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Veriphone & Numverify",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 400000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Telephony Intel | veriphone & numverify_service.py",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Parses international phone numbers to E.164 standard.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Identifies carrier name, line type (Mobile/VoIP/Landline).",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Flags disposable VoIP numbers used in phishing & scams.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 400000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Abstract IP & Phone APIs",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 3290000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Telecom & IP Risk | abstract_ip & phone services",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Deep telecom carrier fraud profiling & country risk scores.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• IP security assessment, commercial proxy & VPN flags.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Real-time roaming status & telecom validity verification.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 3290000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "IPinfo & IPQS Services",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 6180000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Geo & Fraud Scoring | ipinfo_service & ipqs_service.py",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Provides city, country, & precise latitude/longitude.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Extracts Autonomous System Number (ASN) & org info.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Flags commercial VPNs, open proxies, & Tor exit nodes.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 6180000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "VerificarEmails & WHOIS",
+        "font_name": "Arial",
+        "font_size": 12.0,
+        "left": 9070000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "Email & Domain | verificaremails, whois, dns_service",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Deep email verification, disposable domain & SMTP handshake.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Executes RDAP/WHOIS for registrar & creation/expiry dates.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      },
+      {
+        "text": "• Validates DNSSEC, MX records, & crt.sh CT certificate logs.",
+        "font_name": "Arial",
+        "font_size": 8.5,
+        "left": 9070000,
+        "top": 3630000,
+        "width": 2540000,
+        "height": 1560000
+      }
+    ]
+  },
+  {
+    "slide_index": 7,
+    "shapes_count": 12,
+    "texts": [
+      {
+        "text": "Machine Learning Implementation",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "7",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "ML ARCHITECTURE & FEATURE ENGINEERING",
+        "font_name": null,
+        "font_size": null,
+        "left": 562708,
+        "top": 1433146,
+        "width": 5055577,
+        "height": 446854
+      },
+      {
+        "text": "✔ Real-Time Feature Engineering (ml/feature_engineering.py)\n    Extracts 50 dynamic lexical and structural features from target URLs: character counts, suspicious token entropy, TLD risk weights, path depths, and brand keyword similarity.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1915168,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Binary & Multi-Class Classifiers (ml/inference.py)\n    Scikit-Learn Random Forest ensemble models calibrated with 5-fold Stratified Cross-Validation for robust decision boundary convergence.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1915168,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Portable Serialized Artifacts (ml/models/*.pkl)\n    Pre-trained models loaded via thread-safe singleton cache in ml/model_loader.py, enabling sub-20ms inference latency per query.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1915168,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Explainability & Risk Contribution\n    Extracts feature importance weights feeding into the Unified Risk Engine to directly modulate risk scores based on ML model confidence.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1915168,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "ACTUAL MEASURED MODEL BENCHMARKS (cybermind_metrics.json)",
+        "font_name": null,
+        "font_size": null,
+        "left": 6497515,
+        "top": 1433146,
+        "width": 5131777,
+        "height": 446854
+      },
+      {
+        "text": "OVERALL SYSTEM ML PERFORMANCE (5-Fold Stratified CV):\u000b • Accuracy: 96.67%  |  Precision: 96.84%  |  Recall: 96.67%\u000b • F1-Score: 96.63%  |  ROC-AUC: 0.9940  |  Ensemble: Random Forest",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1923960,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ PhiUSIIL Phishing URL Model (phishing_url_model.pkl):\n • 234,987 samples, 50 features | Binary Classification\n • Training CV Accuracy: 100.0% | ROC-AUC: 1.0000\n • External OpenPhish Feed Benchmark (1,000 samples): 94.50% Accuracy",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1923960,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ File Signatures Model (file_signatures_model.pkl):\n • 1,024 samples, 9 features | Multi-Class Risk Classification\n • Accuracy: 97.56% | Precision: 97.67% | ROC-AUC: 0.9985\n • High: 98.15% F1 | Medium: 97.76% F1 | Low: 96.85% F1",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1923960,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Online-Valid Phishing Model (online_valid_model.pkl):\u000b • 5,810 samples, 10,080 features | Multi-Class Target Classifier\u000b • Accuracy: 90.26% | Precision: 90.79% | F1: 90.19% | ROC-AUC: 0.9777 (PayPal, Blizzard, Orkut, Sulake, Other)",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1923960,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Data Breaches Model (breaches_model.pkl):\u000b  • 520 samples, 6 features | 5-Class Root-Cause Classifier\u000b  • Accuracy: 98.85% | Precision: 98.88% | F1: 98.75% | ROC-AUC: 1.0000",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1923960,
+        "width": 5300000,
+        "height": 4000000
+      }
+    ]
+  },
+  {
+    "slide_index": 8,
+    "shapes_count": 12,
+    "texts": [
+      {
+        "text": "Risk Engine & AI Explanation",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "8",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "UNIFIED 0–100 RISK ENGINE (modules/risk_engine.py)",
+        "font_name": null,
+        "font_size": null,
+        "left": 545123,
+        "top": 1459522,
+        "width": 5073162,
+        "height": 420477
+      },
+      {
+        "text": "Multi-Factor Mathematical Formulation:\n  Risk Score = (w1 · API_Score) + (w2 · ML_Prob) + (w3 · Heuristics)\n  Where w1=0.45, w2=0.35, w3=0.20 (dynamically weighted).",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "Critical Override Logic:\n If VirusTotal engine flags > 5 OR Google Safe Browsing triggers, the score is automatically escalated to 90–100 (Critical), overriding benign weights.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "5 Standardized Severity Bands:",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "• 🟢 SAFE (0–20): Clean reputation, valid SSL, zero engine blacklist hits.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "• 🔵 LOW (21–40): Minor misconfigurations (missing CSP headers, new domain).",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "• 🟡 MEDIUM (41–60): Elevated entropy, suspicious redirects, or spam keywords.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "• 🟠 HIGH (61–80): Multiple threat indicators, high abuse confidence score.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "• 🔴 CRITICAL (81–100): Active malware distribution, verified phishing, known C2 IP.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 3193182
+      },
+      {
+        "text": "GROQ LLAMA-3 GENERATIVE AI EXPLANATION ENGINE",
+        "font_name": null,
+        "font_size": null,
+        "left": 6585438,
+        "top": 1459521,
+        "width": 4958862,
+        "height": 420477
+      },
+      {
+        "text": "✔ Contextual Threat Translation\nSynthesizes multi-page JSON payloads from VirusTotal, AbuseIPDB, and ML models into a clean 3-sentence executive summary that non-technical managers can instantly comprehend.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Actionable Remediation Directives\nGenerates role-specific mitigation recommendations:\n• For SOC Analysts: Specific iptables block rules, DNS sinkhole targets, and hash blacklist values.\n• For Leadership: Business impact, user credential revoking advice, and policy adjustments.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Low-Latency Inference via Groq Cloud\nIntegrates Groq Llama-3 70B API via modules/ai_assistant.py, streaming high-speed reasoning tokens in under 1.2 seconds.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 4000000
+      },
+      {
+        "text": "✔ Resilient Offline Heuristic Engine\nIncludes an embedded deterministic template engine that automatically provides rule-based remediation when GROQ_API_KEY is not set or network is disconnected.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1880000,
+        "width": 5300000,
+        "height": 4000000
+      }
+    ]
+  },
+  {
+    "slide_index": 9,
+    "shapes_count": 17,
+    "texts": [
+      {
+        "text": "Database Implementation",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "9",
+        "font_name": null,
+        "font_size": null,
+        "left": 11300000,
+        "top": 6180000,
+        "width": 800000,
+        "height": 650000
+      },
+      {
+        "text": "DATABASE CONFIGURATION: SQLite 3 | database/cybermind.db | 15 Relational Tables | 11 Optimized B-Tree Indexes | PRAGMA foreign_keys = ON; | Thread-Safe Connection Pool",
+        "font_name": null,
+        "font_size": null,
+        "left": 400000,
+        "top": 1200000,
+        "width": 11392000,
+        "height": 650000
+      },
+      {
+        "text": "Master Entity: scan_history",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2215662,
+        "width": 3290000,
+        "height": 531585
+      },
+      {
+        "text": "131 REAL SCAN RECORDS LOGGED",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• scan_id: INTEGER PRIMARY KEY AUTOINCREMENT",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• scan_type: TEXT (e.g. Website Scanner, URL, Phone)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• target: TEXT (URL, IP, domain, phone number)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• risk_level: TEXT (Safe, Low, Medium, High, Critical)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• risk_score: REAL (0.0 to 100.0 unified score)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• status: TEXT (Completed, Processing, Failed)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• scan_time: TIMESTAMP (ISO 8601 UTC)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• country: TEXT (Geolocation resolved country)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "• latitude / longitude: REAL (Coordinates for live map)",
+        "font_name": null,
+        "font_size": null,
+        "left": 480000,
+        "top": 2847248,
+        "width": 3610000,
+        "height": 3031599
+      },
+      {
+        "text": "Scanner Detail Tables",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2215662,
+        "width": 3290000,
+        "height": 531586
+      },
+      {
+        "text": "NORMALIZED MULTI-VECTOR DATA",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• url_scans: 14 cols: status_code, redirects, age, VT flags",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• ip_scans: 13 cols: abuse_score, ASN, ISP, Tor exit flag",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• website_scans: 12 cols: SSL cert, cipher, headers, tech stack",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• email_scans: 10 cols: SPF, DKIM, DMARC, MX, disposable",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• domain_scans: 11 cols: WHOIS, registrar, DNSSEC, expiry",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• file_scans: 13 cols: MD5, SHA256, size, entropy, PE headers",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "• qr_scans: 9 cols: decoded_text, payment_uri, redirect_url",
+        "font_name": null,
+        "font_size": null,
+        "left": 4450000,
+        "top": 2847248,
+        "width": 3290000,
+        "height": 2875146
+      },
+      {
+        "text": "System Telemetry Tables",
+        "font_name": null,
+        "font_size": null,
+        "left": 8420000,
+        "top": 2215662,
+        "width": 3290000,
+        "height": 481586
+      },
+      {
+        "text": "AUDITING & ADMINISTRATION",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• api_logs: 7 cols: service, latency_ms, status_code, quota",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• reports: 5 cols: report_id, scan_id, pdf_path, json_path",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• settings: Key-value system configuration records",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• scan_statistics: Aggregated daily/weekly threat metrics",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• feedback: Analyst verification and review telemetry",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• users: Authentication and role permissions",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      },
+      {
+        "text": "• support_tickets: 9 customer incident & technical support records\u000b• Performance: 9 B-Tree indexes on scan_time, risk_level, target",
+        "font_name": null,
+        "font_size": null,
+        "left": 8419999,
+        "top": 2759328,
+        "width": 3555123,
+        "height": 3113673
+      }
+    ]
+  },
+  {
+    "slide_index": 10,
+    "shapes_count": 12,
+    "texts": [
+      {
+        "text": "Dashboard",
+        "font_name": null,
+        "font_size": null,
+        "left": 1837592,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554
+      },
+      {
+        "text": "Scan History",
+        "font_name": null,
+        "font_size": null,
+        "left": 8393726,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554
+      },
+      {
+        "text": "Working Prototype & UI Dashboard",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "10",
+        "font_name": null,
+        "font_size": null,
+        "left": 11245279,
+        "top": 6180000,
+        "width": 854721,
+        "height": 769441
+      }
+    ]
+  },
+  {
+    "slide_index": 11,
+    "shapes_count": 15,
+    "texts": [
+      {
+        "text": "Analytics",
+        "font_name": null,
+        "font_size": null,
+        "left": 1837592,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554
+      },
+      {
+        "text": "Web Scanner",
+        "font_name": null,
+        "font_size": null,
+        "left": 8393726,
+        "top": 5187461,
+        "width": 1960684,
+        "height": 738554
+      },
+      {
+        "text": "13",
+        "font_name": null,
+        "font_size": null,
+        "left": 11354459,
+        "top": 6205486,
+        "width": 1175971,
+        "height": 830997
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 338328,
+        "top": 6452744,
+        "width": 2588062,
+        "height": 369332
+      },
+      {
+        "text": "Working Prototype & UI Dashboard",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "11",
+        "font_name": null,
+        "font_size": null,
+        "left": 11238867,
+        "top": 6180000,
+        "width": 861133,
+        "height": 769441
+      }
+    ]
+  },
+  {
+    "slide_index": 12,
+    "shapes_count": 12,
+    "texts": [
+      {
+        "text": "Testing Methodology & Verification",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "12",
+        "font_name": null,
+        "font_size": null,
+        "left": 11238867,
+        "top": 6180000,
+        "width": 861133,
+        "height": 769441
+      },
+      {
+        "text": "TESTING ARCHITECTURE & AUTOMATION WORKFLOW",
+        "font_name": null,
+        "font_size": null,
+        "left": 553915,
+        "top": 1565030,
+        "width": 5037994,
+        "height": 395655
+      },
+      {
+        "text": "✔ Automated Pytest Framework (tests/tests_root.py)",
+        "font_name": null,
+        "font_size": null,
+        "left": 458793,
+        "top": 2020678,
+        "width": 5300000,
+        "height": 3008516
+      },
+      {
+        "text": "Enterprise Pytest test harness orchestrated via root.py, executing 15 test files with parallel execution and health assertions.",
+        "font_name": null,
+        "font_size": null,
+        "left": 458793,
+        "top": 2020678,
+        "width": 5300000,
+        "height": 3008516
+      },
+      {
+        "text": "✔ Deterministic Test Fixtures (tests/conftest.py)\nStandardized session-scoped fixtures providing verified inputs: sample URLs, domains, emails, IP addresses, PE sample files, and decoded QR payloads.",
+        "font_name": null,
+        "font_size": null,
+        "left": 458793,
+        "top": 2020678,
+        "width": 5300000,
+        "height": 3008516
+      },
+      {
+        "text": "✔ Multi-Stage Verification Pipeline\nInput Target ➔ core/validator.py Sanitization ➔ Service Execution ➔ Assertion of Expected vs. Actual Outputs ➔ Pass / Fail ➔ Auto-Fallback Verification.",
+        "font_name": null,
+        "font_size": null,
+        "left": 458793,
+        "top": 2020678,
+        "width": 5300000,
+        "height": 3008516
+      },
+      {
+        "text": "✔ Diagnostics Master Orchestrator (root.py)\nSequential 5-phase validation: module discovery, manager initialization, health checks, test suite execution, and live diagnostic scans.",
+        "font_name": null,
+        "font_size": null,
+        "left": 458793,
+        "top": 2020678,
+        "width": 5300000,
+        "height": 3008516
+      },
+      {
+        "text": "7 IMPLEMENTED TESTING CATEGORIES (156 TEST CASES)",
+        "font_name": null,
+        "font_size": null,
+        "left": 6462346,
+        "top": 1565030,
+        "width": 5037992,
+        "height": 407230
+      },
+      {
+        "text": "1. Functional Scanner Tests: test_modules.py & test_universal_scan.py: Routing, parameter handling, and return payload structure across all 10 scanners.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      },
+      {
+        "text": "2. External Service & API Tests: test_api.py & test_services.py: Validates mock fallbacks, API rate limits, timeouts, and live endpoints.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      },
+      {
+        "text": "3. ML Prediction & Inference Tests: test_ml.py: Verifies 50-feature array shapes, probability calibration, and model serialization.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      },
+      {
+        "text": "4. Relational Database Tests: test_database.py: Asserts schema migrations, foreign keys, record CRUD, and multi-thread safe execution.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      },
+      {
+        "text": "5. Device Hardening Audit Tests: test_device_security.py: Validates local port scanning, Windows firewall detection, and OS checks.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      },
+      {
+        "text": "6. Input Validation & Error Handling: Tests malformed URLs, empty targets, non-numeric phones, and SQL injection sanitization.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      },
+      {
+        "text": "7. Startup Diagnostics & Health Checks: test_startup.py: Comprehensive health verification across all 10 manager classes.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 1960685,
+        "width": 5300000,
+        "height": 2923877
+      }
+    ]
+  },
+  {
+    "slide_index": 13,
+    "shapes_count": 9,
+    "texts": [
+      {
+        "text": "Test Cases & Execution Matrix",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "13",
+        "font_name": null,
+        "font_size": null,
+        "left": 11238867,
+        "top": 6180000,
+        "width": 861133,
+        "height": 769441
+      },
+      {
+        "text": "EXECUTION SUMMARY: Total Automated Test Cases: 156  |  Passed: 156 (100% Pass Rate)  |  Failed: 0  |  Execution Duration: 8.42s  |  All 10 Managers Verified Healthy",
+        "font_name": null,
+        "font_size": null,
+        "left": 400000,
+        "top": 5500000,
+        "width": 11392000,
+        "height": 550000
+      }
+    ]
+  },
+  {
+    "slide_index": 14,
+    "shapes_count": 9,
+    "texts": [
+      {
+        "text": "Code Review, Bugs & Issue Resolution",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "14",
+        "font_name": null,
+        "font_size": null,
+        "left": 11238867,
+        "top": 6180000,
+        "width": 861133,
+        "height": 769441
+      },
+      {
+        "text": "CODING STANDARDS & ARCHITECTURAL BEST PRACTICES APPLIED:",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 4480000,
+        "width": 11292000,
+        "height": 1500000
+      },
+      {
+        "text": "✔ Decoupled 3-Tier Layering: Strict separation between UI (Streamlit), Business Logic (Modules/Services/ML), and Storage (SQLite).",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 4480000,
+        "width": 11292000,
+        "height": 1500000
+      },
+      {
+        "text": "✔ Strict Schema Validation: All incoming payloads sanitized through core/validator.py before reaching scanner engines.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 4480000,
+        "width": 11292000,
+        "height": 1500000
+      },
+      {
+        "text": "✔ Defensive Error Handling: Every external API call wrapped in try/except blocks with structured logging via core/logger.py.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 4480000,
+        "width": 11292000,
+        "height": 1500000
+      },
+      {
+        "text": "✔ Type Hinting & Modularity: Comprehensive Python 3.12+ type annotations (from __future__ import annotations) throughout.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 4480000,
+        "width": 11292000,
+        "height": 1500000
+      }
+    ]
+  },
+  {
+    "slide_index": 15,
+    "shapes_count": 24,
+    "texts": [
+      {
+        "text": "Current Project Progress & Roadmap",
+        "font_name": null,
+        "font_size": null,
+        "left": 0,
+        "top": 0,
+        "width": 10500000,
+        "height": 930000
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 6430000,
+        "width": 2500000,
+        "height": 350000
+      },
+      {
+        "text": "15",
+        "font_name": null,
+        "font_size": null,
+        "left": 11238867,
+        "top": 6180000,
+        "width": 861133,
+        "height": 769441
+      },
+      {
+        "text": "IMPLEMENTATION",
+        "font_name": null,
+        "font_size": null,
+        "left": 380000,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 654025
+      },
+      {
+        "text": "90%",
+        "font_name": null,
+        "font_size": null,
+        "left": 380000,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 654025
+      },
+      {
+        "text": "Core Operational",
+        "font_name": null,
+        "font_size": null,
+        "left": 380000,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 654025
+      },
+      {
+        "text": "MODULES",
+        "font_name": null,
+        "font_size": null,
+        "left": 2338400,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "10 / 10",
+        "font_name": null,
+        "font_size": null,
+        "left": 2338400,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "All Active",
+        "font_name": null,
+        "font_size": null,
+        "left": 2338400,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "SERVICES / APIs",
+        "font_name": null,
+        "font_size": null,
+        "left": 4296800,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 638636
+      },
+      {
+        "text": "30+",
+        "font_name": null,
+        "font_size": null,
+        "left": 4296800,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 638636
+      },
+      {
+        "text": "Integrated & Cached",
+        "font_name": null,
+        "font_size": null,
+        "left": 4296800,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 638636
+      },
+      {
+        "text": "ML ACCURACY",
+        "font_name": null,
+        "font_size": null,
+        "left": 6255200,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 638636
+      },
+      {
+        "text": "96.7%",
+        "font_name": null,
+        "font_size": null,
+        "left": 6255200,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 638636
+      },
+      {
+        "text": "5-Fold Stratified CV",
+        "font_name": null,
+        "font_size": null,
+        "left": 6255200,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 638636
+      },
+      {
+        "text": "TEST CASES",
+        "font_name": null,
+        "font_size": null,
+        "left": 8213600,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "156 / 156",
+        "font_name": null,
+        "font_size": null,
+        "left": 8213600,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "100% Passing",
+        "font_name": null,
+        "font_size": null,
+        "left": 8213600,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "RESOLVED BUGS",
+        "font_name": null,
+        "font_size": null,
+        "left": 10172000,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "12 Fixes",
+        "font_name": null,
+        "font_size": null,
+        "left": 10172000,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "Refactored & Verified",
+        "font_name": null,
+        "font_size": null,
+        "left": 10172000,
+        "top": 1210000,
+        "width": 1640000,
+        "height": 930000
+      },
+      {
+        "text": "REVIEW 3 COMPLETED MILESTONES",
+        "font_name": null,
+        "font_size": null,
+        "left": 527538,
+        "top": 2576146,
+        "width": 5169877,
+        "height": 473854
+      },
+      {
+        "text": "✔ 10 Scanner Modules Fully Operational\n    URL, Website, Domain, Email, IP, Phone, File/PE, QR, Device, and Universal.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "VirusTotal, AbuseIPDB, Google Safe Browsing, Groq, Veriphone, Numverify,",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "Abstract, IPinfo, IPQS, and VerificarEmails.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "Random Forest models achieving 96.67% CV accuracy (99.40% ROC-AUC)",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "across 242,341 samples.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "✔ Unified 0–100 Multi-Factor Risk Engine\n    Dynamic weighted risk scores with 5 severity tiers and critical override triggers.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "✔ Full Interactive Streamlit Dashboard\n    Multi-page navigation, live scan charts, KPI cards, and threat map.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "✔ 156 Automated Pytest Test Cases Passing\n    100% passing test suite covering APIs, ML models, modules, and database.",
+        "font_name": null,
+        "font_size": null,
+        "left": 450000,
+        "top": 3130000,
+        "width": 5450000,
+        "height": 2857192
+      },
+      {
+        "text": "ROADMAP FOR REVIEW 4 / FINAL SUBMISSION",
+        "font_name": null,
+        "font_size": null,
+        "left": 6479930,
+        "top": 2576146,
+        "width": 5184531,
+        "height": 473854
+      },
+      {
+        "text": "• Dynamic Malware Detonation Sandbox\n    Integrate automated safe container detonation for runtime PE behavioral analysis.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 3130000,
+        "width": 5300000,
+        "height": 2820000
+      },
+      {
+        "text": "• Enterprise SIEM / SOAR Webhook Connectors\n    Real-time alert streaming to Splunk, Elastic Security, and Microsoft Sentinel.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 3130000,
+        "width": 5300000,
+        "height": 2820000
+      },
+      {
+        "text": "• Automated Windows Firewall Active Response\n    Automated script generation for immediate host-based IP and port blocking.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 3130000,
+        "width": 5300000,
+        "height": 2820000
+      },
+      {
+        "text": "• Multi-User Role-Based Access Control (RBAC)\n    Analyst vs. Administrator access tiers with audit trails and team reporting.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 3130000,
+        "width": 5300000,
+        "height": 2820000
+      },
+      {
+        "text": "• Final Project Dissertation & Deployment\n    Production Docker containerization and comprehensive M.Sc. dissertation report.",
+        "font_name": null,
+        "font_size": null,
+        "left": 6400000,
+        "top": 3130000,
+        "width": 5300000,
+        "height": 2820000
+      }
+    ]
+  },
+  {
+    "slide_index": 16,
+    "shapes_count": 9,
+    "texts": [
+      {
+        "text": "Thank You!",
+        "font_name": null,
+        "font_size": null,
+        "left": 285238,
+        "top": 2494274,
+        "width": 6748607,
+        "height": 2534926
+      },
+      {
+        "text": "For Your Attention",
+        "font_name": null,
+        "font_size": null,
+        "left": 285238,
+        "top": 2494274,
+        "width": 6748607,
+        "height": 2534926
+      },
+      {
+        "text": "Stay Secure, Stay Smart, Stay Ahead.",
+        "font_name": null,
+        "font_size": null,
+        "left": 350229,
+        "top": 4290619,
+        "width": 6216160,
+        "height": 369332
+      },
+      {
+        "text": "CyberMind-AI",
+        "font_name": null,
+        "font_size": null,
+        "left": 426380,
+        "top": 201490,
+        "width": 1637824,
+        "height": 369332
+      },
+      {
+        "text": "SOCCA - MSC DS",
+        "font_name": null,
+        "font_size": null,
+        "left": 4285663,
+        "top": 175819,
+        "width": 1947497,
+        "height": 369332
+      },
+      {
+        "text": "Presented by Daksh Vasani",
+        "font_name": null,
+        "font_size": null,
+        "left": -119758,
+        "top": 6047651,
+        "width": 4829101,
+        "height": 810349
+      },
+      {
+        "text": "ER. NO: 2504070500037",
+        "font_name": null,
+        "font_size": null,
+        "left": -119758,
+        "top": 6047651,
+        "width": 4829101,
+        "height": 810349
+      }
+    ]
+  }
+]

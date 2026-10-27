@@ -10,17 +10,8 @@ import re
 from typing import Any
 
 from core.logger import logger
-from services.url_service import url_service
-from services.website_service import website_service
-from services.domain_service import domain_service
-from services.email_service import email_service
-from services.ssl_service import ssl_service
-from services.whois_service import whois_service
-from services.dns_service import dns_service
-from services.breach_intelligence_service import breach_intelligence_service
-from services.device_security_service import device_security_service
-from modules.risk_engine import risk_engine
 from database.db import db
+
 
 class UniversalScanModule:
     """
@@ -83,6 +74,10 @@ class UniversalScanModule:
         details = {}
         
         if input_type == "email":
+            from services.email_service import email_service
+            from services.device_security_service import device_security_service
+            from services.breach_intelligence_service import breach_intelligence_service
+
             # 1. Email validation
             is_valid = email_service.validate(value)
             
@@ -159,6 +154,11 @@ class UniversalScanModule:
             }
             
         elif input_type == "url":
+            from services.url_service import url_service
+            from services.website_service import website_service
+            from services.ssl_service import ssl_service
+            from modules.risk_engine import risk_engine
+
             # 1. URL scanner
             url_res = {}
             try:
@@ -217,7 +217,45 @@ class UniversalScanModule:
                 "website_data": web_res
             }
             
+        elif input_type == "ip":
+            from services.ip_service import ip_service
+            from modules.risk_engine import risk_engine
+            ip_res = {}
+            try:
+                ip_res = ip_service.analyze(value)
+            except Exception:
+                pass
+            
+            calc_risk = risk_engine.calculate(ip_res)
+            risk_score = calc_risk.get("score", 0)
+            risk_level = calc_risk.get("level", "Safe")
+            
+            geo = ip_res.get("geo") or {}
+            abuse = ip_res.get("abuse") or {}
+            bl = ip_res.get("blacklist") or {}
+            
+            recs = ["Regularly monitor inbound and outbound traffic on this IP."]
+            if abuse.get("abuse_score", 0) > 20:
+                recs.append("Restrict firewall access to this high-abuse IP.")
+                
+            details = {
+                "input_type": "ip",
+                "ip": value,
+                "geo": geo,
+                "abuse": abuse,
+                "blacklist": bl,
+                "ip_data": ip_res,
+                "recommendations": recs,
+            }
+
         else: # domain
+            from services.domain_service import domain_service
+            from services.website_service import website_service
+            from services.ssl_service import ssl_service
+            from services.whois_service import whois_service
+            from services.dns_service import dns_service
+            from modules.risk_engine import risk_engine
+
             # 1. Domain scan
             dom_res = {}
             try:
@@ -302,6 +340,15 @@ class UniversalScanModule:
             "details": details
         }
         
+        # Normalize risk_level for scan_history CHECK constraint ('Safe', 'Low', 'Medium', 'High', 'Critical')
+        db_risk_level = str(risk_level).capitalize()
+        if db_risk_level in ("Malicious", "Danger"):
+            db_risk_level = "Critical"
+        elif db_risk_level in ("Suspicious", "Warn"):
+            db_risk_level = "Medium"
+        elif db_risk_level not in ("Safe", "Low", "Medium", "High", "Critical"):
+            db_risk_level = "Low"
+
         # Save to SQLite database
         try:
             db.execute(
@@ -309,7 +356,7 @@ class UniversalScanModule:
                 INSERT INTO scan_history (scan_type, target, risk_level, risk_score)
                 VALUES (?, ?, ?, ?)
                 """,
-                ("Universal Scan", value, risk_level, float(risk_score))
+                ("Universal Scan", value, db_risk_level, float(risk_score))
             )
         except Exception as e:
             logger.error(f"Failed to log universal scan to db: {e}")

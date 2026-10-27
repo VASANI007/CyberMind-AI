@@ -549,15 +549,23 @@ style_template = """
     footer {visibility:hidden;}
     [data-testid="stToolbar"]{display:none;}
     [data-testid="stDecoration"]{display:none;}
-    header[data-testid="stHeader"]{
+    header,
+    [data-testid="stHeader"],
+    [data-testid="stAppHeader"],
+    .stAppHeader {
         display: none !important;
         height: 0 !important;
         min-height: 0 !important;
+        max-height: 0 !important;
         padding: 0 !important;
         margin: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
     }
-    [data-testid="stMain"] {
+    [data-testid="stMain"],
+    .stMain {
         padding-top: 0 !important;
+        margin-top: 0 !important;
     }
     section[data-testid="stSidebar"] {
         display: none !important;
@@ -768,8 +776,27 @@ style_template = """
     }
 
     /* 1. Custom Fixed Sidebar Outer Element Wrapper Node Zero-Out */
+    div.stElementContainer:has(.st-key-navcol),
+    [data-testid="stElementContainer"]:has(.st-key-navcol),
     div.stElementContainer:has(> .st-key-navcol),
     [data-testid="stElementContainer"]:has(> .st-key-navcol) {
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        overflow: visible !important;
+    }
+
+    /* Zero out invisible helper element containers (iframe[height="0"], empty wrappers, style blocks) */
+    div.stElementContainer:has(iframe[height="0"]),
+    [data-testid="stElementContainer"]:has(iframe[height="0"]),
+    div.stElementContainer:has(div[data-testid="stCustomComponentV1"]:has(iframe[height="0"])),
+    [data-testid="stElementContainer"]:has(div[data-testid="stCustomComponentV1"]:has(iframe[height="0"])),
+    div.stElementContainer:has(> style),
+    [data-testid="stElementContainer"]:has(> style) {
+        display: none !important;
         height: 0 !important;
         min-height: 0 !important;
         max-height: 0 !important;
@@ -782,7 +809,7 @@ style_template = """
     div.block-container,
     [data-testid="stMainBlockContainer"],
     .stMainBlockContainer {
-        padding-top: 1rem !important;
+        padding-top: 0.8rem !important;
         padding-bottom: 2.5rem !important;
         padding-left: 17.5rem !important;
         padding-right: 1.5rem !important;
@@ -3224,31 +3251,45 @@ def circular_gauge(score, level):
     text_color = "#EAF0F7" if dark else "#1E293B"
     tick_color = "#8B98AC" if dark else "#64748B"
     border_color = "#1D2838" if dark else "#D1D9E6"
-    color = "#22C55E" if score < 30 else "#F5A623" if score < 70 else "#F2545B"
+    color = "#8B98AC" if level == "Unverified" else ("#22C55E" if score < 30 else "#F5A623" if score < 70 else "#F2545B")
     fig = go.Figure(go.Indicator(
-        mode = "gauge+number",
+        mode = "gauge",
         value = score,
-        domain = {'x': [0, 1], 'y': [0.08, 0.92]},
-        title = {'text': f"RISK: {level.upper()}", 'font': {'size': 14, 'color': text_color}},
+        domain = {'x': [0.04, 0.96], 'y': [0.08, 0.95]},
+        title = {'text': f"<b>RISK: {level.upper()}</b>", 'font': {'size': 13, 'color': color, 'family': "Inter"}},
         gauge = {
-            'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': tick_color},
-            'bar': {'color': color},
-            'bgcolor': "rgba(0,0,0,0)",
-            'borderwidth': 2,
+            'axis': {
+                'range': [0, 100],
+                'tickwidth': 1,
+                'tickcolor': tick_color,
+                'tickvals': [0, 25, 50, 75, 100],
+                'ticktext': ['0', '25', '50', '75', '100'],
+                'tickfont': {'size': 10, 'color': tick_color}
+            },
+            'bar': {'color': color, 'thickness': 0.28},
+            'bgcolor': "rgba(255,255,255,0.03)" if dark else "rgba(0,0,0,0.03)",
+            'borderwidth': 1.5,
             'bordercolor': border_color,
             'steps': [
-                {'range': [0, 30], 'color': 'rgba(34,197,94,0.08)'},
-                {'range': [30, 70], 'color': 'rgba(245,166,35,0.08)'},
-                {'range': [70, 100], 'color': 'rgba(242,84,91,0.08)'}
+                {'range': [0, 30], 'color': 'rgba(34,197,94,0.10)'},
+                {'range': [30, 70], 'color': 'rgba(245,166,35,0.10)'},
+                {'range': [70, 100], 'color': 'rgba(242,84,91,0.10)'}
             ],
         }
     ))
+    fig.add_annotation(
+        x=0.5, y=0.22,
+        text=f"<span style='font-size:36px; font-weight:800; color:{text_color};'>{score}</span><span style='font-size:15px; color:{tick_color}; font-weight:600;'> / 100</span>",
+        showarrow=False,
+        font={'family': "Inter"},
+        align='center'
+    )
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font={'color': text_color, 'family': "Inter"},
-        height=230,
-        margin=dict(l=25, r=25, t=45, b=15)
+        height=225,
+        margin=dict(l=15, r=15, t=35, b=10)
     )
     return fig
 
@@ -3958,6 +3999,7 @@ def render_dashboard():
                 border: 1px solid var(--border) !important;
                 border-radius: 18px !important;
                 padding: 40px 44px 44px 44px !important;
+                margin-top: 0 !important;
                 margin-bottom: 24px !important;
             }}
             </style>
@@ -5894,7 +5936,6 @@ def render_ai_assistant_page():
 
 
 def render_universal_scan_page():
-    from modules.universal_scan_module import universal_scan_module
     import html
 
     # Auto-clean when navigating INTO Universal Scan from a different page
@@ -5964,6 +6005,7 @@ def render_universal_scan_page():
         else:
             st.session_state["universal_scan_err"] = False
             with st.spinner("Analyzing input type and launching modules..."):
+                from modules.universal_scan_module import universal_scan_module
                 res = universal_scan_module.analyze(target_to_scan)
                 st.session_state.universal_scan_result = res
                 st.session_state.last_scan_context = {

@@ -28,7 +28,8 @@ class Database:
 
         self.connection = sqlite3.connect(
             self.db_path,
-            check_same_thread=False
+            check_same_thread=False,
+            timeout=30.0
         )
 
         self.connection.row_factory = sqlite3.Row
@@ -37,6 +38,12 @@ class Database:
 
         self.cursor.execute(
             "PRAGMA foreign_keys = ON;"
+        )
+        self.cursor.execute(
+            "PRAGMA journal_mode = WAL;"
+        )
+        self.cursor.execute(
+            "PRAGMA busy_timeout = 10000;"
         )
 
         return self.connection
